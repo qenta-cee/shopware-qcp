@@ -24,6 +24,8 @@
  * Please do not use these plugins if you do not agree to this terms of use!
  */
 
+require_once __DIR__ . '/Components/CSRFWhitelistAware.php';
+
 /**
  * WirecardCheckoutPage Bootstrap class
  *
