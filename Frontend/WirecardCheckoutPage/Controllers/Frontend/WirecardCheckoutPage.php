@@ -321,9 +321,9 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
 
     public function getWhitelistedCSRFActions()
     {
-        return [
+        return array(
             'confirm',
             'return'
-        ];
+        );
     }
 }
