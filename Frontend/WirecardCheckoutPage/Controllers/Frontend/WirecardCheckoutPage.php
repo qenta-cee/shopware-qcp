@@ -24,12 +24,14 @@
  * Please do not use these plugins if you do not agree to this terms of use!
  */
 
+use Shopware\Components\CSRFWhitelistAware;
+
 /**
  * controller class handling Wirecard Checkout Page Requests^
  *
  * WirecardCheckoutPage Controller
  */
-class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Controllers_Frontend_Payment
+class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
     /**
      * Index action
@@ -317,4 +319,11 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
         return Shopware()->Db()->update('s_order', array('transactionID' => $sTransactionId), "temporaryID = '$sTemporaryId'");
     }
 
+    public function getWhitelistedCSRFActions()
+    {
+        return array(
+            'confirm',
+            'return'
+        );
+    }
 }
