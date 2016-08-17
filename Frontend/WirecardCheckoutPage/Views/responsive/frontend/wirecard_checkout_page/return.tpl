@@ -27,20 +27,19 @@
 </style>
 {/block}
 
-{block name="frontend_index_header_javascript" append}
+{block name="frontend_index_header_javascript_jquery_lib" append}
+    <script type="text/javascript">
+        function iframeBreakout(redirectUrl)
+        {
+            parent.location.href = redirectUrl;
+        }
 
-<script type="text/javascript">
-    function iframeBreakout(redirectUrl)
-    {
-        parent.location.href = redirectUrl;
-    }
-
-    (function($) {
-        $(document).ready(function() {
-            iframeBreakout('{$redirectUrl}');
-        });
-    })(jQuery);
-</script>
+        (function($) {
+            $(document).ready(function() {
+                iframeBreakout('{$redirectUrl}');
+            });
+        })(jQuery);
+    </script>
 {/block}
 
 {namespace name="frontend/checkout/return"}
