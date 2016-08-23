@@ -263,11 +263,11 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
     /**
      * Save return data
      *
-     * @param WirecardCEE_QPay_Return_Success $return
+     * @param WirecardCEE_Stdlib_Return_Success $return
      * @param null $orderNumber
      * @internal param null $transactionId
      */
-    protected function saveComments(WirecardCEE_QPay_Return_Success $return = null, $orderNumber = null)
+    protected function saveComments(WirecardCEE_Stdlib_Return_Success $return = null, $orderNumber = null)
     {
         $comments = array();
         $gatewayReferenceNumber ='';
