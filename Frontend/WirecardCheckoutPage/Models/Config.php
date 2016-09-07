@@ -37,7 +37,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Config
      */
     public function getShopName()
     {
-        return $this->SHOP_NAME;
+        return $this->SHOP_PREFIX;
     }
 
 
@@ -160,7 +160,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Config
         $var = strtoupper($var);
         if (isset($config->$var)) {
             return $config->$var;
-        } else if($var == 'SHOPID' || $var == 'DISPLAY_TEXT' || $var == 'SHOP_NAME' || $var == 'IMAGE_URL') {
+        } else if($var == 'SHOPID' || $var == 'DISPLAY_TEXT' || $var == 'SHOP_PREFIX' || $var == 'IMAGE_URL') {
             //optional field shopId would cause exception if not configured
             return '';
         } else {
