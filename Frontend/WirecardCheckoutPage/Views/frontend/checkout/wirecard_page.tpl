@@ -11,7 +11,7 @@
 {* Main content *}
 {block name="frontend_index_content"}
     <div id="payment" class="grid_20">
-        <iframe src="{$redirectUrl}" width="680" height="660" id="wcp_iframe" style="border: 0; margin: auto;"></iframe>
+        <iframe src="{$redirectUrl}" height="660" id="wcp_iframe" style="border: 0; margin: auto;"></iframe>
     </div>
 {/block}
 

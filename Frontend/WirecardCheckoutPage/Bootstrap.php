@@ -55,7 +55,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.2.5';
+        return '1.2.6';
     }
 
     /**
@@ -261,7 +261,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
 
         $form->setElement(
             'text',
-            'SHOP_NAME',
+            'SHOP_PREFIX',
             array(
                 'label' => 'Shop-Präfix im Buchungstext (Rechnung)',
                 'value' => '',
@@ -428,7 +428,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     'label' => 'Max. retries',
                     'description' => 'Maximum number of payment attempts regarding a certain order.'
                 ),
-                'SHOP_NAME' => Array(
+                'SHOP_PREFIX' => Array(
                     'label' => 'Shop prefix in posting text (invoice)',
                     'description' => 'Reference to your online shop on your consumer\'s invoice, limited to 9 characters.'
                 ),
