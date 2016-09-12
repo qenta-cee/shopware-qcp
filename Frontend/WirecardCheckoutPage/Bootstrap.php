@@ -48,6 +48,16 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     const NAME = 'Shopware_5.WirecardCheckoutPage';
 
+    public function getCapabilities()
+    {
+        return array(
+            'install' => true,
+            'enable' => true,
+            'update' => true,
+            'secureUninstall' => true
+        );
+    }
+
     /**
      * Returns the version of plugin as string.
      *
@@ -55,7 +65,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.2.6';
+        return '1.2.7';
     }
 
     /**
@@ -105,16 +115,14 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
         );
     }
 
-    public function uninstall() {
-        //TODO: uninstall Routine.. remove translations, remove snippets
-        try {
-            Shopware()->Db()->delete('s_core_paymentmeans', 'pluginID = ' . (int) $this->getId());
-            Shopware()->Db()->delete('s_crontab', 'pluginID = ' . (int) $this->getId());
-
-        } catch (Exception $e) {
-
-        }
-
+    /**
+     * This derived method is called automatically each time the plugin will be reinstalled
+     * (does not delete databases)
+     *
+     * @return array
+     */
+    public function secureUninstall()
+    {
         if ($this->assertMinimumVersion('5')) {
             /** @var \Shopware\Components\CacheManager $cacheManager */
             $cacheManager = $this->get('shopware.cache_manager');
@@ -125,6 +133,19 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
             'success' => true,
             'invalidateCache' => array('frontend', 'config', 'template', 'theme')
         );
+    }
+
+    public function uninstall() {
+        //TODO: uninstall Routine.. remove translations, remove snippets
+        try {
+            Shopware()->Db()->delete('s_core_paymentmeans', 'pluginID = ' . (int) $this->getId());
+            Shopware()->Db()->delete('s_crontab', 'pluginID = ' . (int) $this->getId());
+
+        } catch (Exception $e) {
+
+        }
+
+        return $this->secureUninstall();
 
     }
 
