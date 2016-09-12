@@ -268,19 +268,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
         );
 
         $form->setElement(
-            'checkbox',
-            'ACCEPT_TERMS',
-            array(
-                'label' => 'Payolution terms',
-                'value' => 1,
-                'description' => 'Consumer must accept payolution terms during the checkout process.',
-                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
-                'required' => false,
-                'order' => ++$i
-            )
-        );
-
-        $form->setElement(
             'numberfield',
             'MAX_RETRIES',
             array(
