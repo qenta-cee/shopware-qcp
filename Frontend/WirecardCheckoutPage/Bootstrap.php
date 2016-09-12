@@ -65,7 +65,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.2.7';
+        return '1.2.8';
     }
 
     /**
@@ -262,6 +262,19 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 'value' => 0,
                 'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
                 'description' => 'Automatisches Abbuchen der Zahlungen. Bitte kontaktieren Sie unsere Sales-Teams um dieses Feature freizuschalten.',
+                'required' => false,
+                'order' => ++$i
+            )
+        );
+
+        $form->setElement(
+            'checkbox',
+            'ACCEPT_TERMS',
+            array(
+                'label' => 'Payolution terms',
+                'value' => 1,
+                'description' => 'Consumer must accept payolution terms during the checkout process.',
+                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
                 'required' => false,
                 'order' => ++$i
             )
@@ -693,18 +706,18 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
             // Looking for user data
             $user = Shopware()->Session()->sOrderVariables['sUserData'];
             if (is_null($user)
-                || !isset($user['billingaddress']['birthday']) // No birthday given
+                || !isset($user['additional']['user']['birthday']) // No birthday given
             ) {
                 return true;
             }
-
             // is birthday a valid date
-            $date = explode("-", $user['billingaddress']['birthday']);
+            // before: $user['billingaddress']['birthday']
+            $date = explode("-", $user['additional']['user']['birthday']);
             if (false === checkdate($date[1], $date[2], $date[0])) {
                 return true;
             }
             // Is customer to be of legal age
-            if ((time() - strtotime($user['billingaddress']['birthday'] . ' +18 years')) < 0) {
+            if ((time() - strtotime($user['additional']['user']['birthday'] . ' +18 years')) < 0) {
                 return true;
             }
         }
