@@ -267,6 +267,20 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
             )
         );
 
+
+        $form->setElement(
+            'checkbox',
+            'PAYOLUTION_TERMS',
+            array(
+                'label' => 'Payolution Konditionen',
+                'value' => 1,
+                'description' => 'Consumer must accept payolution terms during the checkout process.',
+                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
+                'required' => false,
+                'order' => ++$i
+            )
+        );
+
         $form->setElement(
             'numberfield',
             'MAX_RETRIES',
@@ -444,6 +458,10 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 'AUTO_DEPOSIT' => Array(
                     'label' => 'Automated deposit',
                     'description' => 'Enabling an automated deposit of payments. Please contact our sales teams to activate this feature.'
+                ),
+                'PAYOLUTION_TERMS' => Array(
+                    'label' => 'Payolution terms',
+                    'description' => 'Consumer must accept payolution terms during the checkout process.'
                 ),
                 'MAX_RETRIES' => Array(
                     'label' => 'Max. retries',
@@ -746,6 +764,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 } else {
                     $view->addTemplateDir($this->Path() . 'Views/');
                 }
+                $view->payolutionTerms = Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS;
 
                 // Output of common errors
                 if (null != Shopware()->WirecardCheckoutPage()->wirecard_action) {

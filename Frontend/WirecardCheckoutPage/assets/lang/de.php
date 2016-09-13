@@ -40,6 +40,8 @@ return array(
         'frontend/checkout/confirm' => array(
             'WirecardMessageActionCancel' => 'Der Zahlungsvorgang wurde von Ihnen abgebrochen.',
             'WirecardMessageActionFailure' => 'W&auml;hrend des Zahlungsvorgangs ist ein Fehler aufgetreten. Bitte versuchen Sie es noch einmal oder w&auml;hlen eine andere Zahlungsart aus.',
+            'WirecardCheckoutPagePayolutionTermsHeader' => 'Payolution Konditionen',
+            'WirecardCheckoutPagePayolutionConsent' => 'Mit der Übermittlung jener Daten an payolution, die für die Abwicklung von Zahlungen mit Kauf auf Rechnung und die Identitäts- und Bonitätsprüfung erforderlich sind, bin ich einverstanden. Meine Einwilligung kann ich jederzeit mit Wirkung für die Zukunft widerrufen.',
         )
     ),
 );
