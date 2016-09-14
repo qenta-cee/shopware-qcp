@@ -755,8 +755,8 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
     public function getPayolutionLink()
     {
         $mid = Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_MID;
-        if ($mid === '') {
-            return '';
+        if (strlen($mid) === 0) {
+            return false;
         }
 
         $mId = urlencode(base64_encode($mid));
@@ -798,11 +798,11 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 } else {
                     $view->addTemplateDir($this->Path() . 'Views/');
                 }
-                $view->payolutionTerms = Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS;
+                $view->wcpPayolutionTerms = Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS;
 
-                if ($this->getPayolutionLink() !== '') {
-                    $view->payolutionLink1 = '<a id="wcp-payolutionlink" href="https://payment.payolution.com/payolution-payment/infoport/dataprivacyconsent?mId=' . $this->getPayolutionLink() . '" target="_blank">';
-                    $view->payolutionLink2 = '</a>';
+                if ($this->getPayolutionLink()) {
+                    $view->wcpPayolutionLink1 = '<a id="wcp-payolutionlink" href="https://payment.payolution.com/payolution-payment/infoport/dataprivacyconsent?mId=' . $this->getPayolutionLink() . '" target="_blank">';
+                    $view->wcpPayolutionLink2 = '</a>';
                 }
 
                 // Output of common errors

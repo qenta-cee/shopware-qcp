@@ -17,7 +17,7 @@
 {/block}
 
 {block name='frontend_checkout_confirm_information_wrapper' append}
-    {if $payolutionTerms}
+    {if $wcpPayolutionTerms}
     {if $sUserData.additional.payment.name == 'wcp_invoice' || {$sUserData.additional.payment.name} == 'wcp_installment'}
     <div class="information--panel-item">
         <div class="tos--panel panel has--border">
@@ -32,11 +32,11 @@
                         </span>
                         <span class="block column--label">
                             <label for="wcpPayolutionTermsChecked">
-                                {if $payolutionLink1}
+                                {if $wcpPayolutionLink1}
                                     {s name="WirecardCheckoutPagePayolutionConsent1"}Mit der Übermittlung jener Daten an payolution, die für die Abwicklung von Zahlungen mit Kauf auf Rechnung und die Identitäts- und Bonitätsprüfung erforderlich sind, bin ich einverstanden. Meine {/s}
-                                    {$payolutionLink1}
+                                    {$wcpPayolutionLink1}
                                     {s name="WirecardCheckoutPagePayoltuionLink"}Bewilligung{/s}
-                                    {$payolutionLink2}
+                                    {$wcpPayolutionLink2}
                                     {s name="WirecardCheckoutPagePayolutionConsent2"} kann ich jederzeit mit Wirkung für die Zukunft widerrufen.{/s}
                                 {else}
                                     {s name="WirecardCheckoutPagePayolutionConsent1"}Mit der Übermittlung jener Daten an payolution, die für die Abwicklung von Zahlungen mit Kauf auf Rechnung und die Identitäts- und Bonitätsprüfung erforderlich sind, bin ich einverstanden. Meine {/s}
