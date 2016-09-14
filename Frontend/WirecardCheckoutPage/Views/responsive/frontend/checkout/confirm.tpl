@@ -1,16 +1,5 @@
 {extends file="parent:frontend/checkout/confirm.tpl"}
 
-{block name="frontend_index_header_javascript" append}
-    <script type="text/javascript">
-        document.getElementById('wcp-payolutionlink').onclick=function(event){
-            event.preventDefault();
-            event.stopPropagation();
-            window.open(document.getElementById('wcp-payolutionlink').href);
-            return false;
-        }
-    </script>
-{/block}
-
 {namespace name="frontend/checkout/confirm"}
 
 {block name="frontend_index_content_top" append}
@@ -42,7 +31,7 @@
                             <input type="checkbox" required="required" aria-required="true" id="wcpPayolutionTermsChecked" name="wcpPayolutionTermsChecked">
                         </span>
                         <span class="block column--label">
-                            <label for="wcpPayolutionTermsChecked" data-modalbox="true" data-targetselector="p" data-mode="ajax" data-height="500" data-width="750">
+                            <label for="wcpPayolutionTermsChecked">
                                 {if !$payolutionLink1}
                                     {s name="WirecardCheckoutPagePayolutionConsent1"}Mit der Übermittlung jener Daten an payolution, die für die Abwicklung von Zahlungen mit Kauf auf Rechnung und die Identitäts- und Bonitätsprüfung erforderlich sind, bin ich einverstanden. Meine {/s}
                                     {s name="WirecardCheckoutPagePayoltuionLink"}Bewilligung{/s}
