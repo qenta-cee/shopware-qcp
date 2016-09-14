@@ -15,3 +15,41 @@
         </div>
     </div>
 {/block}
+
+{block name='frontend_checkout_confirm_information_wrapper' append}
+    {if $wcpPayolutionTerms}
+    {if $sUserData.additional.payment.name == 'wcp_invoice' || {$sUserData.additional.payment.name} == 'wcp_installment'}
+    <div class="information--panel-item">
+        <div class="tos--panel panel has--border">
+            <div class="panel--title primary is--underline">
+                {s name="WirecardCheckoutPagePayolutionTermsHeader"}Payolution Konditionen{/s}
+            </div>
+            <div class="panel--body is--wide">
+                <ul class="list--checkbox list--unstyled">
+                    <li class="block-group row--tos">
+                        <span class="block column--checkbox">
+                            <input type="checkbox" required="required" aria-required="true" id="wcpPayolutionTermsChecked" name="wcpPayolutionTermsChecked">
+                        </span>
+                        <span class="block column--label">
+                            <label for="wcpPayolutionTermsChecked">
+                                {if $wcpPayolutionLink1}
+                                    {s name="WirecardCheckoutPagePayolutionConsent1"}Mit der Übermittlung jener Daten an payolution, die für die Abwicklung von Zahlungen mit Kauf auf Rechnung und die Identitäts- und Bonitätsprüfung erforderlich sind, bin ich einverstanden. Meine {/s}
+                                    {$wcpPayolutionLink1}
+                                    {s name="WirecardCheckoutPagePayoltuionLink"}Bewilligung{/s}
+                                    {$wcpPayolutionLink2}
+                                    {s name="WirecardCheckoutPagePayolutionConsent2"} kann ich jederzeit mit Wirkung für die Zukunft widerrufen.{/s}
+                                {else}
+                                    {s name="WirecardCheckoutPagePayolutionConsent1"}Mit der Übermittlung jener Daten an payolution, die für die Abwicklung von Zahlungen mit Kauf auf Rechnung und die Identitäts- und Bonitätsprüfung erforderlich sind, bin ich einverstanden. Meine {/s}
+                                    {s name="WirecardCheckoutPagePayoltuionLink"}Bewilligung{/s}
+                                    {s name="WirecardCheckoutPagePayolutionConsent2"} kann ich jederzeit mit Wirkung für die Zukunft widerrufen.{/s}
+                                {/if}
+                            </label>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    {/if}
+    {/if}
+{/block}

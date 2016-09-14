@@ -65,7 +65,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.2.8';
+        return '1.2.9';
     }
 
     /**
@@ -267,6 +267,33 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
             )
         );
 
+
+        $form->setElement(
+            'checkbox',
+            'PAYOLUTION_TERMS',
+            array(
+                'label' => 'Payolution Konditionen',
+                'value' => 1,
+                'description' => 'Consumer must accept payolution terms during the checkout process.',
+                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
+                'required' => false,
+                'order' => ++$i
+            )
+        );
+
+        $form->setElement(
+            'text',
+            'PAYOLUTION_MID',
+            array(
+                'label' => 'Payolution mID',
+                'value' => '',
+                'description' => 'Your payolution merchant ID, non-base64-encoded.',
+                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
+                'required' => false,
+                'order' => ++$i
+            )
+        );
+
         $form->setElement(
             'numberfield',
             'MAX_RETRIES',
@@ -444,6 +471,14 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 'AUTO_DEPOSIT' => Array(
                     'label' => 'Automated deposit',
                     'description' => 'Enabling an automated deposit of payments. Please contact our sales teams to activate this feature.'
+                ),
+                'PAYOLUTION_TERMS' => Array(
+                    'label' => 'Payolution terms',
+                    'description' => 'Consumer must accept payolution terms during the checkout process.'
+                ),
+                'PAYOLUTION_MID' => Array(
+                    'label' => 'Payolution mID',
+                    'description' => 'Your payolution merchant ID, non-base64-encoded.'
                 ),
                 'MAX_RETRIES' => Array(
                     'label' => 'Max. retries',
@@ -713,6 +748,23 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
     }
 
     /**
+     * return encoded mId for PayolutionLink
+     *
+     * @return string
+     */
+    public function getPayolutionLink()
+    {
+        $mid = Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_MID;
+        if (strlen($mid) === 0) {
+            return false;
+        }
+
+        $mId = urlencode(base64_encode($mid));
+
+        return $mId;
+    }
+
+    /**
      * Display additional data for seamless payment methods and
      * payment methods with required
      *
@@ -745,6 +797,12 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     $view->addTemplateDir($this->Path() . 'Views/responsive/');
                 } else {
                     $view->addTemplateDir($this->Path() . 'Views/');
+                }
+                $view->wcpPayolutionTerms = Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS;
+
+                if ($this->getPayolutionLink()) {
+                    $view->wcpPayolutionLink1 = '<a id="wcp-payolutionlink" href="https://payment.payolution.com/payolution-payment/infoport/dataprivacyconsent?mId=' . $this->getPayolutionLink() . '" target="_blank">';
+                    $view->wcpPayolutionLink2 = '</a>';
                 }
 
                 // Output of common errors
