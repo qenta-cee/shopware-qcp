@@ -32,15 +32,15 @@
                         </span>
                         <span class="block column--label">
                             <label for="wcpPayolutionTermsChecked">
-                                {if !$payolutionLink1}
-                                    {s name="WirecardCheckoutPagePayolutionConsent1"}Mit der Übermittlung jener Daten an payolution, die für die Abwicklung von Zahlungen mit Kauf auf Rechnung und die Identitäts- und Bonitätsprüfung erforderlich sind, bin ich einverstanden. Meine {/s}
-                                    {s name="WirecardCheckoutPagePayoltuionLink"}Bewilligung{/s}
-                                    {s name="WirecardCheckoutPagePayolutionConsent2"} kann ich jederzeit mit Wirkung für die Zukunft widerrufen.{/s}
-                                {else}
+                                {if $payolutionLink1}
                                     {s name="WirecardCheckoutPagePayolutionConsent1"}Mit der Übermittlung jener Daten an payolution, die für die Abwicklung von Zahlungen mit Kauf auf Rechnung und die Identitäts- und Bonitätsprüfung erforderlich sind, bin ich einverstanden. Meine {/s}
                                     {$payolutionLink1}
                                     {s name="WirecardCheckoutPagePayoltuionLink"}Bewilligung{/s}
                                     {$payolutionLink2}
+                                    {s name="WirecardCheckoutPagePayolutionConsent2"} kann ich jederzeit mit Wirkung für die Zukunft widerrufen.{/s}
+                                {else}
+                                    {s name="WirecardCheckoutPagePayolutionConsent1"}Mit der Übermittlung jener Daten an payolution, die für die Abwicklung von Zahlungen mit Kauf auf Rechnung und die Identitäts- und Bonitätsprüfung erforderlich sind, bin ich einverstanden. Meine {/s}
+                                    {s name="WirecardCheckoutPagePayoltuionLink"}Bewilligung{/s}
                                     {s name="WirecardCheckoutPagePayolutionConsent2"} kann ich jederzeit mit Wirkung für die Zukunft widerrufen.{/s}
                                 {/if}
                             </label>
