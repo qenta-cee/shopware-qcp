@@ -27,7 +27,9 @@
             }
             else {
                 $('#wcp-birthdate').val("");
-                $('.is--primary').attr('disabled', true);
+                if($('#wcp-day').is(":visible") == true ) {
+                    $('.is--primary').attr('disabled', true);
+                }
             }
         }
 
