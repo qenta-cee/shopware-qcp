@@ -65,7 +65,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.2.10';
+        return '1.2.11';
     }
 
     /**
@@ -274,7 +274,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
             array(
                 'label' => 'Payolution Konditionen',
                 'value' => 1,
-                'description' => 'Consumer must accept payolution terms during the checkout process.',
+                'description' => 'Anzeige der Checkbox mit den payolution-Bedingungen, die vom Kunden während des Bezahlprozesses bestätigt werden müssen, wenn Ihr Onlineshop als "Trusted Shop" zertifiziert ist.',
                 'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
                 'required' => false,
                 'order' => ++$i
@@ -287,7 +287,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
             array(
                 'label' => 'Payolution mID',
                 'value' => '',
-                'description' => 'Your payolution merchant ID, non-base64-encoded.',
+                'description' => 'payolution-Händler-ID, bestehend aus dem Base64-enkodierten Firmennamen, die für den Link "Einwilligen" gesetzt werden kann.',
                 'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
                 'required' => false,
                 'order' => ++$i
@@ -474,11 +474,11 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 ),
                 'PAYOLUTION_TERMS' => Array(
                     'label' => 'Payolution terms',
-                    'description' => 'Consumer must accept payolution terms during the checkout process.'
+                    'description' => 'If your online shop is certified by "Trusted Shops", display the corresponding checkbox with payolution terms for the consumer to agree with during the checkout process.'
                 ),
                 'PAYOLUTION_MID' => Array(
                     'label' => 'Payolution mID',
-                    'description' => 'Your payolution merchant ID, non-base64-encoded.'
+                    'description' => 'Your payolution merchant ID consisting of the base64-encoded company name which is used in the link for "consent" to the payolution terms.'
                 ),
                 'MAX_RETRIES' => Array(
                     'label' => 'Max. retries',
@@ -733,19 +733,19 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
 
             if ($this->assertMinimumVersion('5.2')) {
                 if (!isset($user['additional']['user']['birthday'])) {
-                    return true;
+                    return false;
                 }
                 $userDate = $user['additional']['user']['birthday'];
             } else {
                 if (!isset($user['billingaddress']['birthday'])) {
-                    return true;
+                    return false;
                 }
                 $userDate = $user['billingaddress']['birthday'];
             }
 
             $date = explode("-", $userDate);
             if (false === checkdate($date[1], $date[2], $date[0])) {
-                return true;
+                return false;
             }
             // Is customer to be of legal age
             if ((time() - strtotime($userDate . ' +18 years')) < 0) {
@@ -806,6 +806,34 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 } else {
                     $view->addTemplateDir($this->Path() . 'Views/');
                 }
+                $view->years = range(date('Y'), date('Y') - 100);
+                $view->days = range(1, 31);
+                $view->months = range(1, 12);
+
+                $user = Shopware()->Session()->sOrderVariables['sUserData'];
+
+                $birth = null;
+
+                if ($this->assertMinimumVersion('5.2')) {
+                    if(!is_null($user) && isset($user['additional']['user']['birthday'])) {
+                        $birth = $user['additional']['user']['birthday'];
+                    }
+                } else {
+                    if(!is_null($user) && isset($user['billingaddress']['birthday'])) {
+                        $birth = $user['billingaddress']['birthday'];
+                    }
+                }
+
+                if ($birth == null) {
+                    $birthday = array('-', '-', '-');
+                } else {
+                    $birthday = explode('-', $birth);
+                }
+
+                $view->bYear = $birthday[0];
+                $view->bMonth = $birthday[1];
+                $view->bDay = $birthday[2];
+
                 $view->wcpPayolutionTerms = Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS;
 
                 if ($this->getPayolutionLink()) {

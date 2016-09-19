@@ -44,6 +44,8 @@ return array(
             'WirecardCheckoutPagePayolutionConsent1' => 'I agree that the data which are necessary for the liquidation of purchase on account and which are used to complete the identy and credit check are transmitted to payolution. My ',
             'WirecardCheckoutPagePayolutionConsent2' => ' can be revoked at any time with effect for the future.',
             'WirecardCheckoutPagePayolutionLink' => 'consent',
+            'WirecardCheckoutPageBirthday' => 'Date of birth',
+            'WirecardCheckoutPageBirthdayInformation' => 'You must be at least 18 years of age to use this payment method.',
         )
     ),
 );
