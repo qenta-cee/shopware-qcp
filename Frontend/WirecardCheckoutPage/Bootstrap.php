@@ -738,7 +738,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 $userDate = $user['additional']['user']['birthday'];
             } else {
                 if (!isset($user['billingaddress']['birthday'])) {
-
+                    return true;
                 }
                 $userDate = $user['billingaddress']['birthday'];
             }
@@ -752,7 +752,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 return true;
             }
         }
-
         return false;
     }
 
