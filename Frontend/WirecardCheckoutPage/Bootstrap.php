@@ -733,19 +733,19 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
 
             if ($this->assertMinimumVersion('5.2')) {
                 if (!isset($user['additional']['user']['birthday'])) {
-                    return true;
+                    return false;
                 }
                 $userDate = $user['additional']['user']['birthday'];
             } else {
                 if (!isset($user['billingaddress']['birthday'])) {
-                    return true;
+                    return false;
                 }
                 $userDate = $user['billingaddress']['birthday'];
             }
 
             $date = explode("-", $userDate);
             if (false === checkdate($date[1], $date[2], $date[0])) {
-                return true;
+                return false;
             }
             // Is customer to be of legal age
             if ((time() - strtotime($userDate . ' +18 years')) < 0) {
