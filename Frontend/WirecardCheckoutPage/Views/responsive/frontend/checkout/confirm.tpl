@@ -2,6 +2,39 @@
 
 {namespace name="frontend/checkout/confirm"}
 
+{block name="frontend_index_header_javascript" append}
+    <script type="text/javascript">
+        window.onload = function() {
+            $(document).ready(function() {
+                checkBirthday();
+            });
+        };
+
+        function checkBirthday() {
+            var m = $('#wcp-month').val();
+            var d = $('#wcp-day').val();
+
+            var dateStr = $('#wcp-year').val() + '-' + m + '-' + d;
+            var minAge = 18;
+
+            var birthdate = new Date(dateStr);
+            var year = birthdate.getFullYear();
+            var today = new Date();
+            var limit = new Date((today.getFullYear() - minAge), today.getMonth(), today.getDate());
+            if (birthdate < limit) {
+                $('#wcp-birthdate').val(dateStr);
+                $('.is--primary').attr('disabled', false);
+            }
+            else {
+                $('#wcp-birthdate').val("");
+                $('.is--primary').attr('disabled', true);
+            }
+        }
+
+    </script>
+{/block}
+
+
 {block name="frontend_index_content_top" append}
     <div class="grid_20">
         <div class="error" id="errors" {if !$wirecard_error}style="display:none;"{/if}>
@@ -16,7 +49,44 @@
     </div>
 {/block}
 
-{block name='frontend_checkout_confirm_information_wrapper' append}
+{block name='frontend_checkout_confirm_product_table' prepend}
+    {if $sUserData.additional.payment.name == 'wcp_invoice' || $sUserData.additional.payment.name == 'wcp_installment'}
+<div class="information--panel-item">
+    <div class="tos--panel panel has--border">
+    <div class="panel--title primary is--underline" name="birthdate">{s name="WirecardCheckoutPageBirthday"}Geburtsdatum{/s}</div>
+        <div class="panel--body is--wide">
+        <div class="row">
+            <input type="hidden" name="birthdate" id="wcp-birthdate" value="" />
+            <div class="col-xs-1">
+                <select name="days" id="wcp-day" class="form-control days input-sm" onchange="checkBirthday()" required>
+                    <option value="">-</option>
+                    {foreach from=$days item=v}
+                        <option value="{$v}" {if ($bDay == $v)}selected="selected"{/if}>{$v}&nbsp;&nbsp;</option>
+                    {/foreach}
+                </select>
+            </div>
+            <div class="col-xs-1">
+                <select name="months" id="wcp-month" class="form-control months input-sm" onchange="checkBirthday()" required>
+                    <option value="">-</option>
+                    {foreach from=$months key=k item=v}
+                        <option value="{$k}" {if ($bMonth == $k)}selected="selected"{/if}>{$v}&nbsp;&nbsp;</option>
+                    {/foreach}
+                </select>
+            </div>
+            <div class="col-xs-1">
+                <select name="years" id="wcp-year" class="form-control years input-sm" onchange="checkBirthday()" required>
+                    <option value="">-</option>
+                    {foreach from=$years item=v}
+                        <option value="{$v}" {if ($bYear == $v)}selected="selected"{/if}>{$v}&nbsp;&nbsp;</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+            {s name="WirecardCheckoutPageBirthdayInformation"}Sie müssen mindestens 18 Jahre alt sein, um dieses Zahlungsmittel nutzen zu können.{/s}
+        </div>
+        </div>
+    </div>
+    {/if}
     {if $wcpPayolutionTerms}
     {if $sUserData.additional.payment.name == 'wcp_invoice' || {$sUserData.additional.payment.name} == 'wcp_installment'}
     <div class="information--panel-item">
