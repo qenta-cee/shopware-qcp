@@ -65,7 +65,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.2.11';
+        return '1.2.12';
     }
 
     /**
@@ -643,10 +643,11 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
         foreach (Shopware()->WirecardCheckoutPage()->getPaymentMethods()->getList() as $pm) {
             $oPayment = $this->Payments()->findOneBy(array('name' => $prefixName . $pm['name']));
             if(!$oPayment) {
-                $oPayment = $this->createPayment(
+                $payment = $this->createPayment(
                     array(
                         'name' => $prefixName . $pm['name'],
                         'description' => $pm['description'],
+                        'template' => $pm['template'],
                         'action' => self::CONTROLLER,
                         'active' => (isset($pm['active'])) ? (int)$pm['active'] : 0,
                         'position' => $i,
@@ -654,6 +655,8 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                         'additionalDescription' => ''
                     )
                 );
+            } else {
+                $oPayment->setTemplate($pm['template']);
             }
 
             $aTranslations[$oPayment->getId()] = $pm['translation'];
@@ -706,6 +709,22 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
     }
 
     /**
+     * Returns the path to the controller.
+     *
+     * Event listener function of the Enlight_Controller_Dispatcher_ControllerPath_Backend_FcPayone
+     * event.
+     * Fired if an request will be root to the own Favorites backend controller.
+     *
+     * @return string
+     */
+    public function onGetBackendController()
+    {
+        Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap::init();
+        Shopware()->Template()->addTemplateDir(dirname(__FILE__) . '/Views/');
+        return dirname(__FILE__) . '/Controllers/Frontend/' . self::CONTROLLER . '.php';
+    }
+
+    /**
      * Riskmanagement: Don't show payment type invoice if
      * shipping and billing address are different or the customer
      * not to be of legal age
@@ -733,25 +752,26 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
 
             if ($this->assertMinimumVersion('5.2')) {
                 if (!isset($user['additional']['user']['birthday'])) {
-                    return false;
+                    return true;
                 }
                 $userDate = $user['additional']['user']['birthday'];
             } else {
                 if (!isset($user['billingaddress']['birthday'])) {
-                    return false;
+
                 }
                 $userDate = $user['billingaddress']['birthday'];
             }
 
             $date = explode("-", $userDate);
             if (false === checkdate($date[1], $date[2], $date[0])) {
-                return false;
+                return true;
             }
             // Is customer to be of legal age
             if ((time() - strtotime($userDate . ' +18 years')) < 0) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -797,7 +817,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
 
         switch($args->getSubject()->Request()->getActionName())
         {
-            case 'confirm':
+            case 'shippingPayment':
                 self::init();
                 $view->addTemplateDir($this->Path() . 'Views/common/');
 
@@ -841,6 +861,20 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     $view->wcpPayolutionLink2 = '</a>';
                 }
 
+                // Output of common errors
+                if (null != Shopware()->WirecardCheckoutPage()->wirecard_action) {
+                    self::showErrorMessages($view);
+                }
+                break;
+            case 'confirm':
+                self::init();
+                $view->addTemplateDir($this->Path() . 'Views/common/');
+
+                if (Shopware()->Shop()->getTemplate()->getVersion() >= 3) {
+                    $view->addTemplateDir($this->Path() . 'Views/responsive/');
+                } else {
+                    $view->addTemplateDir($this->Path() . 'Views/');
+                }
                 // Output of common errors
                 if (null != Shopware()->WirecardCheckoutPage()->wirecard_action) {
                     self::showErrorMessages($view);
