@@ -709,22 +709,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
     }
 
     /**
-     * Returns the path to the controller.
-     *
-     * Event listener function of the Enlight_Controller_Dispatcher_ControllerPath_Backend_FcPayone
-     * event.
-     * Fired if an request will be root to the own Favorites backend controller.
-     *
-     * @return string
-     */
-    public function onGetBackendController()
-    {
-        Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap::init();
-        Shopware()->Template()->addTemplateDir(dirname(__FILE__) . '/Views/');
-        return dirname(__FILE__) . '/Controllers/Frontend/' . self::CONTROLLER . '.php';
-    }
-
-    /**
      * Riskmanagement: Don't show payment type invoice if
      * shipping and billing address are different or the customer
      * not to be of legal age
@@ -752,26 +736,25 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
 
             if ($this->assertMinimumVersion('5.2')) {
                 if (!isset($user['additional']['user']['birthday'])) {
-                    return true;
+                    return false;
                 }
                 $userDate = $user['additional']['user']['birthday'];
             } else {
                 if (!isset($user['billingaddress']['birthday'])) {
-
+                    return false;
                 }
                 $userDate = $user['billingaddress']['birthday'];
             }
 
             $date = explode("-", $userDate);
             if (false === checkdate($date[1], $date[2], $date[0])) {
-                return true;
+                return false;
             }
             // Is customer to be of legal age
             if ((time() - strtotime($userDate . ' +18 years')) < 0) {
                 return true;
             }
         }
-
         return false;
     }
 
