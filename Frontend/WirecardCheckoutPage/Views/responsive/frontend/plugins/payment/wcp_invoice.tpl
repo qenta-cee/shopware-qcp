@@ -21,11 +21,13 @@
 		var limit = new Date((today.getFullYear() - minAge), today.getMonth(), today.getDate());
 		if (birthdate < limit) {
 			$('#wcp-birthdate').val(dateStr);
+			$('#wcpPayolutionAging').hide();
 			$('.is--primary').attr('disabled', false);
 		}
 		else {
 			$('#wcp-birthdate').val("");
 			if($('#wcp-day').is(":visible") == true ) {
+				$('#wcpPayolutionAging').show();
 				$('.is--primary').attr('disabled', true);
 			}
 		}
@@ -63,7 +65,9 @@
 			</div>
 		</div>
 		<div class="clear" style="content:''; clear:both; float:none;"></div>
+		<span id="wcpPayolutionAging" style="color:red;font-weight:bold;display:none;">
 		{s name="WirecardCheckoutPageBirthdayInformation"}Sie müssen mindestens 18 Jahre alt sein, um dieses Zahlungsmittel nutzen zu können.{/s}
+		</span>
 	</div>
 </div>
 {/if}

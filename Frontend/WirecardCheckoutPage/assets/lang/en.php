@@ -40,6 +40,8 @@ return array(
         'frontend/checkout/confirm' => array(
             'WirecardMessageActionCancel' => 'The payment process has been canceled.',
             'WirecardMessageActionFailure' => 'An error occurred during the payment process. Please try again or choose a different payment method.',
+        ),
+        'frontend/WirecardCheckoutPage/payment' => array(
             'WirecardCheckoutPagePayolutionTermsHeader' => 'Payolution Terms',
             'WirecardCheckoutPagePayolutionConsent1' => 'I agree that the data which are necessary for the liquidation of purchase on account and which are used to complete the identy and credit check are transmitted to payolution. My ',
             'WirecardCheckoutPagePayolutionConsent2' => ' can be revoked at any time with effect for the future.',
