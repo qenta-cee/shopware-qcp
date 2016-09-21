@@ -65,7 +65,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.2.11';
+        return '1.2.12';
     }
 
     /**
@@ -643,17 +643,23 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
         foreach (Shopware()->WirecardCheckoutPage()->getPaymentMethods()->getList() as $pm) {
             $oPayment = $this->Payments()->findOneBy(array('name' => $prefixName . $pm['name']));
             if(!$oPayment) {
-                $oPayment = $this->createPayment(
-                    array(
-                        'name' => $prefixName . $pm['name'],
-                        'description' => $pm['description'],
-                        'action' => self::CONTROLLER,
-                        'active' => (isset($pm['active'])) ? (int)$pm['active'] : 0,
-                        'position' => $i,
-                        'pluginID' => $this->getId(),
-                        'additionalDescription' => ''
-                    )
+                $payment = array(
+                    'name' => $prefixName . $pm['name'],
+                    'description' => $pm['description'],
+                    'action' => self::CONTROLLER,
+                    'active' => (isset($pm['active'])) ? (int)$pm['active'] : 0,
+                    'position' => $i,
+                    'pluginID' => $this->getId(),
+                    'additionalDescription' => ''
                 );
+                if (isset($pm['template']) && !is_null($pm['template'])) {
+                    $payment['template'] = $pm['template'];
+                }
+                $oPayment = $this->createPayment($payment);
+            } else {
+                if (isset($pm['template']) && !is_null($pm['template'])) {
+                    $oPayment->setTemplate($pm['template']);
+                }
             }
 
             $aTranslations[$oPayment->getId()] = $pm['translation'];
@@ -797,7 +803,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
 
         switch($args->getSubject()->Request()->getActionName())
         {
-            case 'confirm':
+            case 'shippingPayment':
                 self::init();
                 $view->addTemplateDir($this->Path() . 'Views/common/');
 
@@ -841,6 +847,20 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     $view->wcpPayolutionLink2 = '</a>';
                 }
 
+                // Output of common errors
+                if (null != Shopware()->WirecardCheckoutPage()->wirecard_action) {
+                    self::showErrorMessages($view);
+                }
+                break;
+            case 'confirm':
+                self::init();
+                $view->addTemplateDir($this->Path() . 'Views/common/');
+
+                if (Shopware()->Shop()->getTemplate()->getVersion() >= 3) {
+                    $view->addTemplateDir($this->Path() . 'Views/responsive/');
+                } else {
+                    $view->addTemplateDir($this->Path() . 'Views/');
+                }
                 // Output of common errors
                 if (null != Shopware()->WirecardCheckoutPage()->wirecard_action) {
                     self::showErrorMessages($view);
