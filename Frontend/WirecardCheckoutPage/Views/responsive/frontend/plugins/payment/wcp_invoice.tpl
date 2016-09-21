@@ -87,12 +87,12 @@
 							{if $wcpPayolutionLink1}
 								{s name="WirecardCheckoutPagePayolutionConsent1"}Mit der Übermittlung jener Daten an payolution, die für die Abwicklung von Zahlungen mit Kauf auf Rechnung und die Identitäts- und Bonitätsprüfung erforderlich sind, bin ich einverstanden. Meine {/s}
 								{$wcpPayolutionLink1}
-								{s name="WirecardCheckoutPagePayoltuionLink"}Bewilligung{/s}
+								{s name="WirecardCheckoutPagePayolutionLink"}Bewilligung{/s}
 								{$wcpPayolutionLink2}
 								{s name="WirecardCheckoutPagePayolutionConsent2"} kann ich jederzeit mit Wirkung für die Zukunft widerrufen.{/s}
 							{else}
 								{s name="WirecardCheckoutPagePayolutionConsent1"}Mit der Übermittlung jener Daten an payolution, die für die Abwicklung von Zahlungen mit Kauf auf Rechnung und die Identitäts- und Bonitätsprüfung erforderlich sind, bin ich einverstanden. Meine {/s}
-								{s name="WirecardCheckoutPagePayoltuionLink"}Bewilligung{/s}
+								{s name="WirecardCheckoutPagePayolutionLink"}Bewilligung{/s}
 								{s name="WirecardCheckoutPagePayolutionConsent2"} kann ich jederzeit mit Wirkung für die Zukunft widerrufen.{/s}
 							{/if}
 						</label>
