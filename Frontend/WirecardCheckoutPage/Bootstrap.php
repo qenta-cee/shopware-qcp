@@ -643,20 +643,23 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
         foreach (Shopware()->WirecardCheckoutPage()->getPaymentMethods()->getList() as $pm) {
             $oPayment = $this->Payments()->findOneBy(array('name' => $prefixName . $pm['name']));
             if(!$oPayment) {
-                $payment = $this->createPayment(
-                    array(
-                        'name' => $prefixName . $pm['name'],
-                        'description' => $pm['description'],
-                        'template' => $pm['template'],
-                        'action' => self::CONTROLLER,
-                        'active' => (isset($pm['active'])) ? (int)$pm['active'] : 0,
-                        'position' => $i,
-                        'pluginID' => $this->getId(),
-                        'additionalDescription' => ''
-                    )
+                $payment = array(
+                    'name' => $prefixName . $pm['name'],
+                    'description' => $pm['description'],
+                    'action' => self::CONTROLLER,
+                    'active' => (isset($pm['active'])) ? (int)$pm['active'] : 0,
+                    'position' => $i,
+                    'pluginID' => $this->getId(),
+                    'additionalDescription' => ''
                 );
+                if (isset($pm['template']) && !is_null($pm['template'])) {
+                    $payment['template'] = $pm['template'];
+                }
+                $oPayment = $this->createPayment($payment);
             } else {
-                $oPayment->setTemplate($pm['template']);
+                if (isset($pm['template']) && !is_null($pm['template'])) {
+                    $oPayment->setTemplate($pm['template']);
+                }
             }
 
             $aTranslations[$oPayment->getId()] = $pm['translation'];
