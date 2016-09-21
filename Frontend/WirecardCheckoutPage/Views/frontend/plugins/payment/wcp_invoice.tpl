@@ -1,6 +1,6 @@
 {namespace name='frontend/WirecardCheckoutPage/payment'}
 
-{if $wcpPayolutionTerms && $sUserData.additional.payment.name == 'wcp_invoice' }
+{if $sUserData.additional.payment.name == 'wcp_invoice' }
 	<script type="text/javascript">
 		window.onload = function() {
 			$(document).ready(function() {
