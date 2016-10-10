@@ -12,6 +12,8 @@ Our [Online Guides](https://guides.wirecard.at/) provide further information on 
 ## Installation
 Our [Online Guides](https://guides.wirecard.at/shop_plugins:shopware_wcp:start "Installation details") also provide technical documentation, installation and configuration instructions for the plugin.
 
+Be careful when updating a plugin from GitHub when the plugin was installed via the [Shopware store](http://store.shopware.com/wirecard01501/wirecard-checkout-page.html). If you update to the latest version of GitHub, your Shopware installation will notify you about an upgrade for the plugin due to changes in the files. **This upgrade will revert the changes you made.**
+
 
 ## Wirecard Checkout Page
 Wirecard Checkout Page is designed to meet the ambitious demands of merchants offering a wide range of payment methods while at the same time fulfilling PCI DSS compliance.
