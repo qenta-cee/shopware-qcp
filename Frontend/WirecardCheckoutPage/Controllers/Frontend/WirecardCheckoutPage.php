@@ -178,6 +178,9 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
             );
 
             if($return->getPaymentState() === WirecardCEE_QPay_ReturnFactory::STATE_SUCCESS) {
+                $context['sOrderDay'] = date("d.m.Y");
+                $context['sOrderTime'] = date("H:i");
+
                 $existingOrder = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findByNumber($sOrderVariables['sOrderNumber']);
                 if ($existingOrder[0] instanceof \Shopware\Models\Order\Order) {
                     $sOrderNumber = $this->savePaymentStatus(
@@ -218,8 +221,6 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                             $sOrderNumber, $paymentUniqueId, $paymentState));
                     }
 
-                    $context['sOrderDay'] = date("d.m.Y");
-                    $context['sOrderTime'] = date("H:i");
                     $context['sOrderNumber'] = Shopware()->Session()->sOrderVariables['sOrderNumber'];
 
                     // Sending confirm mail for successfull order

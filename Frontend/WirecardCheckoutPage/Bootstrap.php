@@ -750,14 +750,22 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
     }
 
     /**
-     * set confirmmail after ordercreation false
+     * set confirmmail after ordercreation false (only for WirecardCheckoutSeamless)
      * @param Enlight_Event_EventArgs $args
      * @return bool
      */
     public function defineSending(Enlight_Event_EventArgs $args)
     {
-        return false;
+        $userData = Shopware()->Session()->sOrderVariables['sUserData'];
+        $additional = $userData['additional'];
+        $paymentaction = $additional['payment']['action'];
+
+        //only prevent confirmationmail for WirecardCheckoutPage payment action
+        if($paymentaction == 'WirecardCheckoutPage') {
+            return false;
+        }
     }
+
 
     /**
      * Display additional data for seamless payment methods and
