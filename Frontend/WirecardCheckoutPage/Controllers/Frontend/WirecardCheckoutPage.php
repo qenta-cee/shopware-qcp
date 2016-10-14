@@ -157,17 +157,19 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                 'shippingaddress' => $userData['shippingaddress'],
                 'additional' => $userData['additional'],
 
-                'sShippingCosts' => $sOrderVariables['sShippingcosts'],
-                'sAmount' => $sOrderVariables['sAmount'],
-                'sAmountNet' => $sOrderVariables['sAmountNet'],
+                'sShippingCosts' => $sOrderVariables['sShippingcosts'] . ' ' .Shopware()->Shop()->getCurrency()->getCurrency(),
+                'sAmount'        => $sOrderVariables['sAmount'] . ' ' .Shopware()->Shop()->getCurrency()->getCurrency(),
+                'sAmountNet'     => $sOrderVariables['sAmountNet'] . ' ' .Shopware()->Shop()->getCurrency()->getCurrency(),
+                'sDispatch'      => $sOrderVariables['sDispatch'],
 
                 'sOrderNumber' => $sOrderVariables['sOrderNumber'],
                 'sComment' => $sOrderVariables['sComment'],
-                'sCurrency' => $sOrderVariables['sSYSTEM']->sCurrency['currency'],
+                'sCurrency'    => Shopware()->Shop()->getCurrency()->getCurrency(),
                 'sLanguage' => $shop->getId(),
 
                 'sSubShop' => $mainShop->getId(),
-                'sNet' => $sOrderVariables['sNet'],
+                'sNet'    => !$userData['additional']['show_net'],
+                'sEsd'     => $userData['additional']['payment']['esdactive'],
                 'sTaxRates' => $sOrderVariables['sTaxRates'],
             );
 
@@ -191,6 +193,10 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                     );
 
                     $context['sOrderNumber'] = Shopware()->Session()->sOrderVariables['sOrderNumber'];
+                    $context['sShippingCosts'] = $sOrderVariables['sShippingcosts'] . ' ' .Shopware()->Shop()->getCurrency()->getCurrency();
+                    $context['sAmount'] = $sOrderVariables['sAmount'] . ' ' .Shopware()->Shop()->getCurrency()->getCurrency();
+                    $context['sAmountNet'] = $sOrderVariables['sAmountNet'] . ' ' .Shopware()->Shop()->getCurrency()->getCurrency();
+                    $context['sCurrency'] = Shopware()->Shop()->getCurrency()->getCurrency();
 
                     // Sending confirm mail for successfull order after pending
                     $mail = Shopware()->TemplateMail()->createMail('sORDER', $context);
@@ -222,6 +228,10 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                     }
 
                     $context['sOrderNumber'] = Shopware()->Session()->sOrderVariables['sOrderNumber'];
+                    $context['sShippingCosts'] = $sOrderVariables['sShippingcosts'] . ' ' .Shopware()->Shop()->getCurrency()->getCurrency();
+                    $context['sAmount'] = $sOrderVariables['sAmount'] . ' ' .Shopware()->Shop()->getCurrency()->getCurrency();
+                    $context['sAmountNet'] = $sOrderVariables['sAmountNet'] . ' ' .Shopware()->Shop()->getCurrency()->getCurrency();
+                    $context['sCurrency'] = Shopware()->Shop()->getCurrency()->getCurrency();
 
                     // Sending confirm mail for successfull order
                     $mail = Shopware()->TemplateMail()->createMail('sORDER', $context);
@@ -300,16 +310,9 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                 $existingOrder = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findByNumber($sOrderVariables['sOrderNumber']);
 
                 if ($existingOrder[0] instanceof \Shopware\Models\Order\Order) {
-                    $this->savePaymentStatus(
-                        $transactionId,
-                        $paymentUniqueId,
-                        21,  //failure paymentstatus
-                        false
-                    );
-
                     $sOrder = array(
                         'ordernumber' => $sOrderVariables['sOrderNumber'],
-                        'status_description' => 'failure'
+                        'status_description' => $return->getPaymentState()->getName()
                     );
 
                     $pendingContext = array(
