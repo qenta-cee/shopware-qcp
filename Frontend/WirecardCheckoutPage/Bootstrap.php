@@ -438,7 +438,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 'order' => ++$i
             )
         );
-
     }
 
     /**

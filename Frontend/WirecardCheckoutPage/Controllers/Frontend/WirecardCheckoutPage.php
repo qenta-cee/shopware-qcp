@@ -157,14 +157,14 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                 'shippingaddress' => $userData['shippingaddress'],
                 'additional' => $userData['additional'],
 
-                'sShippingCosts' => $sOrderVariables['sShippingcosts'] . ' ' .Shopware()->Shop()->getCurrency()->getCurrency(),
-                'sAmount'        => $sOrderVariables['sAmount'] . ' ' .Shopware()->Shop()->getCurrency()->getCurrency(),
-                'sAmountNet'     => $sOrderVariables['sAmountNet'] . ' ' .Shopware()->Shop()->getCurrency()->getCurrency(),
+                'sShippingCosts' => $sOrderVariables['sShippingcosts'] . ' ' .$basketData['sCurrencyName'],
+                'sAmount'        => $sOrderVariables['sAmount'] . ' ' .$basketData['sCurrencyName'],
+                'sAmountNet'     => $sOrderVariables['sAmountNet'] . ' ' .$basketData['sCurrencyName'],
                 'sDispatch'      => $sOrderVariables['sDispatch'],
 
                 'sOrderNumber' => $sOrderVariables['sOrderNumber'],
                 'sComment' => $sOrderVariables['sComment'],
-                'sCurrency'    => Shopware()->Shop()->getCurrency()->getCurrency(),
+                'sCurrency'    => $basketData['sCurrencyName'],
                 'sLanguage' => $shop->getId(),
 
                 'sSubShop' => $mainShop->getId(),
@@ -193,14 +193,13 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                     );
 
                     $context['sOrderNumber'] = Shopware()->Session()->sOrderVariables['sOrderNumber'];
-                    $context['sShippingCosts'] = $sOrderVariables['sShippingcosts'] . ' ' .Shopware()->Shop()->getCurrency()->getCurrency();
-                    $context['sAmount'] = $sOrderVariables['sAmount'] . ' ' .Shopware()->Shop()->getCurrency()->getCurrency();
-                    $context['sAmountNet'] = $sOrderVariables['sAmountNet'] . ' ' .Shopware()->Shop()->getCurrency()->getCurrency();
-                    $context['sCurrency'] = Shopware()->Shop()->getCurrency()->getCurrency();
 
                     // Sending confirm mail for successfull order after pending
                     $mail = Shopware()->TemplateMail()->createMail('sORDER', $context);
                     $mail->addTo($userData['additional']['user']['email']);
+                    if(!Shopware()->Config()->get('sNO_ORDER_MAIL')) {
+                        $mail->addBcc(Shopware()->Config()->get('mail'));
+                    }
 
                     try {
                         $mail->send();
@@ -228,14 +227,13 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                     }
 
                     $context['sOrderNumber'] = Shopware()->Session()->sOrderVariables['sOrderNumber'];
-                    $context['sShippingCosts'] = $sOrderVariables['sShippingcosts'] . ' ' .Shopware()->Shop()->getCurrency()->getCurrency();
-                    $context['sAmount'] = $sOrderVariables['sAmount'] . ' ' .Shopware()->Shop()->getCurrency()->getCurrency();
-                    $context['sAmountNet'] = $sOrderVariables['sAmountNet'] . ' ' .Shopware()->Shop()->getCurrency()->getCurrency();
-                    $context['sCurrency'] = Shopware()->Shop()->getCurrency()->getCurrency();
 
                     // Sending confirm mail for successfull order
                     $mail = Shopware()->TemplateMail()->createMail('sORDER', $context);
                     $mail->addTo($userData['additional']['user']['email']);
+                    if(!Shopware()->Config()->get('sNO_ORDER_MAIL')) {
+                        $mail->addBcc(Shopware()->Config()->get('mail'));
+                    }
 
                     try {
                         $mail->send();
