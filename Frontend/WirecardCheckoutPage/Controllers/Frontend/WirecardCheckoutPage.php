@@ -62,6 +62,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                 'appendSession' => true
             )
         );
+
         $aParams = Array(
             'sCoreId' => Shopware()->SessionID(),
             '__shop' => Shopware()->Shop()->getId(),
@@ -72,6 +73,13 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
         $checkoutUrl = $this->Front()->Router()->assemble(
             Array('controller' => 'checkout', 'action' => 'confirm', 'sUseSSL' => true)
         );
+        $bUseIframe = (Shopware()->WirecardCheckoutPage()->getConfig()->use_iframe == 1);
+
+        if(isset($_SESSION["wcp_redirect_url"])) {
+            $this->redirect($_SESSION["wcp_redirect_url"]);
+            unset($_SESSION["wcp_redirect_url"]);
+            return;
+        }
 
         $oResponse = $oPageModel->initiatePayment($sPaymentType, $fAmount, $sCurrency, $sReturnUrl, $sConfigmrUrl, $aParams);
         if ($oResponse === null) {
@@ -90,7 +98,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
         }
         else
         {
-            $bUseIframe = (Shopware()->WirecardCheckoutPage()->getConfig()->use_iframe == 1);
+            $_SESSION["wcp_redirect_url"] = $oResponse->getRedirectUrl();
             $sRedirectUrl = $oResponse->getRedirectUrl();
         }
 
