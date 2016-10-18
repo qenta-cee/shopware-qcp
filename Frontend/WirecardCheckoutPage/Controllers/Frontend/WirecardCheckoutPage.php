@@ -394,6 +394,9 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
 
                 case WirecardCEE_QPay_ReturnFactory::STATE_CANCEL:
                     /** @var $return WirecardCEE_QPay_Return_Cancel */
+                    if(isset($_SESSION["wcp_redirect_url"])) {
+                        unset($_SESSION["wcp_redirect_url"]);
+                    }
                 $sRedirectUrl = $this->Front()->Router()->assemble(
                     Array('controller' => 'checkout', 'action' => 'confirm', 'sUseSSL' => true)
                 );
@@ -403,6 +406,9 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                 case WirecardCEE_QPay_ReturnFactory::STATE_FAILURE:
             default:
                     /** @var $return WirecardCEE_QPay_Return_Failure */
+                if(isset($_SESSION["wcp_redirect_url"])) {
+                    unset($_SESSION["wcp_redirect_url"]);
+                }
                     Shopware()->WirecardCheckoutPage()->wirecard_message = $return->getErrors()->getConsumerMessage();
                     Shopware()->WirecardCheckoutPage()->wirecard_action = 'external_error';
                 $sRedirectUrl = $this->Front()->Router()->assemble(
