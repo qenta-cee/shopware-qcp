@@ -65,7 +65,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.2.12';
+        return '1.2.13';
     }
 
     /**
@@ -426,6 +426,30 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 'order' => ++$i
             )
         );
+        $form->setElement(
+            'checkbox',
+            'SEND_PENDING_MAILS',
+            array(
+                'label' => 'Mail für Pendingstatus versenden',
+                'value' => 0,
+                'description' => 'Falls "Ja" gesetzt ist, werden Mails zu noch nicht bestätigten Zahlungen verschickt.',
+                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
+                'required' => false,
+                'order' => ++$i
+            )
+        );
+        $form->setElement(
+            'checkbox',
+            'ENABLE_DUPLICATE_REQUEST_CHECK',
+            array(
+                'label' => 'Überprüfung auf doppelte Anfragen',
+                'value' => 0,
+                'description' => 'Überprüfung auf mehrfache Anfragen seitens Ihres Kunden.',
+                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
+                'required' => false,
+                'order' => ++$i
+            )
+        );
     }
 
     /**
@@ -511,6 +535,14 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 'DISPLAY_TEXT' => Array(
                     'label' => 'Text on payment page',
                     'description' => 'Text displayed during the payment process, i.e. "Thank you for ordering in xy-shop".'
+                ),
+                'SEND_PENDING_MAILS' => Array(
+                    'label' => 'Send Pendingstate mails',
+                    'description' => 'Selecting "Yes", mails will be sent for pending orders'
+                ),
+                'ENABLE_DUPLICATE_REQUEST_CHECK' => Array(
+                    'label' => 'Check for duplicate requests',
+                    'description' => 'Checking duplicate requests made by your consumer.'
                 )
             )
         );
@@ -579,6 +611,11 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
         if(!$this->hasCronJob('Wirecard CEE WCP Logeintr&auml;ge l&ouml;schen')) {
             $this->createCronJob('Wirecard CEE WCP Logeintr&auml;ge l&ouml;schen', 'WirecardCEEDeleteWCPLog');
         }
+        // Prevent ordermail after pending
+        $this->subscribeEvent(
+            'Shopware_Modules_Order_SendMail_Send',
+            'defineSending'
+        );
     }
 
     /**
@@ -712,56 +749,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
     }
 
     /**
-     * Riskmanagement: Don't show payment type invoice if
-     * shipping and billing address are different or the customer
-     * not to be of legal age
-     * The payment method is displayed if return value is TRUE
-     *
-     * @param Enlight_Hook_HookArgs $args
-     *
-     * @return bool
-     */
-    public function wRiskWirecardCheckoutPage(Enlight_Hook_HookArgs $args)
-    {
-        if ($args->getReturn() == true) {
-            return true;
-        }
-
-        self::init();
-        $parameter = $args->getArgs();
-        $payment = Shopware()->WirecardCheckoutPage()->getPaymentMethods()->getPaymentMethodName($parameter[0]);
-        if (0 == strcmp($payment, 'wcp_invoice') || 0 == strcmp($payment, 'wcp_installment')) {
-            // Looking for user data
-            $user = Shopware()->Session()->sOrderVariables['sUserData'];
-            if (is_null($user)) {
-                return true;
-            }
-
-            if ($this->assertMinimumVersion('5.2')) {
-                if (!isset($user['additional']['user']['birthday'])) {
-                    return false;
-                }
-                $userDate = $user['additional']['user']['birthday'];
-            } else {
-                if (!isset($user['billingaddress']['birthday'])) {
-                    return false;
-                }
-                $userDate = $user['billingaddress']['birthday'];
-            }
-
-            $date = explode("-", $userDate);
-            if (false === checkdate($date[1], $date[2], $date[0])) {
-                return false;
-            }
-            // Is customer to be of legal age
-            if ((time() - strtotime($userDate . ' +18 years')) < 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * return encoded mId for PayolutionLink
      *
      * @return string
@@ -777,6 +764,24 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
 
         return $mId;
     }
+
+    /**
+     * set confirmmail after ordercreation false (only for WirecardCheckoutSeamless)
+     * @param Enlight_Event_EventArgs $args
+     * @return bool
+     */
+    public function defineSending(Enlight_Event_EventArgs $args)
+    {
+        $userData = Shopware()->Session()->sOrderVariables['sUserData'];
+        $additional = $userData['additional'];
+        $paymentaction = $additional['payment']['action'];
+
+        //only prevent confirmationmail for WirecardCheckoutPage payment action
+        if($paymentaction == 'WirecardCheckoutPage') {
+            return false;
+        }
+    }
+
 
     /**
      * Display additional data for seamless payment methods and

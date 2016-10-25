@@ -82,7 +82,15 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
                         ->setDisplayText($confimUrl)
                         ->setConsumerData($this->getConsumerData($paymentType));
 
-        $oFrontendClient->generateCustomerStatement(Shopware()->WirecardCheckoutPage()->getConfig()->getShopName());
+        if(Shopware()->WirecardCheckoutPage()->getConfig()->ENABLE_DUPLICATE_REQUEST_CHECK){
+            $oFrontendClient->setDuplicateRequestCheck(true);
+        }
+
+        $oFrontendClient->generateCustomerStatement(
+            Shopware()->WirecardCheckoutPage()->getConfig()->getShopname(),
+            Shopware()->WirecardCheckoutPage()->wWirecardCheckoutPageId
+        );
+
 
         // add custom params, will be send back by wirecard
         foreach ($params as $k => $v)
