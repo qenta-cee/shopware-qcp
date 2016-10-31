@@ -692,7 +692,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
 
         $translation = new Shopware_Components_Translation();
         $aTranslations = array();
-        $i = 90;
+        $i = 80;
         foreach (Shopware()->WirecardCheckoutPage()->getPaymentMethods()->getList() as $pm) {
             $oPayment = $this->Payments()->findOneBy(array('name' => $prefixName . $pm['name']));
             if(!$oPayment) {
@@ -714,6 +714,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     $oPayment->setTemplate($pm['template']);
                 }
             }
+
             $aTranslations[$oPayment->getId()] = $pm['translation'];
             $i++;
         }
