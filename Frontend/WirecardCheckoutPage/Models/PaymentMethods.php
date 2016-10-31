@@ -53,7 +53,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
             'call' => WirecardCEE_QPay_PaymentType::CCARD_MOTO,
             'translation' => Array('description' => 'Wirecard Credit Card (backoffice)', 'additionalDescription' => '')
         ),
-        
+
         'EPS' => array(
             'name' => 'eps',
             'description' => 'Wirecard eps Online-&Uuml;berweisung',
@@ -223,6 +223,13 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
             'call' => WirecardCEE_QPay_PaymentType::VOUCHER,
             'translation' => Array('description' => 'Wirecard Voucher', 'additionalDescription' => '')
         ),
+        'MASTERPASS' => array(
+            'name' => 'masterpass',
+            'description' => 'Wirecard Masterpass',
+            'template' => '',
+            'call' => WirecardCEE_QPay_PaymentType::MASTERPASS,
+            'translation' => Array('description' => 'Wirecard Masterpass', 'additionalDescription' => '')
+        )
     );
 
     public function getList()

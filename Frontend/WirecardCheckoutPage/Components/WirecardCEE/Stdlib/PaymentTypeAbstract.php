@@ -20,6 +20,7 @@ abstract class WirecardCEE_Stdlib_PaymentTypeAbstract {
     const BMC = 'BANCONTACT_MISTERCASH';
     const CCARD = 'CCARD';
     const CCARD_MOTO = 'CCARD-MOTO';
+    const MASTERPASS = 'MASTERPASS';
     const EKONTO = 'EKONTO';
     const EPAYBG = 'EPAY_BG';
     const EPS = 'EPS';
@@ -53,40 +54,34 @@ abstract class WirecardCEE_Stdlib_PaymentTypeAbstract {
      * @todo would be nice to get this values directly from the server so the data is in sync
      */
     protected static $_eps_financial_institutions = Array(
-        'BA-CA' => 'Bank Austria Creditanstalt',
-        'Bawag|B' => 'BAWAG',
-        'Bawag|E' => 'easybank',
-        'Bawag|P' => 'PSK Bank',
-        'Bawag|S' => 'Sparda Bank',
-        'BB-Racon' => 'Bank Burgenland',
-        'Hypo-Racon|O' => 'Hypo Ober&ouml;sterreich',
-        'Hypo-Racon|S' => 'Hypo Salzburg',
-        'Hypo-Racon|St' => 'Hypo Steiermark',
-        'Racon' => 'Raiffeisen Bank',
-        'Spardat|EBS' => 'Erste Bank und Sparkassen',
-        'ARZ|AAB' => 'Austrian Anadi Bank AG',
-        'ARZ|AB' => '&Ouml;sterreichische Apothekerbank',
-        'ARZ|BAF' => 'Ärztebank',
-        'ARZ|BCS' => 'Bankhaus Carl Sp&auml;ngler &amp; Co. AG',
-        'ARZ|BD' => 'bankdirekt.at AG',
-        'ARZ|BKS' => 'BKS Bank AG',
-        'ARZ|BSS' => 'Bankhaus Schelhammer &amp; Schattera AG',
-        'ARZ|BTV' => 'BTV VIER L&Auml;NDER BANK',
-        'ARZ|GB' => 'G&auml;rtnerbank',
-        'ARZ|HAA' => 'Hypo Alpe-Adria-Bank AG, HYPO Alpe-Adria-Bank International AG',
-        'ARZ|HI' => 'Hypo Investmentbank AG',
-        'ARZ|HTB' => 'Hypo Tirol Bank AG',
-        'ARZ|IB' => 'Immo-Bank',
-        'ARZ|IKB' => 'Investkredit Bank AG',
-        'ARZ|NLH' => 'Niester&ouml;sterreichische Landes-Hypothekenbank AG',
-        'ARZ|OB' => 'Oberbank AG',
-        'ARZ|PB' => 'PRIVAT BANK AG',
-        'ARZ|SB' => 'Schoellerbank AG',
-        'ARZ|SBL' => 'Sparda-Bank Linz',
-        'ARZ|SBVI' => 'Sparda-Bank Villach/Innsbruck',
-        'ARZ|VB' => 'Die &ouml;stereischischen Volksbanken',
-        'ARZ|VLH' => 'Vorarlberger Landes- und Hypothekerbank AG',
-        'ARZ|VRB' => 'VR-Bank Braunau',
+        'ARZ|AAB'       => 'Austrian Anadi Bank AG',
+        'BA-CA'         => 'Bank Austria Creditanstalt',
+        'BB-Racon'      => 'Bank Burgenland',
+        'ARZ|BD'        => 'bankdirekt.at AG',
+        'ARZ|BAF'       => '&Auml;rztebank',
+        'ARZ|BCS'       => 'Bankhaus Carl Sp&auml;ngler &amp; Co. AG',
+        'ARZ|BSS'       => 'Bankhaus Schelhammer &amp; Schattera AG',
+        'Bawag|B'       => 'BAWAG',
+        'ARZ|VB'        => 'Die &ouml;sterreichischen Volksbanken',
+        'Bawag|E'       => 'easybank',
+        'Spardat|EBS'   => 'Erste Bank und Sparkassen',
+        'ARZ|GB'        => 'G&auml;rtnerbank',
+        'ARZ|HAA'       => 'Hypo Alpe-Adria-Bank AG, HYPO Alpe-Adria-Bank International AG',
+        'ARZ|HI'        => 'Hypo Investmentbank AG',
+        'ARZ|HTB'       => 'Hypo Tirol Bank AG',
+        'ARZ|IB'        => 'Immo-Bank',
+        'ARZ|IKB'       => 'Investkredit Bank AG',
+        'ARZ|NLH'       => 'Nieder&ouml;sterreichische Landes-Hypothekenbank AG',
+        'ARZ|AB'        => '&Ouml;sterreichische Apothekerbank',
+        'ARZ|PB'        => 'PRIVAT BANK AG',
+        'Bawag|P'       => 'PSK Bank',
+        'Racon'         => 'Raiffeisen Bank',
+        'ARZ|SB'        => 'Schoellerbank AG',
+        'Bawag|S'       => 'Sparda Bank',
+        'ARZ|SBL'       => 'Sparda-Bank Linz',
+        'ARZ|SBVI'      => 'Sparda-Bank Villach/Innsbruck',
+        'ARZ|VLH'       => 'Vorarlberger Landes- und Hypothekerbank AG',
+        'ARZ|VRB'       => 'VR-Bank Braunau'
     );
 
     /**

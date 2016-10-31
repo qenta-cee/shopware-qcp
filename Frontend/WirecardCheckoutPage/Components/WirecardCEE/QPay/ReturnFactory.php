@@ -89,6 +89,7 @@ class WirecardCEE_QPay_ReturnFactory extends WirecardCEE_Stdlib_ReturnFactoryAbs
             case WirecardCEE_Stdlib_PaymentTypeAbstract::CCARD:
             case WirecardCEE_Stdlib_PaymentTypeAbstract::CCARD_MOTO:
             case WirecardCEE_Stdlib_PaymentTypeAbstract::MAESTRO:
+            case WirecardCEE_Stdlib_PaymentTypeAbstract::MASTERPASS:
                 return new WirecardCEE_QPay_Return_Success_CreditCard($return, $secret);
                 break;
             case WirecardCEE_Stdlib_PaymentTypeAbstract::PAYPAL:

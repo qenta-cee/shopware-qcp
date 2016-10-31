@@ -86,6 +86,12 @@ class WirecardCEE_Stdlib_ConsumerData {
     protected static $BIRTH_DATE_FORMAT    = 'Y-m-d';
 
     /**
+     *
+     * @var string
+     */
+    protected static $SHIPPING_PROFILE = 'shippingProfile';
+
+    /**
      * setter for the mail address of the consumer
      *
      * @param string $mailAddress
@@ -183,6 +189,17 @@ class WirecardCEE_Stdlib_ConsumerData {
      */
     public function setUserAgent($consumerUserAgent) {
         $this->_setField(self::$USER_AGENT, $consumerUserAgent);
+        return $this;
+    }
+
+    /**
+     * setter for the consumer shipping profile
+     *
+     * @param string $shippingProfile
+     * @return WirecardCEE_Stdlib_ConsumerData
+     */
+    public function setShippingProfile($shippingProfile) {
+        $this->_setField(self::$SHIPPING_PROFILE, $shippingProfile);
         return $this;
     }
 

@@ -149,6 +149,12 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
         $consumerData->setIpAddress($_SERVER['REMOTE_ADDR']);
         $consumerData->setUserAgent($_SERVER['HTTP_USER_AGENT']);
 
+        $shippingProfile = Shopware()->WirecardCheckoutPage()->getConfig()->SHIPPING_PROFILE;
+        if(!empty($this->getAddress('shipping')) && Shopware()->WirecardCheckoutPage()->getConfig()->send_additional_data) {
+            $shippingProfile = 'NO_SHIPPING';
+        }
+        $consumerData->setShippingProfile($shippingProfile);
+
         if(!Shopware()->WirecardCheckoutPage()->getConfig()->send_additional_data)
         {
             switch($paymentType)

@@ -65,7 +65,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.2.13';
+        return '1.2.14';
     }
 
     /**
@@ -450,6 +450,18 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 'order' => ++$i
             )
         );
+        $form->setElement(
+            'text',
+            'SHIPPING_PROFILE',
+            array(
+                'label' => 'Shipping Profile',
+                'value' => '',
+                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
+                'description' => 'Ausgewählte Regionen für Shipping Profile.',
+                'required' => false,
+                'order' => ++$i
+            )
+        );
     }
 
     /**
@@ -543,6 +555,10 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 'ENABLE_DUPLICATE_REQUEST_CHECK' => Array(
                     'label' => 'Check for duplicate requests',
                     'description' => 'Checking duplicate requests made by your consumer.'
+                ),
+                'SHIPPING_PROFILE' => Array(
+                    'label' => 'Shipping Profile',
+                    'description' => 'Selecting restricted areas for shipping.'
                 )
             )
         );
@@ -676,7 +692,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
 
         $translation = new Shopware_Components_Translation();
         $aTranslations = array();
-        $i = 80;
+        $i = 90;
         foreach (Shopware()->WirecardCheckoutPage()->getPaymentMethods()->getList() as $pm) {
             $oPayment = $this->Payments()->findOneBy(array('name' => $prefixName . $pm['name']));
             if(!$oPayment) {
@@ -698,7 +714,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     $oPayment->setTemplate($pm['template']);
                 }
             }
-
             $aTranslations[$oPayment->getId()] = $pm['translation'];
             $i++;
         }
