@@ -258,7 +258,7 @@ class WirecardCEE_Stdlib_ConsumerData
      */
     public function addAddressInformation(WirecardCEE_Stdlib_ConsumerData_Address $address)
     {
-        $consumerData        = array_merge($this->_consumerData, $address->getData());
+        $consumerData = array_merge($this->_consumerData, $address->getData());
         $this->_consumerData = $consumerData;
 
         return $this;
@@ -298,7 +298,8 @@ class WirecardCEE_Stdlib_ConsumerData
      * @param string $shippingProfile
      * @return WirecardCEE_Stdlib_ConsumerData
      */
-    public function setShippingProfile($shippingProfile) {
+    public function setShippingProfile($shippingProfile)
+    {
         $this->_setField(self::$SHIPPING_PROFILE, $shippingProfile);
         return $this;
     }
@@ -344,6 +345,6 @@ class WirecardCEE_Stdlib_ConsumerData
     protected function _setField($name, $value)
     {
         // e.g. consumerBillingFirstname
-        $this->_consumerData[self::$PREFIX . $name] = (string) $value;
+        $this->_consumerData[self::$PREFIX . $name] = (string)$value;
     }
 }

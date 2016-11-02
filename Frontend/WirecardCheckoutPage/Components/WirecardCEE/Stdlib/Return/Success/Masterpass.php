@@ -47,7 +47,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_Masterpass extends WirecardCEE_
      */
     public function getMasterpassBillingAddressCity()
     {
-        return (string) $this->masterpassBillingAddressCity;
+        return (string)$this->masterpassBillingAddressCity;
     }
 
     /**
@@ -57,7 +57,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_Masterpass extends WirecardCEE_
      */
     public function getMasterpassBillingAddressCountry()
     {
-        return (string) $this->masterpassBillingAddressCountry;
+        return (string)$this->masterpassBillingAddressCountry;
     }
 
     /**
@@ -67,7 +67,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_Masterpass extends WirecardCEE_
      */
     public function getMasterpassBillingAddressCountrySubdivision()
     {
-        return (string) $this->masterpassBillingAddressCountrySubdivision;
+        return (string)$this->masterpassBillingAddressCountrySubdivision;
     }
 
     /**
@@ -77,7 +77,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_Masterpass extends WirecardCEE_
      */
     public function getMasterpassBillingAddressPostalCode()
     {
-        return (string) $this->masterpassBillingAddressPostalCode;
+        return (string)$this->masterpassBillingAddressPostalCode;
     }
 
     /**
@@ -87,7 +87,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_Masterpass extends WirecardCEE_
      */
     public function getMasterpassBillingAddressAddressLine1()
     {
-        return (string) $this->masterpassBillingAddressAddressLine1;
+        return (string)$this->masterpassBillingAddressAddressLine1;
     }
 
     /**
@@ -97,7 +97,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_Masterpass extends WirecardCEE_
      */
     public function getMasterpassBillingAddressAddressLine2()
     {
-        return (string) $this->masterpassBillingAddressAddressLine2;
+        return (string)$this->masterpassBillingAddressAddressLine2;
     }
 
     /**
@@ -107,7 +107,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_Masterpass extends WirecardCEE_
      */
     public function getMasterpassBillingAddressAddressLine3()
     {
-        return (string) $this->masterpassBillingAddressAddressLine3;
+        return (string)$this->masterpassBillingAddressAddressLine3;
     }
 
     /**
@@ -117,7 +117,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_Masterpass extends WirecardCEE_
      */
     public function getMasterpassShippingAddressRecipientName()
     {
-        return (string) $this->masterpassShippingAddressRecipientName;
+        return (string)$this->masterpassShippingAddressRecipientName;
     }
 
     /**
@@ -127,7 +127,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_Masterpass extends WirecardCEE_
      */
     public function getMasterpassShippingAddressRecipientPhoneNumber()
     {
-        return (string) $this->masterpassShippingAddressRecipientPhoneNumber;
+        return (string)$this->masterpassShippingAddressRecipientPhoneNumber;
     }
 
     /**
@@ -137,7 +137,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_Masterpass extends WirecardCEE_
      */
     public function getMasterpassShippingAddressCity()
     {
-        return (string) $this->masterpassShippingAddressCity;
+        return (string)$this->masterpassShippingAddressCity;
     }
 
     /**
@@ -147,7 +147,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_Masterpass extends WirecardCEE_
      */
     public function getMasterpassShippingAddressCountry()
     {
-        return (string) $this->masterpassShippingAddressCountry;
+        return (string)$this->masterpassShippingAddressCountry;
     }
 
     /**
@@ -157,7 +157,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_Masterpass extends WirecardCEE_
      */
     public function getMasterpassShippingAddressCountrySubdivision()
     {
-        return (string) $this->masterpassShippingAddressCountrySubdivision;
+        return (string)$this->masterpassShippingAddressCountrySubdivision;
     }
 
     /**
@@ -167,7 +167,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_Masterpass extends WirecardCEE_
      */
     public function getMasterpassShippingAddressPostalCode()
     {
-        return (string) $this->masterpassShippingAddressPostalCode;
+        return (string)$this->masterpassShippingAddressPostalCode;
     }
 
     /**
@@ -177,7 +177,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_Masterpass extends WirecardCEE_
      */
     public function getMasterpassShippingAddressAddressLine1()
     {
-        return (string) $this->masterpassShippingAddressAddressLine1;
+        return (string)$this->masterpassShippingAddressAddressLine1;
     }
 
     /**
@@ -187,7 +187,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_Masterpass extends WirecardCEE_
      */
     public function getMasterpassShippingAddressAddressLine2()
     {
-        return (string) $this->masterpassShippingAddressAddressLine2;
+        return (string)$this->masterpassShippingAddressAddressLine2;
     }
 
     /**
@@ -197,7 +197,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_Masterpass extends WirecardCEE_
      */
     public function getMasterpassShippingAddressAddressLine3()
     {
-        return (string) $this->masterpassShippingAddressAddressLine3;
+        return (string)$this->masterpassShippingAddressAddressLine3;
     }
 
 }

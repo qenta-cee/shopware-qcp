@@ -78,34 +78,34 @@ abstract class WirecardCEE_Stdlib_PaymentTypeAbstract
      * @todo would be nice to get this values directly from the server so the data is in sync
      */
     protected static $_eps_financial_institutions = Array(
-        'ARZ|AAB'       => 'Austrian Anadi Bank AG',
-        'BA-CA'         => 'Bank Austria Creditanstalt',
-        'BB-Racon'      => 'Bank Burgenland',
-        'ARZ|BD'        => 'bankdirekt.at AG',
-        'ARZ|BAF'       => '&Auml;rztebank',
-        'ARZ|BCS'       => 'Bankhaus Carl Sp&auml;ngler &amp; Co. AG',
-        'ARZ|BSS'       => 'Bankhaus Schelhammer &amp; Schattera AG',
-        'Bawag|B'       => 'BAWAG',
-        'ARZ|VB'        => 'Die &ouml;sterreichischen Volksbanken',
-        'Bawag|E'       => 'easybank',
-        'Spardat|EBS'   => 'Erste Bank und Sparkassen',
-        'ARZ|GB'        => 'G&auml;rtnerbank',
-        'ARZ|HAA'       => 'Hypo Alpe-Adria-Bank AG, HYPO Alpe-Adria-Bank International AG',
-        'ARZ|HI'        => 'Hypo Investmentbank AG',
-        'ARZ|HTB'       => 'Hypo Tirol Bank AG',
-        'ARZ|IB'        => 'Immo-Bank',
-        'ARZ|IKB'       => 'Investkredit Bank AG',
-        'ARZ|NLH'       => 'Nieder&ouml;sterreichische Landes-Hypothekenbank AG',
-        'ARZ|AB'        => '&Ouml;sterreichische Apothekerbank',
-        'ARZ|PB'        => 'PRIVAT BANK AG',
-        'Bawag|P'       => 'PSK Bank',
-        'Racon'         => 'Raiffeisen Bank',
-        'ARZ|SB'        => 'Schoellerbank AG',
-        'Bawag|S'       => 'Sparda Bank',
-        'ARZ|SBL'       => 'Sparda-Bank Linz',
-        'ARZ|SBVI'      => 'Sparda-Bank Villach/Innsbruck',
-        'ARZ|VLH'       => 'Vorarlberger Landes- und Hypothekerbank AG',
-        'ARZ|VRB'       => 'VR-Bank Braunau'
+        'ARZ|AAB' => 'Austrian Anadi Bank AG',
+        'BA-CA' => 'Bank Austria Creditanstalt',
+        'BB-Racon' => 'Bank Burgenland',
+        'ARZ|BD' => 'bankdirekt.at AG',
+        'ARZ|BAF' => '&Auml;rztebank',
+        'ARZ|BCS' => 'Bankhaus Carl Sp&auml;ngler &amp; Co. AG',
+        'ARZ|BSS' => 'Bankhaus Schelhammer &amp; Schattera AG',
+        'Bawag|B' => 'BAWAG',
+        'ARZ|VB' => 'Die &ouml;sterreichischen Volksbanken',
+        'Bawag|E' => 'easybank',
+        'Spardat|EBS' => 'Erste Bank und Sparkassen',
+        'ARZ|GB' => 'G&auml;rtnerbank',
+        'ARZ|HAA' => 'Hypo Alpe-Adria-Bank AG, HYPO Alpe-Adria-Bank International AG',
+        'ARZ|HI' => 'Hypo Investmentbank AG',
+        'ARZ|HTB' => 'Hypo Tirol Bank AG',
+        'ARZ|IB' => 'Immo-Bank',
+        'ARZ|IKB' => 'Investkredit Bank AG',
+        'ARZ|NLH' => 'Nieder&ouml;sterreichische Landes-Hypothekenbank AG',
+        'ARZ|AB' => '&Ouml;sterreichische Apothekerbank',
+        'ARZ|PB' => 'PRIVAT BANK AG',
+        'Bawag|P' => 'PSK Bank',
+        'Racon' => 'Raiffeisen Bank',
+        'ARZ|SB' => 'Schoellerbank AG',
+        'Bawag|S' => 'Sparda Bank',
+        'ARZ|SBL' => 'Sparda-Bank Linz',
+        'ARZ|SBVI' => 'Sparda-Bank Villach/Innsbruck',
+        'ARZ|VLH' => 'Vorarlberger Landes- und Hypothekerbank AG',
+        'ARZ|VRB' => 'VR-Bank Braunau'
     );
 
     /**
@@ -117,12 +117,12 @@ abstract class WirecardCEE_Stdlib_PaymentTypeAbstract
      */
     protected static $_idl_financial_institutions = Array(
         'ABNAMROBANK' => 'ABN AMRO Bank',
-        'ASNBANK'     => 'ASN Bank',
-        'INGBANK'     => 'ING',
-        'KNAB'        => 'Knab',
-        'RABOBANK'    => 'Rabobank',
-        'SNSBANK'     => 'SNS Bank',
-        'REGIOBANK'   => 'Regio Bank',
+        'ASNBANK' => 'ASN Bank',
+        'INGBANK' => 'ING',
+        'KNAB' => 'Knab',
+        'RABOBANK' => 'Rabobank',
+        'SNSBANK' => 'SNS Bank',
+        'REGIOBANK' => 'Regio Bank',
         'TRIODOSBANK' => 'Triodos Bank',
         'VANLANSCHOT' => 'Van Lanschot Bankiers'
     );
@@ -137,7 +137,7 @@ abstract class WirecardCEE_Stdlib_PaymentTypeAbstract
      */
     public static function hasFinancialInstitutions($paymentType)
     {
-        return (bool) ( $paymentType == self::EPS || $paymentType == self::IDL );
+        return (bool)($paymentType == self::EPS || $paymentType == self::IDL);
     }
 
     /**
