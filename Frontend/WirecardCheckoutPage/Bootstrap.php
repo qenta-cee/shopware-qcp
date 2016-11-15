@@ -456,18 +456,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 'order' => ++$i
             )
         );
-        $form->setElement(
-            'text',
-            'SHIPPING_PROFILE',
-            array(
-                'label' => 'Shipping Profile',
-                'value' => '',
-                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
-                'description' => 'Ausgewählte Regionen für Shipping Profile.',
-                'required' => false,
-                'order' => ++$i
-            )
-        );
     }
 
     /**
@@ -561,10 +549,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 'ENABLE_DUPLICATE_REQUEST_CHECK' => Array(
                     'label' => 'Check for duplicate requests',
                     'description' => 'Checking duplicate requests made by your consumer.'
-                ),
-                'SHIPPING_PROFILE' => Array(
-                    'label' => 'Shipping Profile',
-                    'description' => 'Selecting restricted areas for shipping.'
                 )
             )
         );
