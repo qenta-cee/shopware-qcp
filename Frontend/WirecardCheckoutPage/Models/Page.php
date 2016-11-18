@@ -78,6 +78,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
     {
         $oFrontendClient = $this->getFrontendClient(Shopware()->WirecardCheckoutPage()->getConfig());
         $email = (string) Shopware()->WirecardCheckoutPage()->getUser('user')->email;
+        $shippingProfile = 'NO_SHIPPING';
 
         $oFrontendClient->setPaymentType($paymentType)
                         ->setAmount($amount)
@@ -89,7 +90,8 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
                         ->setConfirmUrl($confimUrl)
                         ->setDisplayText($confimUrl)
                         ->setConsumerData($this->getConsumerData($paymentType))
-                        ->createCustomerMerchantCrmId($email);
+                        ->createCustomerMerchantCrmId($email)
+                        ->setShippingProfile($shippingProfile);
 
         if(Shopware()->WirecardCheckoutPage()->getConfig()->ENABLE_DUPLICATE_REQUEST_CHECK){
             $oFrontendClient->setDuplicateRequestCheck(true);
@@ -157,9 +159,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
         $consumerData = new WirecardCEE_Stdlib_ConsumerData();
         $consumerData->setIpAddress($_SERVER['REMOTE_ADDR']);
         $consumerData->setUserAgent($_SERVER['HTTP_USER_AGENT']);
-
-        $shippingProfile = 'NO_SHIPPING';
-        $consumerData->setShippingProfile($shippingProfile);
 
         if(!Shopware()->WirecardCheckoutPage()->getConfig()->send_additional_data)
         {

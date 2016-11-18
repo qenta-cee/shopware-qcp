@@ -201,6 +201,12 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
     const CUSTOMER_MERCHANT_CRM_ID = 'customerMerchantCrmId';
 
     /**
+     *
+     * @var string
+     */
+    const SHIPPING_PROFILE = 'shippingProfile';
+
+    /**
      * Type of the fingerprint order
      *
      * @var int
@@ -675,6 +681,18 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
     public function createCustomerMerchantCrmId($userEmail)
     {
         $this->_setField(self::CUSTOMER_MERCHANT_CRM_ID, md5($userEmail));
+        return $this;
+    }
+
+    /**
+     * setter for the consumer shipping profile
+     *
+     * @param string $shippingProfile
+     * @return $this
+     */
+    public function setShippingProfile($shippingProfile)
+    {
+        $this->_setField(self::SHIPPING_PROFILE, $shippingProfile);
         return $this;
     }
 
