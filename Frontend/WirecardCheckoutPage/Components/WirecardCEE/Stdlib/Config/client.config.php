@@ -32,7 +32,7 @@
 
 return Array(
     'MODULE_NAME' => 'WirecardCEE_Stdlib',
-    'MODULE_VERSION' => '3.0.1',
+    'MODULE_VERSION' => '3.0.2',
     'DEPENDENCIES' => array(
         'FRAMEWORK_NAME' => 'Zend_Framework',
         'FRAMEWORK_VERSION' => Array(

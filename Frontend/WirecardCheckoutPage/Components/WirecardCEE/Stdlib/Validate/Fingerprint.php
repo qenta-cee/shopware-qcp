@@ -282,6 +282,9 @@ class WirecardCEE_Stdlib_Validate_Fingerprint extends Zend_Validate_Abstract
         }
 
         $fingerprintOrder->setOrder(array_map('strtolower', $this->fingerprintOrder->__toArray()));
+        if (!in_array('secret', $fingerprintOrder->__toArray())) {
+            throw new WirecardCEE_Stdlib_Exception_UnexpectedValueException();
+        }
 
         $fingerprintFields = Array();
         foreach ($fingerprintOrder as $fingerprintFieldKey) {
