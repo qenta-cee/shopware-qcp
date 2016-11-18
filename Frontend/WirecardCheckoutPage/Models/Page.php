@@ -77,6 +77,8 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
     public function initiatePayment($paymentType, $amount, $currency, $returnUrl, $confimUrl, $params = array())
     {
         $oFrontendClient = $this->getFrontendClient(Shopware()->WirecardCheckoutPage()->getConfig());
+        $email = (string) Shopware()->WirecardCheckoutPage()->getUser('user')->email;
+
         $oFrontendClient->setPaymentType($paymentType)
                         ->setAmount($amount)
                         ->setCurrency($currency)
@@ -86,7 +88,8 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
                         ->setPendingUrl($returnUrl)
                         ->setConfirmUrl($confimUrl)
                         ->setDisplayText($confimUrl)
-                        ->setConsumerData($this->getConsumerData($paymentType));
+                        ->setConsumerData($this->getConsumerData($paymentType))
+                        ->createCustomerMerchantCrmId($email);
 
         if(Shopware()->WirecardCheckoutPage()->getConfig()->ENABLE_DUPLICATE_REQUEST_CHECK){
             $oFrontendClient->setDuplicateRequestCheck(true);
