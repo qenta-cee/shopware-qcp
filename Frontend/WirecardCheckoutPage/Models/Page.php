@@ -90,7 +90,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
                         ->setConfirmUrl($confimUrl)
                         ->setDisplayText($confimUrl)
                         ->setConsumerData($this->getConsumerData($paymentType))
-                        ->createCustomerMerchantCrmId($email)
+                        ->createConsumerMerchantCrmId($email)
                         ->setShippingProfile($shippingProfile);
 
         if(Shopware()->WirecardCheckoutPage()->getConfig()->ENABLE_DUPLICATE_REQUEST_CHECK){

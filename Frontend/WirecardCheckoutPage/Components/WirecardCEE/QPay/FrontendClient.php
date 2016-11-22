@@ -198,7 +198,7 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      *
      * @var string
      */
-    const CUSTOMER_MERCHANT_CRM_ID = 'customerMerchantCrmId';
+    const CONSUMER_MERCHANT_CRM_ID = 'consumerMerchantCrmId';
 
     /**
      *
@@ -678,9 +678,9 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      *
      * @return $this
      */
-    public function createCustomerMerchantCrmId($userEmail)
+    public function createConsumerMerchantCrmId($userEmail)
     {
-        $this->_setField(self::CUSTOMER_MERCHANT_CRM_ID, md5($userEmail));
+        $this->_setField(self::CONSUMER_MERCHANT_CRM_ID, md5($userEmail));
         return $this;
     }
 
