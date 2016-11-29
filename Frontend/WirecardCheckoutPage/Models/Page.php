@@ -3,25 +3,31 @@
  * Shop System Plugins - Terms of Use
  *
  * The plugins offered are provided free of charge by Wirecard Central Eastern Europe GmbH
- * (abbreviated to Wirecard CEE) and explicitly do not form part of the Wirecard CEE range
- * of products and services.
+ * (abbreviated to Wirecard CEE) and are explicitly not part of the Wirecard CEE range of
+ * products and services.
+ *
  * They have been tested and approved for full functionality in the standard configuration
  * (status on delivery) of the corresponding shop system. They are under General Public
- * License Version 2 (GPLv2) and can be used, developed and passed to third parties under
+ * License Version 2 (GPLv2) and can be used, developed and passed on to third parties under
  * the same terms.
- * However, Wirecard CEE does not provide any guarantee or accept any liability for any
- * errors occurring when used in an enhanced, customized shop system configuration.
+ *
+ * However, Wirecard CEE does not provide any guarantee or accept any liability for any errors
+ * occurring when used in an enhanced, customized shop system configuration.
+ *
  * Operation in an enhanced, customized configuration is at your own risk and requires a
  * comprehensive test phase by the user of the plugin.
- * The customer uses the plugin at own risk. Wirecard CEE does not guarantee its full
- * functionality neither does Wirecard CEE assume liability for any disadvantage related
- * to the use of this plugin. Additionally Wirecard CEE does not guarantee its full
- * functionality for customized shop systems or installed plugins of other vendors of
- * plugins within the same shop system.
- * The customer is responsible for testing the plugin's functionality within its own shop
- * system before using it within a production environment of a shop system.
- * By installing the plugin to the shop system the customer agrees to the terms of use.
- * Please do not use these plugins if you do not agree to this terms of use!
+ *
+ * Customers use the plugins at their own risk. Wirecard CEE does not guarantee their full
+ * functionality neither does Wirecard CEE assume liability for any disadvantages related to
+ * the use of the plugins. Additionally, Wirecard CEE does not guarantee the full functionality
+ * for customized shop systems or installed plugins of other vendors of plugins within the same
+ * shop system.
+ *
+ * Customers are responsible for testing the plugin's functionality before starting productive
+ * operation.
+ *
+ * By installing the plugin into the shop system the customer agrees to these terms of use.
+ * Please do not use the plugin if you do not agree to these terms of use!
  */
 
 /**
@@ -71,6 +77,9 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
     public function initiatePayment($paymentType, $amount, $currency, $returnUrl, $confimUrl, $params = array())
     {
         $oFrontendClient = $this->getFrontendClient(Shopware()->WirecardCheckoutPage()->getConfig());
+        $email = (string) Shopware()->WirecardCheckoutPage()->getUser('user')->email;
+        $shippingProfile = 'NO_SHIPPING';
+
         $oFrontendClient->setPaymentType($paymentType)
                         ->setAmount($amount)
                         ->setCurrency($currency)
@@ -80,7 +89,9 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
                         ->setPendingUrl($returnUrl)
                         ->setConfirmUrl($confimUrl)
                         ->setDisplayText($confimUrl)
-                        ->setConsumerData($this->getConsumerData($paymentType));
+                        ->setConsumerData($this->getConsumerData($paymentType))
+                        ->createConsumerMerchantCrmId($email)
+                        ->setShippingProfile($shippingProfile);
 
         if(Shopware()->WirecardCheckoutPage()->getConfig()->ENABLE_DUPLICATE_REQUEST_CHECK){
             $oFrontendClient->setDuplicateRequestCheck(true);

@@ -32,29 +32,9 @@
 
 
 /**
- * @name WirecardCEE_Stdlib_Module_ModuleAbstract
+ * @name WirecardCEE_QPay_Return_Success_Masterpass
  * @category WirecardCEE
- * @package WirecardCEE_Stdlib
- * @subpackage Module
- * @abstract
+ * @package WirecardCEE_QPay
+ * @subpackage Return_Success
  */
-abstract class WirecardCEE_Stdlib_Module_ModuleAbstract implements WirecardCEE_Stdlib_Module_ModuleInterface
-{
-    /**
-     * Returns the user configuration details found in 'Config' directory
-     * (user.config.php)
-     *
-     * @return Array
-     * @abstract
-     */
-    public static function getConfig() { }
-
-    /**
-     * Returns the client configuration details found in 'Config' directory
-     * (client.config.php)
-     *
-     * @return Array
-     * @abstract
-     */
-    public static function getClientConfig() { }
-}
+class WirecardCEE_QPay_Return_Success_Masterpass extends WirecardCEE_Stdlib_Return_Success_Masterpass {}
