@@ -82,30 +82,29 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
         $bUseIframe = (Shopware()->WirecardCheckoutPage()->getConfig()->use_iframe == 1);
 
         if(isset($_SESSION["wcp_redirect_url"])) {
-            $this->redirect($_SESSION["wcp_redirect_url"]);
+            $sRedirectUrl = $_SESSION["wcp_redirect_url"];
             unset($_SESSION["wcp_redirect_url"]);
-            return;
-        }
+        } else {
+            $oResponse = $oPageModel->initiatePayment($sPaymentType, $fAmount, $sCurrency, $sReturnUrl, $sConfigmrUrl, $aParams);
+            if ($oResponse === null) {
+                $this->redirect($checkoutUrl);
+                return;
+            }
 
-        $oResponse = $oPageModel->initiatePayment($sPaymentType, $fAmount, $sCurrency, $sReturnUrl, $sConfigmrUrl, $aParams);
-        if ($oResponse === null) {
-            $this->redirect($checkoutUrl);
-            return;
-        }
-
-        if($oResponse->hasFailed())
-        {
-            Shopware()->WirecardCheckoutPage()->getLog()->Debug(__METHOD__ . ':' . $oResponse->getError());
-            Shopware()->WirecardCheckoutPage()->wirecard_message = $oResponse->getError();
-            Shopware()->WirecardCheckoutPage()->wirecard_action = 'failure';
-            //if an error occurs we should not show followup page in iframe.
-            $bUseIframe = false;
-            $sRedirectUrl = $checkoutUrl;
-        }
-        else
-        {
-            $_SESSION["wcp_redirect_url"] = $oResponse->getRedirectUrl();
-            $sRedirectUrl = $oResponse->getRedirectUrl();
+            if($oResponse->hasFailed())
+            {
+                Shopware()->WirecardCheckoutPage()->getLog()->Debug(__METHOD__ . ':' . $oResponse->getError());
+                Shopware()->WirecardCheckoutPage()->wirecard_message = $oResponse->getError();
+                Shopware()->WirecardCheckoutPage()->wirecard_action = 'failure';
+                //if an error occurs we should not show followup page in iframe.
+                $bUseIframe = false;
+                $sRedirectUrl = $checkoutUrl;
+            }
+            else
+            {
+                $_SESSION["wcp_redirect_url"] = $oResponse->getRedirectUrl();
+                $sRedirectUrl = $oResponse->getRedirectUrl();
+            }
         }
 
         if($bUseIframe)
