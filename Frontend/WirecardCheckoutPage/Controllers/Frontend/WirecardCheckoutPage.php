@@ -40,6 +40,14 @@ use Shopware\Components\CSRFWhitelistAware;
 class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
     /**
+     * Use Bootstrap init
+     * Called by any actions
+     */
+    public function init()
+    {
+    }
+
+    /**
      * Index action
      * Different view for wcp and other payment methods
      */
