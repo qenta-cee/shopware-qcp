@@ -10,7 +10,7 @@
 		};
 
 		function checkBirthday() {
-			var m = $('#wcp-month').val();
+			var m = parseInt($('#wcp-month option:selected').text());
 			var d = $('#wcp-day').val();
 
 			var dateStr = $('#wcp-year').val() + '-' + m + '-' + d;
