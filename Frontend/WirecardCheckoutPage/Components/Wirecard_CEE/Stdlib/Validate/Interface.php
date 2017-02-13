@@ -30,66 +30,32 @@
  * Please do not use the plugin if you do not agree to these terms of use!
  */
 
-/**
- * class representing a basket object stored to the database
- */
-class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Basket
+
+interface WirecardCEE_Stdlib_Validate_Interface
 {
     /**
-     * getter for basket content
-     * @return array|null
+     * Returns true if and only if $value meets the validation requirements
+     *
+     * If $value fails validation, then this method returns false, and
+     * getMessages() will return an array of messages that explain why the
+     * validation failed.
+     *
+     * @param  mixed $value
+     *
+     * @return boolean
+     * @throws WirecardCEE_Stdlib_Validate_Exception If validation of $value is impossible
      */
-    public function getBasket()
-    {
-        if (FALSE == Shopware()->WirecardCheckoutPage()->Config()->restoreBasket()) {
-            return NULL;
-        }
-
-        Shopware()->Pluginlogger()->info('WirecardCheckoutPage: ID: ' . Shopware()->SessionID());
-        $sql = Shopware()->Db()->select()
-            ->from('s_order_basket')
-            ->where('sessionID = ?', array(Shopware()->SessionID()));
-        $basket = Shopware()->Db()->fetchAll($sql);
-        return $basket;
-    }
+    public function isValid($value);
 
     /**
-     * getter for serialized basket item
+     * Returns an array of messages that explain why the most recent isValid()
+     * call returned false. The array keys are validation failure message identifiers,
+     * and the array values are the corresponding human-readable message strings.
      *
-     * @return string
-     */
-    public function getSerializedBasket()
-    {
-        return serialize($this->getBasket());
-    }
-
-    /**
-     * Restore basket if it's enabled in the configuration
+     * If isValid() was never called or if the most recent isValid() call
+     * returned true, then this method returns an empty array.
      *
-     * @param array $basket
-     * @return bool
+     * @return array
      */
-    public function setBasket($basket = array())
-    {
-        if (FALSE == Shopware()->WirecardCheckoutPage()->Config()->restoreBasket()) {
-            return FALSE;
-        }
-        Shopware()->Db()->delete('s_order_basket', 'sessionID = "' . Shopware()->SessionID() . '"');
-        foreach ($basket as $row) {
-            Shopware()->Db()->insert('s_order_basket', $row);
-        }
-        return TRUE;
-    }
-
-    /**
-     * setter for serialized basketItems
-     *
-     * @param $basket
-     * @return bool
-     */
-    public function setSerializedBasket($basket)
-    {
-        return $this->setBasket(unserialize($basket));
-    }
-
+    public function getMessages();
 }

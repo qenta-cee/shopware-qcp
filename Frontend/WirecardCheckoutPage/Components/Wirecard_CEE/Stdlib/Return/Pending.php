@@ -30,66 +30,73 @@
  * Please do not use the plugin if you do not agree to these terms of use!
  */
 
-/**
- * class representing a basket object stored to the database
- */
-class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Basket
-{
-    /**
-     * getter for basket content
-     * @return array|null
-     */
-    public function getBasket()
-    {
-        if (FALSE == Shopware()->WirecardCheckoutPage()->Config()->restoreBasket()) {
-            return NULL;
-        }
 
-        Shopware()->Pluginlogger()->info('WirecardCheckoutPage: ID: ' . Shopware()->SessionID());
-        $sql = Shopware()->Db()->select()
-            ->from('s_order_basket')
-            ->where('sessionID = ?', array(Shopware()->SessionID()));
-        $basket = Shopware()->Db()->fetchAll($sql);
-        return $basket;
+/**
+ * @name WirecardCEE_Stdlib_Return_Pending
+ * @category WirecardCEE
+ * @package WirecardCEE_Stdlib
+ * @subpackage Return
+ * @abstract
+ */
+abstract class WirecardCEE_Stdlib_Return_Pending extends WirecardCEE_Stdlib_Return_ReturnAbstract
+{
+
+    /**
+     * Secret
+     *
+     * @var string
+     * @internal
+     */
+    protected static $SECRET = 'secret';
+    /**
+     * State: Pending
+     *
+     * @var string
+     * @internal
+     */
+    protected $_state = 'PENDING';
+
+    /**
+     * Fingerprintorder field
+     *
+     * @var string
+     * @internal
+     */
+    protected static $FINGERPRINT_ORDER_FIELD = 'fingerprintOrderField';
+
+    /**
+     * Constructor for PENDING state - we need the fingeprint validator so we add it after the
+     * parent::__construct($returnData)
+     *
+     * @param array $returnData
+     */
+    public function __construct(
+        $returnData,
+        $secret,
+        $hashAlgo = WirecardCEE_Stdlib_Fingerprint::HASH_ALGORITHM_HMAC_SHA512
+    ) {
+        //@see WirecardCEE_Stdlib_Return_ReturnAbstract::__construct($returnData)
+        parent::__construct($returnData);
+
+        $oFingerprintValidator = new WirecardCEE_Stdlib_Validate_Fingerprint(Array(
+            self::$SECRET => $secret,
+            self::$FINGERPRINT_ORDER_FIELD => 'responseFingerprintOrder',
+        ));
+
+        $oFingerprintValidator->setHashAlgorithm($hashAlgo);
+        $oFingerprintValidator->setOrderType(WirecardCEE_Stdlib_Validate_Fingerprint::TYPE_DYNAMIC);
+
+        $this->addValidator($oFingerprintValidator, 'responseFingerprint');
     }
 
     /**
-     * getter for serialized basket item
+     * getter for the return parameter orderNumber
      *
      * @return string
      */
-    public function getSerializedBasket()
+    public function getOrderNumber()
     {
-        return serialize($this->getBasket());
-    }
-
-    /**
-     * Restore basket if it's enabled in the configuration
-     *
-     * @param array $basket
-     * @return bool
-     */
-    public function setBasket($basket = array())
-    {
-        if (FALSE == Shopware()->WirecardCheckoutPage()->Config()->restoreBasket()) {
-            return FALSE;
-        }
-        Shopware()->Db()->delete('s_order_basket', 'sessionID = "' . Shopware()->SessionID() . '"');
-        foreach ($basket as $row) {
-            Shopware()->Db()->insert('s_order_basket', $row);
-        }
-        return TRUE;
-    }
-
-    /**
-     * setter for serialized basketItems
-     *
-     * @param $basket
-     * @return bool
-     */
-    public function setSerializedBasket($basket)
-    {
-        return $this->setBasket(unserialize($basket));
+        return $this->orderNumber;
     }
 
 }

@@ -43,13 +43,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
             'call' => WirecardCEE_QPay_PaymentType::SELECT,
             'translation' => Array( 'description' => 'Selection within wirecard checkout page', 'additionalDescription' => '')
         ),
-        'MASTERPASS' => array(
-            'name' => 'masterpass',
-            'description' => 'Wirecard Masterpass',
-            'template' => '',
-            'call' => WirecardCEE_QPay_PaymentType::MASTERPASS,
-            'translation' => Array('description' => 'Wirecard Masterpass', 'additionalDescription' => '')
-        ),
         'CCARD' => array(
             'name' => 'ccard',
             'description' => 'Wirecard Kreditkarte',
@@ -64,6 +57,15 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
             'template' => '',
             'call' => WirecardCEE_QPay_PaymentType::CCARD_MOTO,
             'translation' => Array('description' => 'Wirecard Credit Card (backoffice)', 'additionalDescription' => '')
+        ),
+
+        //Masterpass disabled b
+        'MASTERPASS' => array(
+            'name' => 'masterpass',
+            'description' => 'Wirecard Masterpass',
+            'template' => '',
+            'call' => WirecardCEE_QPay_PaymentType::MASTERPASS,
+            'translation' => Array('description' => 'Wirecard Masterpass', 'additionalDescription' => '')
         ),
 
         'EPS' => array(

@@ -71,7 +71,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.3.2';
+        return '1.4.0';
     }
 
     /**
@@ -159,6 +159,22 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
         if (version_compare($version, '1.0.0', '<=')) {
             //removing paymentType click2pay
             Shopware()->Db()->delete('s_core_paymentmeans', 'name = "wcp_c2p"');
+        }
+
+        if (version_compare($version, '1.4.0', '<=')) {
+            //removing old logging method
+            $em = $this->get('models');
+            $form = $this->Form();
+            $wirecard_log = $form->getElement('WIRECARD_LOG');
+            if ($wirecard_log !== null) {
+                $em->remove($wirecard_log);
+            }
+            $wirecard_delete_log = $form->getElement('DELETELOG');
+            if ($wirecard_delete_log !== null) {
+                $em->remove($wirecard_delete_log);
+
+            }
+            $em->flush();
         }
 
         return $this->install();
@@ -377,36 +393,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
 
         $form->setElement(
             'select',
-            'WIRECARD_LOG',
-            array(
-                'label' => 'Protokollierung',
-                'value' => 1,
-                'store' => array(
-                    array(1, 'disable'),
-                    array(2, 'file'),
-                    array(5, 'FirePHP')
-                ),
-                'description' => 'Auswahl, auf welche Art und Weise das Protokoll zur Fehlersuche angelegt werden soll.',
-                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
-                'required' => false,
-                'order' => ++$i
-            )
-        );
-
-        $form->setElement(
-            'numberfield',
-            'DELETELOG',
-            array(
-                'label' => 'Protokoll löschen nach x Tagen',
-                'value' => '14',
-                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
-                'required' => false,
-                'description' => 'Logfiles werden nach der angegebenen Anzahl von Tagen gelöscht. Wird nur bei einer Protokollierung als Datei benötigt.',
-                'order' => ++$i
-            )
-        );
-        $form->setElement(
-            'select',
             'USE_AS_TRANSACTION_ID',
             array(
                 'label' => 'Shopware transaction ID',
@@ -530,14 +516,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     'label' => 'Save payment process results',
                     'description' => 'Save all results regarding the payment process, i.e. each Wirecard Checkout Server response to the confirmation URL to the defined field.'
                 ),
-                'WIRECARD_LOG' => Array(
-                    'label' => 'Logging',
-                    'description' => 'Selecting the method for logging of plugin related events to facilitate debugging.'
-                ),
-                'DELETELOG' => Array(
-                    'label' => 'Keep logs for N days',
-                    'description' => 'Logfiles will be deleted after the given number of days. Only necessary for logging as files.'
-                ),
                 'DISPLAY_TEXT' => Array(
                     'label' => 'Text on payment page',
                     'description' => 'Text displayed during the payment process, i.e. "Thank you for ordering in xy-shop".'
@@ -612,11 +590,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
             'addLessFiles'
         );
 
-        // Cronjob: delete old log files
-        $this->subscribeEvent('WirecardCEEDeleteWCPLog', 'onRun');
-        if(!$this->hasCronJob('Wirecard CEE WCP Logeintr&auml;ge l&ouml;schen')) {
-            $this->createCronJob('Wirecard CEE WCP Logeintr&auml;ge l&ouml;schen', 'WirecardCEEDeleteWCPLog');
-        }
         // Prevent ordermail after pending
         $this->subscribeEvent(
             'Shopware_Modules_Order_SendMail_Send',
@@ -646,29 +619,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
         );
 
         return new Doctrine\Common\Collections\ArrayCollection(array($less));
-    }
-
-    /**
-     * Delete old log entries
-     *
-     * @param Shopware_Components_Cron_CronJob $job
-     */
-    public function onRun(Shopware_Components_Cron_CronJob $job)
-    {
-        self::init();
-        $dir = Shopware()->WirecardCheckoutPage()->getConfig()->getLogDirectory();
-        $deltime = strtotime(sprintf('-%d days', Shopware()->WirecardCheckoutPage()->getConfig()->DELETELOG));
-
-        // Delete old log files
-        if (is_dir($dir) && is_writable($dir)) {
-            foreach (scandir($dir) as $item) {
-                $file = $dir . '/' . $item;
-                $stat = stat($file);
-                if ($stat['mtime'] < $deltime) {
-                    unlink($file);
-                }
-            }
-        }
     }
 
     /**
@@ -736,9 +686,16 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 new Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Resources()
             );
         }
+    }
 
-        // Autoloader for library
-        Zend_Loader_Autoloader::getInstance()->pushAutoloader(Shopware()->WirecardCheckoutPage()->getLoader());
+    /**
+     * Load namespaces with Shopware Loader
+     */
+    public function afterInit()
+    {
+        $this->registerCustomModels();
+        $this->get('Loader')->registerNamespace('Shopware\\Plugins\\WirecardCheckoutPage', $this->Path());
+        $this->get('Loader')->registerNamespace('WirecardCEE', $this->Path() . 'Components/Wirecard_CEE/');
     }
 
     /**

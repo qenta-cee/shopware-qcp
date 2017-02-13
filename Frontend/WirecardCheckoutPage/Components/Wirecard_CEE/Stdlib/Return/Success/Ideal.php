@@ -30,66 +30,43 @@
  * Please do not use the plugin if you do not agree to these terms of use!
  */
 
+
 /**
- * class representing a basket object stored to the database
+ * @name WirecardCEE_Stdlib_Return_Success_Ideal
+ * @category WirecardCEE
+ * @package WirecardCEE_Stdlib
+ * @subpackage Return_Success
+ * @abstract
  */
-class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Basket
+abstract class WirecardCEE_Stdlib_Return_Success_Ideal extends WirecardCEE_Stdlib_Return_Success
 {
     /**
-     * getter for basket content
-     * @return array|null
-     */
-    public function getBasket()
-    {
-        if (FALSE == Shopware()->WirecardCheckoutPage()->Config()->restoreBasket()) {
-            return NULL;
-        }
-
-        Shopware()->Pluginlogger()->info('WirecardCheckoutPage: ID: ' . Shopware()->SessionID());
-        $sql = Shopware()->Db()->select()
-            ->from('s_order_basket')
-            ->where('sessionID = ?', array(Shopware()->SessionID()));
-        $basket = Shopware()->Db()->fetchAll($sql);
-        return $basket;
-    }
-
-    /**
-     * getter for serialized basket item
+     * getter for the return parameter idealConsumerName
      *
      * @return string
      */
-    public function getSerializedBasket()
+    public function getConsumerName()
     {
-        return serialize($this->getBasket());
+        return (string) $this->idealConsumerName;
     }
 
     /**
-     * Restore basket if it's enabled in the configuration
+     * getter for the return parameter idealConsumerCity
      *
-     * @param array $basket
-     * @return bool
+     * @return string
      */
-    public function setBasket($basket = array())
+    public function getConsumerCity()
     {
-        if (FALSE == Shopware()->WirecardCheckoutPage()->Config()->restoreBasket()) {
-            return FALSE;
-        }
-        Shopware()->Db()->delete('s_order_basket', 'sessionID = "' . Shopware()->SessionID() . '"');
-        foreach ($basket as $row) {
-            Shopware()->Db()->insert('s_order_basket', $row);
-        }
-        return TRUE;
+        return (string) $this->idealConsumerCity;
     }
 
     /**
-     * setter for serialized basketItems
+     * getter for the return parameter idealConsunerAccountNumber
      *
-     * @param $basket
-     * @return bool
+     * @return string
      */
-    public function setSerializedBasket($basket)
+    public function getConsumerAccountNumber()
     {
-        return $this->setBasket(unserialize($basket));
+        return (string) $this->idealConsumerAccountNumber;
     }
-
 }
