@@ -59,14 +59,14 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
             'translation' => Array('description' => 'Wirecard Credit Card (backoffice)', 'additionalDescription' => '')
         ),
 
-        //Masterpass disabled b
-        'MASTERPASS' => array(
+        //Masterpass disabled because of compatibility issues with WCS plugin
+        /*'MASTERPASS' => array(
             'name' => 'masterpass',
             'description' => 'Wirecard Masterpass',
             'template' => '',
             'call' => WirecardCEE_QPay_PaymentType::MASTERPASS,
             'translation' => Array('description' => 'Wirecard Masterpass', 'additionalDescription' => '')
-        ),
+        ),*/
 
         'EPS' => array(
             'name' => 'eps',

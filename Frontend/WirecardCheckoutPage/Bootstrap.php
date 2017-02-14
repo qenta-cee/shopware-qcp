@@ -695,7 +695,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
     {
         $this->registerCustomModels();
         $this->get('Loader')->registerNamespace('Shopware\\Plugins\\WirecardCheckoutPage', $this->Path());
-        $this->get('Loader')->registerNamespace('WirecardCEE', $this->Path() . 'Components/Wirecard_CEE/');
+        $this->get('Loader')->registerNamespace('WirecardCEE', $this->Path() . 'Components/WirecardCEE/');
     }
 
     /**
