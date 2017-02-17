@@ -37,4 +37,6 @@
  * @package WirecardCEE_QPay
  * @subpackage Return_Success
  */
-class WirecardCEE_QPay_Return_Success_Masterpass extends WirecardCEE_Stdlib_Return_Success_Masterpass {}
+class WirecardCEE_QPay_Return_Success_Masterpass extends WirecardCEE_Stdlib_Return_Success_Masterpass
+{
+}

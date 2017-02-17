@@ -30,20 +30,7 @@
  * Please do not use the plugin if you do not agree to these terms of use!
  */
 
-
-/**
- * @name WirecardCEE_Stdlib_Return_Cancel
- * @category WirecardCEE
- * @package WirecardCEE_Stdlib
- * @subpackage Return
- * @abstract
- */
-abstract class WirecardCEE_Stdlib_Return_Cancel extends WirecardCEE_Stdlib_Return_ReturnAbstract
+class WirecardCEE_Stdlib_Validate_Exception extends Exception
 {
-    /**
-     * State
-     *
-     * @var string
-     */
-    protected $_state = 'CANCEL';
+
 }

@@ -175,16 +175,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Config
     }
 
     /**
-     * Returns the log type defined in plugin config
-     *
-     * @return string
-     */
-    public function logType()
-    {
-        return strtolower($this->__get('WIRECARD_LOG'));
-    }
-
-    /**
      * @return array
      */
     protected function getLanguageDefinition()

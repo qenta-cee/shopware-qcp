@@ -78,6 +78,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
     {
         $oFrontendClient = $this->getFrontendClient(Shopware()->WirecardCheckoutPage()->getConfig());
         $email = (string) Shopware()->WirecardCheckoutPage()->getUser('user')->email;
+        // default setting, shipping address always set in Shopware checkout
         $shippingProfile = 'NO_SHIPPING';
 
         $oFrontendClient->setPaymentType($paymentType)
@@ -107,12 +108,12 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
         foreach ($params as $k => $v)
             $oFrontendClient->$k = $v;
 
-        Shopware()->WirecardCheckoutPage()->getLog()->Debug(__METHOD__ . ':' . print_r($oFrontendClient->getRequestData(),true));
+        Shopware()->Pluginlogger()->info('WirecardCheckoutPage: '.__METHOD__ . ':' . print_r($oFrontendClient->getRequestData(),true));
 
         try {
             return $oFrontendClient->initiate();
         } catch (\Exception $e) {
-            Shopware()->WirecardCheckoutPage()->getLog()->Err(__METHOD__ . ':' . $e->getMessage());
+            Shopware()->Pluginlogger()->error('WirecardCheckoutPage: '.__METHOD__ . ':' . $e->getMessage());
             Shopware()->WirecardCheckoutPage()->wirecard_action = 'failure';
             Shopware()->WirecardCheckoutPage()->wirecard_message = $e->getMessage();
         }

@@ -31,6 +31,8 @@
  */
 
 
+use GuzzleHttp\Message\Response;
+
 /**
  * @name WirecardCEE_Stdlib_Response_ResponseAbstract
  * @category WirecardCEE
@@ -42,36 +44,42 @@ abstract class WirecardCEE_Stdlib_Response_ResponseAbstract
 {
     /**
      * State success
+     *
      * @var int
      */
     const STATE_SUCCESS = 0;
 
     /**
      * State failure
+     *
      * @var int
      */
     const STATE_FAILURE = 1;
 
     /**
      * Response holder
+     *
      * @var array
      */
     protected $_response = Array();
 
     /**
      * RedirectURL Field name
+     *
      * @var string
      */
     const REDIRECT_URL = 'redirectUrl';
 
     /**
      * Errors holder
-     * @var Array
+     *
+     * @var array
      */
     protected $_errors = Array();
 
     /**
      * Error message
+     *
      * @staticvar string
      * @internal
      */
@@ -79,6 +87,7 @@ abstract class WirecardCEE_Stdlib_Response_ResponseAbstract
 
     /**
      * Error consumer message
+     *
      * @staticvar string
      * @internal
      */
@@ -87,11 +96,13 @@ abstract class WirecardCEE_Stdlib_Response_ResponseAbstract
     /**
      * base constructor for Response objects
      *
-     * @param Zend_Http_Response $response
+     * @param ResponseInterface $response
+     *
+     * @throws WirecardCEE_Stdlib_Exception_InvalidResponseException
      */
     public function __construct($response)
     {
-        if ($response instanceof Zend_Http_Response) {
+        if ($response instanceof Response) {
             $this->_response = WirecardCEE_Stdlib_SerialApi::decode($response->getBody());
         } elseif (is_array($response)) {
             $this->_response = $response;
@@ -108,18 +119,19 @@ abstract class WirecardCEE_Stdlib_Response_ResponseAbstract
      */
     public function hasFailed()
     {
-        return (bool)($this->getStatus() == self::STATE_FAILURE);
+        return (bool) ( $this->getStatus() >= self::STATE_FAILURE );
     }
 
     /**
      * getter for given field
      *
      * @param string $name
+     *
      * @return string|array|null
      */
     protected function _getField($name)
     {
-        return isset($this->_response[$name]) ? $this->_response[$name] : null;
+        return isset( $this->_response[$name] ) ? $this->_response[$name] : null;
     }
 
 
@@ -130,7 +142,7 @@ abstract class WirecardCEE_Stdlib_Response_ResponseAbstract
      */
     public function getRedirectUrl()
     {
-        return (string)$this->_getField(self::REDIRECT_URL);
+        return (string) $this->_getField(self::REDIRECT_URL);
     }
 
     /**

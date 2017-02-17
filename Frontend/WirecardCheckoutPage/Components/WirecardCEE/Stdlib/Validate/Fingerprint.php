@@ -37,35 +37,40 @@
  * @package WirecardCEE_Stdlib
  * @subpackage Validate
  */
-class WirecardCEE_Stdlib_Validate_Fingerprint extends Zend_Validate_Abstract
+class WirecardCEE_Stdlib_Validate_Fingerprint extends WirecardCEE_Stdlib_Validate_ValidateAbstract
 {
 
     /**
      * Fingeprint order
+     *
      * @var WirecardCEE_Stdlib_FingerprintOrder
      */
     protected $fingerprintOrder;
 
     /**
      * Type of fingerprint order
+     *
      * @var string
      */
     protected $fingerprintOrderType = self::TYPE_FIXED;
 
     /**
      * Hash algorithm
+     *
      * @var string
      */
     protected $hashAlgorithm = WirecardCEE_Stdlib_Fingerprint::HASH_ALGORITHM_SHA512;
 
     /**
      * Secret
+     *
      * @var string
      */
     protected $secret = '';
 
     /**
      * Mandatory fields internal holder
+     *
      * @var array
      * @internal
      */
@@ -73,6 +78,7 @@ class WirecardCEE_Stdlib_Validate_Fingerprint extends Zend_Validate_Abstract
 
     /**
      * Fingerprint order field
+     *
      * @var string
      */
     protected $fingerprintOrderField = '';
@@ -119,8 +125,8 @@ class WirecardCEE_Stdlib_Validate_Fingerprint extends Zend_Validate_Abstract
      * @internal
      */
     protected $_messageTemplates = array(
-        self::INVALID => "Given fingerprint does not match calculated one.",
-        self::INVALID_LENGTH => "'%value%' has invalid length for hash algorithm %hash%.",
+        self::INVALID                  => "Given fingerprint does not match calculated one.",
+        self::INVALID_LENGTH           => "'%value%' has invalid length for hash algorithm %hash%.",
         self::FINGERPRINTORDER_MISSING => 'Parameter fingerprintOrder is missing'
     );
 
@@ -136,7 +142,8 @@ class WirecardCEE_Stdlib_Validate_Fingerprint extends Zend_Validate_Abstract
 
     /**
      * Constructor
-     * @param Array $options - optional
+     *
+     * @param array $options - optional
      */
     public function __construct($options = array())
     {
@@ -146,107 +153,129 @@ class WirecardCEE_Stdlib_Validate_Fingerprint extends Zend_Validate_Abstract
             $options = $options->toArray();
         }
 
-        if (!empty($options['fingerprintOrder'])) {
+        if (!empty( $options['fingerprintOrder'] )) {
             $this->setOrder($options['fingerprintOrder']);
         }
 
-        if (!empty($options['fingerprintOrderField'])) {
+        if (!empty( $options['fingerprintOrderField'] )) {
             $this->setFingerprintOrderField($options['fingerprintOrderField']);
         }
-        if (!empty($options['hashAlgorithm'])) {
+        if (!empty( $options['hashAlgorithm'] )) {
             $this->setHashAlgorithm($options['hashAlgorithm']);
         }
-        if (!empty($options['orderType'])) {
+        if (!empty( $options['orderType'] )) {
             $this->setOrderType($options['orderType']);
         }
-        if (!empty($options['secret'])) {
+        if (!empty( $options['secret'] )) {
             $this->setSecret($options['secret']);
         }
     }
 
     /**
      * Sets the fingerprint order field
+     *
      * @param string $sFingerprintOrderField
+     *
      * @return WirecardCEE_Stdlib_Validate_Fingerprint
      */
     public function setFingerprintOrderField($sFingerprintOrderField)
     {
         $this->fingerprintOrderField = strtolower($sFingerprintOrderField);
+
         return $this;
     }
 
     /**
      * Sets the ordere type
+     *
      * @param string $orderType
-     * @return WirecardCEE_Stdlib_Validate_FingerprintValidator
+     *
+     * @return WirecardCEE_Stdlib_Validate_Fingerprint
      */
     public function setOrderType($orderType)
     {
-        $this->fingerprintOrderType = (string)$orderType;
+        $this->fingerprintOrderType = (string) $orderType;
+
         return $this;
     }
 
     /**
      * Sets the fingeprint order
+     *
      * @param string|array $order
-     * @return WirecardCEE_Stdlib_Validate_FingerprintValidator
+     *
+     * @return WirecardCEE_Stdlib_Validate_Fingerprint
      */
     public function setOrder($order)
     {
         $this->fingerprintOrder->setOrder($order);
+
         return $this;
     }
 
     /**
      * Hash algorithm setter
+     *
      * @param string $hashAlgorithm
-     * @return WirecardCEE_Stdlib_Validate_FingerprintValidator
+     *
+     * @return WirecardCEE_Stdlib_Validate_Fingerprint
      */
     public function setHashAlgorithm($hashAlgorithm)
     {
-        $this->hashAlgorithm = (string)$hashAlgorithm;
+        $this->hashAlgorithm = (string) $hashAlgorithm;
         WirecardCEE_Stdlib_Fingerprint::setHashAlgorithm($hashAlgorithm);
+
         return $this;
     }
 
     /**
      * Secret setter
+     *
      * @param string $secret
-     * @return WirecardCEE_Stdlib_Validate_FingerprintValidator
+     *
+     * @return WirecardCEE_Stdlib_Validate_Fingerprint
      */
     public function setSecret($secret)
     {
-        $this->secret = (string)$secret;
+        $this->secret = (string) $secret;
+
         return $this;
     }
 
     /**
      * Add madatory field
+     *
      * @param string $mandatoryField
-     * @return WirecardCEE_Stdlib_Validate_FingerprintValidator
+     *
+     * @return WirecardCEE_Stdlib_Validate_Fingerprint
      */
     public function addMandatoryField($mandatoryField)
     {
-        if (!in_array((string)$mandatoryField, $this->_mandatoryFields)) {
-            $this->_mandatoryFields[] = (string)$mandatoryField;
+        if (!in_array((string) $mandatoryField, $this->_mandatoryFields)) {
+            $this->_mandatoryFields[] = (string) $mandatoryField;
         }
+
         return $this;
     }
 
     /**
      * Sets mandatory fields
+     *
      * @param array $mandatoryFields
-     * @return WirecardCEE_Stdlib_Validate_FingerprintValidator
+     *
+     * @return WirecardCEE_Stdlib_Validate_Fingerprint
      */
     public function setMandatoryFields(Array $mandatoryFields)
     {
         $this->_mandatoryFields = $mandatoryFields;
+
         return $this;
     }
 
     /**
      * Is validator check valid?
-     * @see Zend_Validate_Interface::isValid()
+     *
+     * @see WirecardCEE_Stdlib_Validate_Interface::isValid()
      */
     public function isValid($value, $context = null)
     {
@@ -261,7 +290,7 @@ class WirecardCEE_Stdlib_Validate_Fingerprint extends Zend_Validate_Abstract
                 $stringLength = 32;
                 break;
             default:
-                throw new WirecardCEE_Stdlib_Exception_UnexpectedValueException(sprintf("Used hash algorithm '%s' is not supported. MD5 or SHA512 are currently supported.",
+                throw new WirecardCEE_Stdlib_Exception_UnexpectedValueException(sprintf("Used hash algorithm '%s' is not supported. MD5, SHA512, or HMAC_SHA512 are currently supported.",
                     $this->hashAlgorithm));
                 break;
         }
@@ -277,6 +306,7 @@ class WirecardCEE_Stdlib_Validate_Fingerprint extends Zend_Validate_Abstract
                 $fingerprintOrder = new WirecardCEE_Stdlib_FingerprintOrder(strtolower($context[$this->fingerprintOrderField]));
             } else {
                 $this->_error(self::FINGERPRINTORDER_MISSING);
+
                 return false;
             }
         }
@@ -291,12 +321,13 @@ class WirecardCEE_Stdlib_Validate_Fingerprint extends Zend_Validate_Abstract
             if ($fingerprintFieldKey == 'secret') {
                 $fingerprintFields[$fingerprintFieldKey] = $this->secret;
             } else {
-                $fingerprintFields[$fingerprintFieldKey] = isset($context[$fingerprintFieldKey]) ? $context[$fingerprintFieldKey] : '';
+                $fingerprintFields[$fingerprintFieldKey] = isset( $context[$fingerprintFieldKey] ) ? $context[$fingerprintFieldKey] : '';
             }
         }
 
         if (!WirecardCEE_Stdlib_Fingerprint::compare($fingerprintFields, $fingerprintOrder, $value)) {
             $this->_error(self::INVALID);
+
             return false;
         }
 

@@ -30,17 +30,12 @@
  * Please do not use the plugin if you do not agree to these terms of use!
  */
 
+
 return Array(
-    'FRONTEND_URL' => 'https://checkout.wirecard.com/page/init-server.php',
-    'TOOLKIT_URL' => 'https://checkout.wirecard.com/page/toolkit.php',
-    'MODULE_NAME' => 'WirecardCEE_QPay',
-    'MODULE_VERSION' => '3.0.3',
-    'DEPENDENCIES' => Array(
-        'FRAMEWORK_NAME' => 'Zend_Framework',
-        'FRAMEWORK_VERSION' => Array(
-            'MINIMUM' => '1.11.10',
-            'CURRENT' => Zend_Version::VERSION
-        ),
-    ),
-    'USE_DEBUG' => false
+    'FRONTEND_URL'   => 'https://checkout.wirecard.com/page/init-server.php',
+    'TOOLKIT_URL'    => 'https://checkout.wirecard.com/page/toolkit.php',
+    'MODULE_NAME'    => 'WirecardCEE_QPay',
+    'MODULE_VERSION' => '3.3.0',
+    'DEPENDENCIES'   => Array(),
+    'USE_DEBUG'      => false
 );

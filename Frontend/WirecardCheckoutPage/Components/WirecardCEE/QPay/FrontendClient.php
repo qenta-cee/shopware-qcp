@@ -194,7 +194,7 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
     const PLUGIN_VERSION = 'pluginVersion';
 
     /**
-     * Field name: customerMerchantCrmId
+     * Field name: consumerMerchantCrmId
      *
      * @var string
      */
@@ -234,6 +234,7 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
 
     /**
      * Library name
+     *
      * @staticvar string
      * @internal
      */
@@ -241,27 +242,22 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
 
     /**
      * Library version
+     *
      * @staticvar string
      * @internal
      */
     protected static $LIBRARY_VERSION = '3.4.0';
 
     /**
-     * Framewor name (is populated from client.config.php)
-     * @staticvar string
-     * @internal
-     */
-    protected static $FRAMEWORK_NAME;
-
-    /**
      * Constructor
      *
-     * @param Array $aConfig
-     * @throws WirecardCEE_QPay_Exception_MissingConfigParamException
-     * @throws WIrecardCEE_QPay_Exception_InvalidParamLengthException
+     * @param mixed $aConfig
+     *
+     * @throws WirecardCEE_QPay_Exception_InvalidParamLengthException
+     * @throws WirecardCEE_QPay_Exception_InvalidArgumentException
      * @formatter:off
      */
-    public function __construct(Array $aConfig = null)
+    public function __construct($aConfig = null)
     {
         $this->_fingerprintOrder = new WirecardCEE_Stdlib_FingerprintOrder();
 
@@ -270,7 +266,7 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
             $aConfig = WirecardCEE_QPay_Module::getConfig();
         }
 
-        if (isset($aConfig['WirecardCEEQPayConfig'])) {
+        if (isset( $aConfig['WirecardCEEQPayConfig'] )) {
             //we only need the WirecardCEEQPayConfig here
             $aConfig = $aConfig['WirecardCEEQPayConfig'];
         }
@@ -279,31 +275,29 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
         $this->oUserConfig = new WirecardCEE_Stdlib_Config($aConfig);
         $this->oClientConfig = new WirecardCEE_Stdlib_Config(WirecardCEE_QPay_Module::getClientConfig());
 
-        self::$FRAMEWORK_NAME = $this->getClientConfig()->DEPENDENCIES->FRAMEWORK_NAME;
-
         //now let's check if the CUSTOMER_ID, SHOP_ID, LANGUAGE and SECRET exist in $this->oUserConfig object that we created from config array
-        $sCustomerId = isset($this->oUserConfig->CUSTOMER_ID) ? trim($this->oUserConfig->CUSTOMER_ID) : null;
-        $sShopId = isset($this->oUserConfig->SHOP_ID) ? trim($this->oUserConfig->SHOP_ID) : null;
-        $sLanguage = isset($this->oUserConfig->LANGUAGE) ? trim($this->oUserConfig->LANGUAGE) : null;
-        $sSecret = isset($this->oUserConfig->SECRET) ? trim($this->oUserConfig->SECRET) : null;
+        $sCustomerId = isset( $this->oUserConfig->CUSTOMER_ID ) ? trim($this->oUserConfig->CUSTOMER_ID) : null;
+        $sShopId     = isset( $this->oUserConfig->SHOP_ID ) ? trim($this->oUserConfig->SHOP_ID) : null;
+        $sLanguage   = isset( $this->oUserConfig->LANGUAGE ) ? trim($this->oUserConfig->LANGUAGE) : null;
+        $sSecret     = isset( $this->oUserConfig->SECRET ) ? trim($this->oUserConfig->SECRET) : null;
 
         //If not throw the InvalidArgumentException exception!
-        if (empty($sCustomerId) || is_null($sCustomerId)) {
+        if (empty( $sCustomerId ) || is_null($sCustomerId)) {
             throw new WirecardCEE_QPay_Exception_InvalidArgumentException(sprintf('CUSTOMER_ID passed to %s is invalid.',
                 __METHOD__));
         }
 
-        if (empty($sLanguage) || is_null($sLanguage)) {
+        if (empty( $sLanguage ) || is_null($sLanguage)) {
             throw new WirecardCEE_QPay_Exception_InvalidArgumentException(sprintf('LANGUAGE passed to %s is invalid.',
                 __METHOD__));
         }
 
-        if (empty($sSecret) || is_null($sSecret)) {
+        if (empty( $sSecret ) || is_null($sSecret)) {
             throw new WirecardCEE_QPay_Exception_InvalidArgumentException(sprintf('SECRET passed to %s is invalid.',
                 __METHOD__));
         }
 
-        // we're using md5 for hash-ing
+        // we're using hmac sha512 for hash-ing
         WirecardCEE_Stdlib_Fingerprint::setHashAlgorithm(WirecardCEE_Stdlib_Fingerprint::HASH_ALGORITHM_HMAC_SHA512);
 
         //everything ok! let's set the fields
@@ -362,7 +356,7 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
         if ($aMissingFields->count()) {
             throw new WirecardCEE_QPay_Exception_InvalidArgumentException(sprintf(
                 "Could not initiate QPay! Missing mandatory field(s): %s; thrown in %s; Please use the appropriate setter functions to set missing fields.",
-                implode(", ", (array)$aMissingFields), __METHOD__));
+                implode(", ", (array) $aMissingFields), __METHOD__));
         }
 
         //this is where the magic happens! We send our data to response object and hopefully get back the response object with 'redirectUrl'.
@@ -377,12 +371,14 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * Setter for amount
      *
      * @param int|float $amount
+     *
      * @return WirecardCEE_QPay_FrontendClient
      * @formatter:on
      */
     public function setAmount($amount)
     {
         $this->_setField(self::AMOUNT, $amount);
+
         return $this;
     }
 
@@ -390,11 +386,13 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * Setter for currency
      *
      * @param string $sCurrency
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setCurrency($sCurrency)
     {
         $this->_setField(self::CURRENCY, $sCurrency);
+
         return $this;
     }
 
@@ -402,11 +400,13 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * Setter for payment type
      *
      * @param string $sPaymentType
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setPaymentType($sPaymentType)
     {
         $this->_setField(self::PAYMENT_TYPE, $sPaymentType);
+
         return $this;
     }
 
@@ -414,11 +414,13 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * Setter for order description
      *
      * @param string $sDesc
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setOrderDescription($sDesc)
     {
         $this->_setField(self::ORDER_DESCRIPTION, $sDesc);
+
         return $this;
     }
 
@@ -426,11 +428,13 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * Setter for success url
      *
      * @param string $sUrl
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setSuccessUrl($sUrl)
     {
         $this->_setField(self::SUCCESS_URL, $sUrl);
+
         return $this;
     }
 
@@ -438,11 +442,13 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * Setter for cancel url
      *
      * @param string $sUrl
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setCancelUrl($sUrl)
     {
         $this->_setField(self::CANCEL_URL, $sUrl);
+
         return $this;
     }
 
@@ -450,11 +456,13 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * Setter for failure url
      *
      * @param string $sUrl
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setFailureUrl($sUrl)
     {
         $this->_setField(self::FAILURE_URL, $sUrl);
+
         return $this;
     }
 
@@ -462,11 +470,13 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * Setter for service url
      *
      * @param string $sUrl
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setServiceUrl($sUrl)
     {
         $this->_setField(self::SERVICE_URL, $sUrl);
+
         return $this;
     }
 
@@ -474,11 +484,13 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * setter for the QPay parameter pendingUrl
      *
      * @param string $pendingUrl
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setPendingUrl($pendingUrl)
     {
         $this->_setField(self::PENDING_URL, $pendingUrl);
+
         return $this;
     }
 
@@ -487,11 +499,13 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * Only applicable if payment type is EPS or IDL (iDeal)
      *
      * @param string $financialInstitution
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setFinancialInstitution($financialInstitution)
     {
         $this->_setField(self::FINANCIAL_INSTITUTION, $financialInstitution);
+
         return $this;
     }
 
@@ -499,11 +513,13 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * setter for the qpay parameter displaytext
      *
      * @param string $displayText
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setDisplayText($displayText)
     {
         $this->_setField(self::DISPLAY_TEXT, $displayText);
+
         return $this;
     }
 
@@ -511,11 +527,13 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * setter for the qpay parameter confirmUrl
      *
      * @param string $confirmUrl
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setConfirmUrl($confirmUrl)
     {
         $this->_setField(self::CONFIRM_URL, $confirmUrl);
+
         return $this;
     }
 
@@ -523,11 +541,13 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * setter for the qpay parameter imageUrl
      *
      * @param string $imageUrl
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setImageUrl($imageUrl)
     {
         $this->_setField(self::IMAGE_URL, $imageUrl);
+
         return $this;
     }
 
@@ -535,11 +555,13 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * setter for the qpay parameter windowName
      *
      * @param string $windowName
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setWindowName($windowName)
     {
         $this->_requestData[self::WINDOW_NAME] = $windowName;
+
         return $this;
     }
 
@@ -547,6 +569,7 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * setter for the qpay parameter duplicateRequestCheck
      *
      * @param bool $duplicateRequestCheck
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setDuplicateRequestCheck($duplicateRequestCheck)
@@ -554,6 +577,7 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
         if ($duplicateRequestCheck) {
             $this->_setField(self::DUPLICATE_REQUEST_CHECK, self::$BOOL_TRUE);
         }
+
         return $this;
     }
 
@@ -567,6 +591,7 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
     public function setCustomerStatement($customerStatement)
     {
         $this->_setField(self::CUSTOMER_STATEMENT, $customerStatement);
+
         return $this;
     }
 
@@ -637,23 +662,27 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * setter for the qpay parameter orderReference
      *
      * @param string $orderReference
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setOrderReference($orderReference)
     {
         $this->_setField(self::ORDER_REFERENCE, $orderReference);
+
         return $this;
     }
 
     /**
      * setter for the qpay paramter autoDeposit
      *
-     * @param string $autoDeposit
+     * @param string $bBool
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setAutoDeposit($bBool)
     {
-        $this->_setField(self::AUTO_DEPOSIT, ($bBool) ? self::$BOOL_TRUE : self::$BOOL_FALSE);
+        $this->_setField(self::AUTO_DEPOSIT, ( $bBool ) ? self::$BOOL_TRUE : self::$BOOL_FALSE);
+
         return $this;
     }
 
@@ -661,6 +690,7 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * setter for the qpay parameter maxRetries
      *
      * @param string $maxRetries
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setMaxRetries($maxRetries)
@@ -669,6 +699,7 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
         if ($maxRetries >= 0) {
             $this->_setField(self::MAX_RETRIES, $maxRetries);
         }
+
         return $this;
     }
 
@@ -681,13 +712,14 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
     public function createConsumerMerchantCrmId($userEmail)
     {
         $this->_setField(self::CONSUMER_MERCHANT_CRM_ID, md5($userEmail));
+
         return $this;
     }
 
     /**
      * setter for the consumer shipping profile
      *
-     * @param string $shippingProfile
+     * @param $shippingProfile
      * @return $this
      */
     public function setShippingProfile($shippingProfile)
@@ -700,11 +732,13 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * setter for the qpay parameter orderNumber
      *
      * @param int $orderNumber
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setOrderNumber($orderNumber)
     {
         $this->_setField(self::ORDER_NUMBER, $orderNumber);
+
         return $this;
     }
 
@@ -712,11 +746,13 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * setter for the qpay parameter confirmMail
      *
      * @param string $confirmMail
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setConfirmMail($confirmMail)
     {
         $this->_setField(self::CONFIRM_MAIL, $confirmMail);
+
         return $this;
     }
 
@@ -751,7 +787,8 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
     /**
      * adds given consumerData to qpay request
      *
-     * @param WirecardCEE_QPay_Request_Initiation_ConsumerData $consumerData
+     * @param WirecardCEE_Stdlib_ConsumerData $consumerData
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setConsumerData(WirecardCEE_Stdlib_ConsumerData $consumerData)
@@ -760,6 +797,7 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
         foreach ($consumerData->getData() as $key => $value) {
             $this->_setField($key, $value);
         }
+
         return $this;
     }
 
@@ -777,12 +815,14 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
 
     /**
      *
-     * @param string $plVersion
+     * @param string $sPluginVersion
+     *
      * @return WirecardCEE_QPay_FrontendClient
      */
     public function setPluginVersion($sPluginVersion)
     {
         $this->_setField(self::PLUGIN_VERSION, $sPluginVersion);
+
         return $this;
     }
 
@@ -790,6 +830,7 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * Getter for response object
      *
      * @return WirecardCEE_QPay_Response_Initiation
+     * @throws Exception
      */
     public function getResponse()
     {
@@ -804,8 +845,8 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
      * Magic method for setting request parameters.
      * may be used for additional parameters
      *
-     * @param type $name
-     * @param type $value
+     * @param string $name
+     * @param mixed $value
      */
     public function __set($name, $value)
     {
@@ -815,13 +856,14 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
     /**
      * generates an base64 encoded pluginVersion string from the given shop-
      * plugin- and library-versions
-     * QPAY Client Libary and Zend Framework Version will be added automatically
+     * QPAY Client Libary Version will be added automatically
      *
      * @param string $shopName
      * @param string $shopVersion
      * @param string $pluginName
      * @param string $pluginVersion
      * @param array|null $libraries
+     *
      * @return string base64 encoded pluginVersion
      */
     public static function generatePluginVersion(
@@ -832,7 +874,6 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
         $libraries = null
     ) {
         $libraryString = self::_getQPayClientVersionString();
-        $libraryString .= ', ' . self::_getZendFrameworkVersionString();
         if (is_array($libraries)) {
             foreach ($libraries as $libName => $libVersion) {
                 $libraryString .= ", {$libName} {$libVersion}";
@@ -858,7 +899,7 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
     {
         // if consumer data is not an instance of WirecardCEE_Stdlib_ConsumerData
         // or if it's empty don't even bother with any checkings...
-        if (empty($this->oConsumerData) || !$this->oConsumerData instanceof WirecardCEE_Stdlib_ConsumerData) {
+        if (empty( $this->oConsumerData ) || !$this->oConsumerData instanceof WirecardCEE_Stdlib_ConsumerData) {
             return false;
         }
 
@@ -872,8 +913,8 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
         $aConsumerData = $this->oConsumerData->getData();
 
         // check
-        return (isset($aConsumerData[$sConsumerIpAddressField]) && !empty($aConsumerData[$sConsumerIpAddressField])) &&
-        (isset($aConsumerData[$sConsumerUserAgentField]) && !empty($aConsumerData[$sConsumerUserAgentField]));
+        return ( isset( $aConsumerData[$sConsumerIpAddressField] ) && !empty( $aConsumerData[$sConsumerIpAddressField] ) ) &&
+               ( isset( $aConsumerData[$sConsumerUserAgentField] ) && !empty( $aConsumerData[$sConsumerUserAgentField] ) );
     }
 
     /**
@@ -899,22 +940,8 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
     }
 
     /**
-     * Getter for Zend Framework Versionstring
-     *
-     * @access private
-     * @return string
-     */
-    protected static function _getZendFrameworkVersionString()
-    {
-        if (!class_exists('Zend_Version', false)) {
-            require_once('Zend/Version.php');
-        }
-
-        return self::$FRAMEWORK_NAME . ' ' . Zend_Version::VERSION;
-    }
-
-    /**
      * Returns the user agent string
+     *
      * @return string
      */
     protected function _getUserAgent()

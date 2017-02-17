@@ -31,6 +31,7 @@
  */
 
 
+
 /**
  * @name WirecardCEE_Stdlib_Return_ReturnAbstract
  * @category WirecardCEE
@@ -42,20 +43,23 @@ abstract class WirecardCEE_Stdlib_Return_ReturnAbstract
 {
     /**
      * Return data holder
-     * @var Array
+     *
+     * @var array
      * @internal
      */
     protected $_returnData = Array();
 
     /**
      * Validators holder
-     * @var Zend_Validate_Abstract[]
+     *
+     * @var WirecardCEE_Stdlib_Validate_ValidateAbstract[]
      * @internal
      */
     protected $_validators = Array();
 
     /**
      * State
+     *
      * @var string
      * @internal
      */
@@ -64,7 +68,7 @@ abstract class WirecardCEE_Stdlib_Return_ReturnAbstract
     /**
      * Contructor
      *
-     * @param Array $returnData
+     * @param array $returnData
      */
     public function __construct($returnData)
     {
@@ -74,7 +78,8 @@ abstract class WirecardCEE_Stdlib_Return_ReturnAbstract
     /**
      * Validate function
      *
-     * @return boolean
+     * @return bool
+     * @throws Exception
      */
     public function validate()
     {
@@ -88,9 +93,10 @@ abstract class WirecardCEE_Stdlib_Return_ReturnAbstract
         // Iterate thru all the validators and validate every one of them
         foreach ($this->_validators as $param => $aValidator) {
             foreach ($aValidator as $oValidator) {
-                $param = (string)$param;
+                /** @var WirecardCEE_Stdlib_Validate_ValidateAbstract $oValidator */
+                $param = (string) $param;
 
-                if (!isset($this->_returnData[$param])) {
+                if (!isset( $this->_returnData[$param] )) {
                     throw new Exception(sprintf("No key '{$param}' found in \$this->_returnData array. Thrown in %s on line %s.",
                         __METHOD__, __LINE__));
                 }
@@ -101,19 +107,21 @@ abstract class WirecardCEE_Stdlib_Return_ReturnAbstract
             }
         }
 
-        return (bool)$_bValid;
+        return (bool) $_bValid;
     }
 
     /**
      * Adds the validator
      *
-     * @param Zend_Validate_Abstract $oValidator
+     * @param WirecardCEE_Stdlib_Validate_ValidateAbstract $oValidator
      * @param string $param
+     *
      * @return WirecardCEE_Stdlib_Return_ReturnAbstract
      */
-    public function addValidator(Zend_Validate_Abstract $oValidator, $param)
+    public function addValidator(WirecardCEE_Stdlib_Validate_ValidateAbstract $oValidator, $param)
     {
-        $this->_validators[(string)$param][] = $oValidator;
+        $this->_validators[(string) $param][] = $oValidator;
+
         return $this;
     }
 
@@ -124,19 +132,21 @@ abstract class WirecardCEE_Stdlib_Return_ReturnAbstract
      */
     public function getPaymentState()
     {
-        return (string)$this->_state;
+        return (string) $this->_state;
     }
 
     /**
      * magic getter method
      *
      * @param string $name
+     *
      * @return string
      */
     public function __get($name)
     {
-        $name = (string)$name;
-        return (string)array_key_exists($name, $this->_returnData) ? $this->_returnData[$name] : '';
+        $name = (string) $name;
+
+        return (string) array_key_exists($name, $this->_returnData) ? $this->_returnData[$name] : '';
     }
 
     /**

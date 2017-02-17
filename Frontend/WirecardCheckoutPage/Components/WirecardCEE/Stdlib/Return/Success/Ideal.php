@@ -47,7 +47,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_Ideal extends WirecardCEE_Stdli
      */
     public function getConsumerName()
     {
-        return (string)$this->idealConsumerName;
+        return (string) $this->idealConsumerName;
     }
 
     /**
@@ -57,7 +57,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_Ideal extends WirecardCEE_Stdli
      */
     public function getConsumerCity()
     {
-        return (string)$this->idealConsumerCity;
+        return (string) $this->idealConsumerCity;
     }
 
     /**
@@ -67,6 +67,6 @@ abstract class WirecardCEE_Stdlib_Return_Success_Ideal extends WirecardCEE_Stdli
      */
     public function getConsumerAccountNumber()
     {
-        return (string)$this->idealConsumerAccountNumber;
+        return (string) $this->idealConsumerAccountNumber;
     }
 }

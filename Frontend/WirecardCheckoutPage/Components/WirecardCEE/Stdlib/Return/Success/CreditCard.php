@@ -48,7 +48,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_CreditCard extends WirecardCEE_
      */
     public function getAnonymousPan()
     {
-        return (string)$this->anonymousPan;
+        return (string) $this->anonymousPan;
     }
 
     /**
@@ -58,7 +58,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_CreditCard extends WirecardCEE_
      */
     public function getAuthenticated()
     {
-        return (string)$this->authenticated;
+        return (string) $this->authenticated;
     }
 
     /**
@@ -68,7 +68,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_CreditCard extends WirecardCEE_
      */
     public function getExpiry()
     {
-        return (string)$this->expiry;
+        return (string) $this->expiry;
     }
 
     /**
@@ -78,7 +78,7 @@ abstract class WirecardCEE_Stdlib_Return_Success_CreditCard extends WirecardCEE_
      */
     public function getCardholder()
     {
-        return (string)$this->cardholder;
+        return (string) $this->cardholder;
     }
 
     /**
@@ -88,6 +88,6 @@ abstract class WirecardCEE_Stdlib_Return_Success_CreditCard extends WirecardCEE_
      */
     public function getMaskedPan()
     {
-        return (string)$this->maskedPan;
+        return (string) $this->maskedPan;
     }
 }

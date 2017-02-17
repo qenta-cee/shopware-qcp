@@ -62,6 +62,7 @@ abstract class WirecardCEE_Stdlib_Return_Success extends WirecardCEE_Stdlib_Retu
 
     /**
      * Fingerprintorder field
+     *
      * @var string
      * @internal
      */
@@ -74,11 +75,11 @@ abstract class WirecardCEE_Stdlib_Return_Success extends WirecardCEE_Stdlib_Retu
      * @param string $secret
      */
     public function __construct(
-        Array $returnData,
+        array $returnData,
         $secret,
         $hashAlgo = WirecardCEE_Stdlib_Fingerprint::HASH_ALGORITHM_HMAC_SHA512
     ) {
-        $this->_secret = (string)$secret;
+        $this->_secret = (string) $secret;
         parent::__construct($returnData);
 
         $oFingerprintValidator = new WirecardCEE_Stdlib_Validate_Fingerprint(Array(
@@ -109,7 +110,7 @@ abstract class WirecardCEE_Stdlib_Return_Success extends WirecardCEE_Stdlib_Retu
      */
     public function getCurrency()
     {
-        return (string)$this->currency;
+        return (string) $this->currency;
     }
 
     /**
@@ -119,7 +120,7 @@ abstract class WirecardCEE_Stdlib_Return_Success extends WirecardCEE_Stdlib_Retu
      */
     public function getPaymentType()
     {
-        return (string)$this->paymentType;
+        return (string) $this->paymentType;
     }
 
     /**
@@ -129,7 +130,7 @@ abstract class WirecardCEE_Stdlib_Return_Success extends WirecardCEE_Stdlib_Retu
      */
     public function getFinancialInstitution()
     {
-        return (string)$this->financialInstitution;
+        return (string) $this->financialInstitution;
     }
 
     /**
@@ -139,7 +140,7 @@ abstract class WirecardCEE_Stdlib_Return_Success extends WirecardCEE_Stdlib_Retu
      */
     public function getLanguage()
     {
-        return (string)$this->language;
+        return (string) $this->language;
     }
 
     /**
@@ -189,6 +190,6 @@ abstract class WirecardCEE_Stdlib_Return_Success extends WirecardCEE_Stdlib_Retu
      */
     public function getAvsResponseMessage()
     {
-        return (string)$this->avsResponseMessage;
+        return (string) $this->avsResponseMessage;
     }
 }

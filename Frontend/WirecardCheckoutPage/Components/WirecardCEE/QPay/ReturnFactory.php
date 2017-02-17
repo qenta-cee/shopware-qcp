@@ -43,9 +43,7 @@ class WirecardCEE_QPay_ReturnFactory extends WirecardCEE_Stdlib_ReturnFactoryAbs
     /**
      * no initiation allowed.
      */
-    private function __construct()
-    {
-    }
+    private function __construct() { }
 
     /**
      * creates an Return instance (Cancel, Failure, Success...)

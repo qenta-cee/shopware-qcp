@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Shop System Plugins - Terms of Use
  *
@@ -31,45 +32,22 @@
  */
 
 /**
- * Loader class responsible for autoloading WirecardCEE library classes
- *
- * Autoloader for libraries
+ * Class WirecardCEE_QPay_MobileDetect
+ * 
+ * @method bool isTablet() isTablet($userAgent = null, $httpHeaders = null)
+ * @method bool isMobile() isMobile($userAgent = null, $httpHeaders = null)
  */
-class Shopware_Plugins_Frontend_WirecardCheckoutPage_Components_Loader implements Zend_Loader_Autoloader_Interface
+class WirecardCEE_QPay_MobileDetect
 {
-
-    /**
-     * Prefix for classes which
-     * should be included by this autoloader
-     * @var string
-     */
-    const PREFIX = 'WirecardCEE_';
-
-    public function __construct()
-    {
-        $this->addComponentsPath();
+    public function __construct(
+        array $headers = null,
+        $userAgent = null
+    ) {
+        $this->detector = new Mobile_Detect($headers, $userAgent);
     }
 
-    /**
-     * Add library path to PHP include path
-     */
-    protected function addComponentsPath()
+    public function __call($name, $arguments)
     {
-        set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
-    }
-
-    /**
-     * method used by shopware for autoloading
-     *
-     * @param string $class
-     * @return bool|mixed
-     */
-    public function autoload($class)
-    {
-        if (!preg_match('/^' . self::PREFIX . '/', $class)) {
-            return FALSE;
-        }
-        $fragment = str_replace('_', '/', trim($class, '_'));
-        return include_once(dirname(__FILE__) . '/' . $fragment . '.php');
+        return call_user_func_array(array($this->detector, $name), $arguments);
     }
 }

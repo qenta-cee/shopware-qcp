@@ -45,7 +45,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Basket
             return NULL;
         }
 
-        Shopware()->WirecardCheckoutPage()->getLog()->Info('ID: ' . Shopware()->SessionID());
+        Shopware()->Pluginlogger()->info('WirecardCheckoutPage: ID: ' . Shopware()->SessionID());
         $sql = Shopware()->Db()->select()
             ->from('s_order_basket')
             ->where('sessionID = ?', array(Shopware()->SessionID()));

@@ -31,19 +31,31 @@
  */
 
 
-/**
- * @name WirecardCEE_Stdlib_Return_Cancel
- * @category WirecardCEE
- * @package WirecardCEE_Stdlib
- * @subpackage Return
- * @abstract
- */
-abstract class WirecardCEE_Stdlib_Return_Cancel extends WirecardCEE_Stdlib_Return_ReturnAbstract
+interface WirecardCEE_Stdlib_Validate_Interface
 {
     /**
-     * State
+     * Returns true if and only if $value meets the validation requirements
      *
-     * @var string
+     * If $value fails validation, then this method returns false, and
+     * getMessages() will return an array of messages that explain why the
+     * validation failed.
+     *
+     * @param  mixed $value
+     *
+     * @return boolean
+     * @throws WirecardCEE_Stdlib_Validate_Exception If validation of $value is impossible
      */
-    protected $_state = 'CANCEL';
+    public function isValid($value);
+
+    /**
+     * Returns an array of messages that explain why the most recent isValid()
+     * call returned false. The array keys are validation failure message identifiers,
+     * and the array values are the corresponding human-readable message strings.
+     *
+     * If isValid() was never called or if the most recent isValid() call
+     * returned true, then this method returns an empty array.
+     *
+     * @return array
+     */
+    public function getMessages();
 }

@@ -101,7 +101,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
 
             if($oResponse->hasFailed())
             {
-                Shopware()->WirecardCheckoutPage()->getLog()->Debug(__METHOD__ . ':' . $oResponse->getError());
+                Shopware()->Pluginlogger()->info('WirecardCheckoutPage: '. __METHOD__ . ':' . $oResponse->getError());
                 Shopware()->WirecardCheckoutPage()->wirecard_message = $oResponse->getError();
                 Shopware()->WirecardCheckoutPage()->wirecard_action = 'failure';
                 //if an error occurs we should not show followup page in iframe.
@@ -140,7 +140,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
             Shopware()->Plugins()->Controller()->ViewRenderer()->setNoRender();
 
             $post = $this->Request()->getPost();
-            Shopware()->WirecardCheckoutPage()->getLog()->Debug(__METHOD__ . '--' . __LINE__ . ':' . print_r($post, 1));
+            Shopware()->Pluginlogger()->info('WirecardCheckoutPage: '.__METHOD__ . '--' . __LINE__ . ':' . print_r($post, 1));
 
             $paymentUniqueId = $this->Request()->getParam('wWirecardCheckoutPageId');
             if (Shopware()->WirecardCheckoutPage()->getConfig()->setAsTransactionID() == 'gatewayReferenceNumber') {
@@ -359,7 +359,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
             $update['data'] = serialize($post);
 
         } catch (Exception $e) {
-            Shopware()->WirecardCheckoutPage()->getLog()->Debug(__METHOD__ . '.--' . __LINE__ . ':' . $e->getMessage());
+            Shopware()->Pluginlogger()->info('WirecardCheckoutPage: '.__METHOD__ . '.--' . __LINE__ . ':' . $e->getMessage());
             print WirecardCEE_QPay_ReturnFactory::generateConfirmResponseString(htmlspecialchars($e->getMessage()));
             return;
         }
@@ -382,7 +382,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
             $result->cleared = false;
         }
         $post = $this->Request()->getPost();
-        Shopware()->WirecardCheckoutPage()->getLog()->Debug(__METHOD__ . '--' . __LINE__ . ':' . print_r($post, 1));
+        Shopware()->Pluginlogger()->info('WirecardCheckoutPage: '.__METHOD__ . '--' . __LINE__ . ':' . print_r($post, 1));
 
         try {
             $return = WirecardCEE_QPay_ReturnFactory::getInstance(
@@ -429,7 +429,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                 );
         }
         } catch (Exception $e) {
-            Shopware()->WirecardCheckoutPage()->getLog()->Err(__METHOD__ . ':' . $e->getMessage());
+            Shopware()->Pluginlogger()->error('WirecardCheckoutPage: '.__METHOD__ . ':' . $e->getMessage());
             Shopware()->WirecardCheckoutPage()->wirecard_action = 'failure';
         }
 
@@ -476,10 +476,10 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
         }
 
         $field = Shopware()->WirecardCheckoutPage()->getConfig()->saveResponseTo();
-        Shopware()->WirecardCheckoutPage()->getLog()->Debug('Comment field:' . $field);
+        Shopware()->Pluginlogger()->info('WirecardCheckoutPage: Comment field:' . $field);
         if ($field == 'internalcomment') {
 
-            Shopware()->WirecardCheckoutPage()->getLog()->Debug('Saving internal comment');
+            Shopware()->Pluginlogger()->info('WirecardCheckoutPage: Saving internal comment');
             Shopware()->Db()->update(
                 's_order',
                 array($field => implode("\n", $comments)),
@@ -491,7 +491,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                 ->where('ordernumber = ?', array($orderNumber));
             $orderId = Shopware()->Db()->fetchOne($sql);
 
-            Shopware()->WirecardCheckoutPage()->getLog()->Debug('Saving attribute');
+            Shopware()->Pluginlogger()->info('WirecardCheckoutPage: Saving attribute');
             Shopware()->Db()->update(
                 's_order_attributes',
                 array($field => implode("\n", $comments)),

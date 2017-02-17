@@ -43,12 +43,14 @@ abstract class WirecardCEE_Stdlib_Return_Pending extends WirecardCEE_Stdlib_Retu
 
     /**
      * Secret
+     *
      * @var string
      * @internal
      */
     protected static $SECRET = 'secret';
     /**
      * State: Pending
+     *
      * @var string
      * @internal
      */
@@ -56,6 +58,7 @@ abstract class WirecardCEE_Stdlib_Return_Pending extends WirecardCEE_Stdlib_Retu
 
     /**
      * Fingerprintorder field
+     *
      * @var string
      * @internal
      */
