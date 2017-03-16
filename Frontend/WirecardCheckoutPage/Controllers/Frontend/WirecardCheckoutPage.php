@@ -231,7 +231,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                         Shopware()->Session()->offsetSet('sOrderVariables', $variables);
                     }
                     if (Shopware()->WirecardCheckoutPage()->getConfig()->saveResponseTo()) {
-                        $this->saveComments($return, $sOrderNumber);
+                        $this->saveComments($return, $sOrderVariables['sOrderNumber']);
                     }
                 }
                 else {
@@ -267,7 +267,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                 }
 
                 if (Shopware()->WirecardCheckoutPage()->getConfig()->saveResponseTo()) {
-                    $this->saveComments($return, $sOrderNumber);
+                    $this->saveComments($return, $sOrderVariables['sOrderNumber']);
                 }
 
             }elseif ($return->getPaymentState() === WirecardCEE_QPay_ReturnFactory::STATE_PENDING) {
@@ -320,7 +320,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                         }
                     }
                     if (Shopware()->WirecardCheckoutPage()->getConfig()->saveResponseTo()) {
-                        $this->saveComments($return, $sOrderNumber);
+                        $this->saveComments($return, $sOrderVariables['sOrderNumber']);
                     }
                 }
 
@@ -461,9 +461,11 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
      * @param null $orderNumber
      * @internal param null $transactionId
      */
-    protected function saveComments(WirecardCEE_Stdlib_Return_Success $return = null, $orderNumber = null)
+    protected function saveComments(WirecardCEE_Stdlib_Return_ReturnAbstract $return = null, $orderNumber = null)
     {
         $comments = array();
+        $comments[] = "------- Wirecard Response Data --------";
+        $comments[] = "---------------------------------------";
         $gatewayReferenceNumber ='';
         foreach ($return->getReturned() as $name => $value) {
             if ($name == 'sCoreId' || $name == 'wWirecardCheckoutPageId') {
@@ -474,6 +476,9 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
             }
             $comments[] = sprintf('%s: %s', $name, $value);
         }
+        $comments[] = "---------------------------------------";
+
+
 
         $field = Shopware()->WirecardCheckoutPage()->getConfig()->saveResponseTo();
         Shopware()->Pluginlogger()->info('WirecardCheckoutPage: Comment field:' . $field);
