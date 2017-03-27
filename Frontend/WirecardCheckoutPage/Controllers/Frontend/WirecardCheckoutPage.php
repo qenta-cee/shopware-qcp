@@ -155,7 +155,9 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
             $paymentState = Shopware()->WirecardCheckoutPage()->getPaymentStatusId($return->getPaymentState());
 
             if (!$return->validate()) {
-                throw new WirecardCEE_QPay_Exception_InvalidResponseException(json_encode($return->getMessage()));
+                Shopware()->Pluginlogger()->info('WirecardCheckoutPage: '. __METHOD__ . ':Validation error: invalid response');
+                print WirecardCEE_QPay_ReturnFactory::generateConfirmResponseString('Validation error: invalid response');
+                return;
             }
 
             $oOrder = $this->getOrderByUniqueId($paymentUniqueId);
@@ -327,11 +329,12 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
             }else {
                 $sOrderVariables = Shopware()->Session()->sOrderVariables;
                 $existingOrder = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findByNumber($sOrderVariables['sOrderNumber']);
+                $status = $existingOrder[0]->getPaymentStatus();
 
                 if ($existingOrder[0] instanceof \Shopware\Models\Order\Order) {
                     $sOrder = array(
                         'ordernumber' => $sOrderVariables['sOrderNumber'],
-                        'status_description' => $return->getPaymentState()->getName()
+                        'status_description' => $status->getName()
                     );
 
                     $pendingContext = array(
