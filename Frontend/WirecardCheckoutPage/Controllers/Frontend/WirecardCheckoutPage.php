@@ -89,7 +89,9 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
         );
         $bUseIframe = (Shopware()->WirecardCheckoutPage()->getConfig()->use_iframe == 1);
 
-        if(isset($_SESSION["wcp_redirect_url"])) {
+	    $sOrderVariables = Shopware()->Session()->sOrderVariables;
+	    $existingOrder = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findByNumber($sOrderVariables['sOrderNumber']);
+	    if ($existingOrder[0] instanceof \Shopware\Models\Order\Order && isset($_SESSION["wcp_redirect_url"])) {
             $sRedirectUrl = $_SESSION["wcp_redirect_url"];
             unset($_SESSION["wcp_redirect_url"]);
         } else {
