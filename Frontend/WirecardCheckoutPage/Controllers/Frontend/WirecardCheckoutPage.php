@@ -331,9 +331,9 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
             }else {
                 $sOrderVariables = Shopware()->Session()->sOrderVariables;
                 $existingOrder = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findByNumber($sOrderVariables['sOrderNumber']);
-                $status = $existingOrder[0]->getPaymentStatus();
 
                 if ($existingOrder[0] instanceof \Shopware\Models\Order\Order) {
+	                $status = $existingOrder[0]->getPaymentStatus();
                     $sOrder = array(
                         'ordernumber' => $sOrderVariables['sOrderNumber'],
                         'status_description' => $status->getName()
