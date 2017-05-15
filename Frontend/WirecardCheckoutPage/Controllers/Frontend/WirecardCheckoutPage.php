@@ -335,13 +335,13 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                 if ($existingOrder[0] instanceof \Shopware\Models\Order\Order) {
 	                $status = $existingOrder[0]->getPaymentStatus();
 	                // No orderupdate for exisiting success order
-	                if ($status === WirecardCEE_QPay_ReturnFactory::STATE_SUCCESS) {
+	                if ($status === Shopware()->WirecardCheckoutPage()->getPaymentStatusId(WirecardCEE_QPay_ReturnFactory::STATE_SUCCESS)) {
 		                Shopware()->Pluginlogger()->info('WirecardCheckoutPage: '. __METHOD__ . ': Existing order with status SUCCESS can not be overwritten!');
 		                print WirecardCEE_QPay_ReturnFactory::generateConfirmResponseString('Can not overwrite order with SUCCESS state');
 		                return;
 	                }
 	                // send status mail for existing pending order
-	                if ($status === WirecardCEE_QPay_ReturnFactory::STATE_PENDING) {
+	                if ($status === Shopware()->WirecardCheckoutPage()->getPaymentStatusId(WirecardCEE_QPay_ReturnFactory::STATE_PENDING)) {
 		                $sOrder = array(
 			                'ordernumber'        => $sOrderVariables['sOrderNumber'],
 			                'status_description' => $status->getName()
