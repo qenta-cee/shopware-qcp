@@ -334,28 +334,37 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
 
                 if ($existingOrder[0] instanceof \Shopware\Models\Order\Order) {
 	                $status = $existingOrder[0]->getPaymentStatus();
-                    $sOrder = array(
-                        'ordernumber' => $sOrderVariables['sOrderNumber'],
-                        'status_description' => $status->getName()
-                    );
+	                // No orderupdate for exisiting success order
+	                if ($status === WirecardCEE_QPay_ReturnFactory::STATE_SUCCESS) {
+		                Shopware()->Pluginlogger()->info('WirecardCheckoutPage: '. __METHOD__ . ': Existing order with status SUCCESS can not be overwritten!');
+		                print WirecardCEE_QPay_ReturnFactory::generateConfirmResponseString('Can not overwrite order with SUCCESS state');
+		                return;
+	                }
+	                // send status mail for existing pending order
+	                if ($status === WirecardCEE_QPay_ReturnFactory::STATE_PENDING) {
+		                $sOrder = array(
+			                'ordernumber'        => $sOrderVariables['sOrderNumber'],
+			                'status_description' => $status->getName()
+		                );
 
-                    $pendingContext = array(
-                        'sUser' => $sUser,
-                        'sOrder' => $sOrder
-                    );
+		                $pendingContext = array(
+			                'sUser'  => $sUser,
+			                'sOrder' => $sOrder
+		                );
 
-                    // Sending information mail for failed order after pending
-                    $mail = Shopware()->TemplateMail()->createMail('sORDERSTATEMAIL4', $pendingContext);
-                    $mail->addTo($userData['additional']['user']['email']);
+		                // Sending information mail for failed order after pending
+		                $mail = Shopware()->TemplateMail()->createMail( 'sORDERSTATEMAIL4', $pendingContext );
+		                $mail->addTo( $userData['additional']['user']['email'] );
 
-                    try {
-                        $mail->send();
-                    } catch (\Exception $e) {
-                        $variables = Shopware()->Session()->offsetGet('sOrderVariables');
-                        $variables['sOrderNumber'] = $context['sOrderNumber'];
-                        $variables['confirmMailDeliveryFailed'] = true;
-                        Shopware()->Session()->offsetSet('sOrderVariables', $variables);
-                    }
+		                try {
+			                $mail->send();
+		                } catch ( \Exception $e ) {
+			                $variables                              = Shopware()->Session()->offsetGet( 'sOrderVariables' );
+			                $variables['sOrderNumber']              = $context['sOrderNumber'];
+			                $variables['confirmMailDeliveryFailed'] = true;
+			                Shopware()->Session()->offsetSet( 'sOrderVariables', $variables );
+		                }
+	                }
 
                     Shopware()->Models()->remove($existingOrder[0]);
                     Shopware()->Models()->flush();
