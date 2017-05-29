@@ -201,6 +201,7 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
     const CONSUMER_MERCHANT_CRM_ID = 'consumerMerchantCrmId';
 
     /**
+     * Field name: shippingProfile
      *
      * @var string
      */
@@ -716,17 +717,6 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
         return $this;
     }
 
-    /**
-     * setter for the consumer shipping profile
-     *
-     * @param $shippingProfile
-     * @return $this
-     */
-    public function setShippingProfile($shippingProfile)
-    {
-        $this->_setField(self::SHIPPING_PROFILE, $shippingProfile);
-        return $this;
-    }
 
     /**
      * setter for the qpay parameter orderNumber
@@ -824,6 +814,11 @@ class WirecardCEE_QPay_FrontendClient extends WirecardCEE_Stdlib_Client_ClientAb
         $this->_setField(self::PLUGIN_VERSION, $sPluginVersion);
 
         return $this;
+    }
+
+    public function setShippingProfile($shippingProfile)
+    {
+        $this->_setField(self::SHIPPING_PROFILE, $shippingProfile);
     }
 
     /**

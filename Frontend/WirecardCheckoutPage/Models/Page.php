@@ -91,9 +91,11 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
                         ->setConfirmUrl($confimUrl)
                         ->setDisplayText($confimUrl)
                         ->setConsumerData($this->getConsumerData($paymentType))
-                        ->createConsumerMerchantCrmId($email)
-                        ->setShippingProfile($shippingProfile);
+                        ->createConsumerMerchantCrmId($email);
 
+        if ($paymentType == \WirecardCEE_QPay_PaymentType::MASTERPASS) {
+            $oFrontendClient->setShippingProfile('NO_SHIPPING');
+        }
         if (Shopware()->WirecardCheckoutPage()->getConfig()->SEND_BASKET_DATA) {
             $oFrontendClient->setBasket($this->getShoppingBasket());
         }
