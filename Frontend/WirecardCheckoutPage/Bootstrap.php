@@ -91,15 +91,20 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getInfo()
     {
+        $image = dirname(__FILE__) . '/wirecard-logo.png';
+        $imageData = base64_encode(file_get_contents($image));
+
+        $src = 'data: '.mime_content_type($image).';base64,'.$imageData;
+
         return array(
             'version' => $this->getVersion(),
-            'autor' => 'Wirecard Central Eastern Europe GmbH',
-            'copyright' => 'Wirecard Central Eastern Europe GmbH',
+            'autor' => 'Wirecard',
+            'copyright' => 'Wirecard',
             'label' => $this->getLabel(),
             'support' => 'http://www.wirecard.at/en/get-in-contact/',
             'link' => 'http://www.wirecard.at',
-            'description' => '<div style="line-height: 1.6em"><h1>Wirecard Checkout Page</h1><p>'
-                . file_get_contents(dirname(__FILE__) . '/info.txt') . '</p>'
+            'description' => '<img src="'.$src.'" /><div style="line-height: 1.6em"><h3>WIRECARD - YOUR FULL SERVICE PAYMENT PROVIDER - COMPREHENSIVE SOLUTIONS FROM ONE SINGLE SOURCE</h3>'
+                . '<p>' . file_get_contents(dirname(__FILE__) . '/info.txt') . '</p></div>'
         );
     }
 
