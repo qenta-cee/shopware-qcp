@@ -342,14 +342,15 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                         return;
                     } else if ($existingOrder[0] instanceof \Shopware\Models\Order\Order) {
                         $status = $existingOrder[0]->getPaymentStatus();
-                        // save existing order for failed payment
-                        $sOrderNumber = $this->savePaymentStatus(
-                            $transactionId,
-                            $paymentUniqueId,
-                            $paymentState,
-                            false
-                        );
                         if ($status->getId() === Shopware()->WirecardCheckoutPage()->getPaymentStatusId(WirecardCEE_QPay_ReturnFactory::STATE_PENDING)) {
+                            // save existing order for failed payment
+                            $sOrderNumber = $this->savePaymentStatus(
+                                $transactionId,
+                                $paymentUniqueId,
+                                $paymentState,
+                                false
+                            );
+
                             $sOrder = array(
                                 'ordernumber'        => $sOrderVariables['sOrderNumber'],
                                 'status_description' => $status->getName()
