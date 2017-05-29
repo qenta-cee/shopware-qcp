@@ -53,20 +53,19 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
 
         'CCARD-MOTO' => array(
             'name' => 'ccard-moto',
-            'description' => 'Wirecard Kreditkarte (Backoffice)',
+            'description' => 'Wirecard Kreditkarte - Post / Telefonbestellung',
             'template' => '',
             'call' => WirecardCEE_QPay_PaymentType::CCARD_MOTO,
-            'translation' => Array('description' => 'Wirecard Credit Card (backoffice)', 'additionalDescription' => '')
+            'translation' => Array('description' => 'Wirecard Credit Card - Mail Order and Telephone Order', 'additionalDescription' => '')
         ),
 
-        //Masterpass disabled because of compatibility issues with WCS plugin
-        /*'MASTERPASS' => array(
+        'MASTERPASS' => array(
             'name' => 'masterpass',
             'description' => 'Wirecard Masterpass',
             'template' => '',
             'call' => WirecardCEE_QPay_PaymentType::MASTERPASS,
             'translation' => Array('description' => 'Wirecard Masterpass', 'additionalDescription' => '')
-        ),*/
+        ),
 
         'EPS' => array(
             'name' => 'eps',
@@ -92,17 +91,17 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
         ),
         'SOFORTUEBERWEISUNG' => array(
             'name' => 'sofortueberweisung',
-            'description' => 'Wirecard sofort&uuml;berweisung (PIN/TAN)',
+            'description' => 'Wirecard SOFORT &Uuml;berweisung',
             'template' => '',
             'call' => WirecardCEE_QPay_PaymentType::SOFORTUEBERWEISUNG,
-            'translation' => Array('description' => 'Wirecard sofortbanking (PIN/TAN)', 'additionalDescription' => '')
+            'translation' => Array('description' => 'Wirecard SOFORT banking', 'additionalDescription' => '')
         ),
         'BANCONTACT_MISTERCASH' => array(
             'name' => 'bancontact_mistercash',
-            'description' => 'Wirecard Bancontact/Mister Cash',
+            'description' => 'Wirecard Bancontact',
             'template' => '',
             'call' => WirecardCEE_QPay_PaymentType::BMC,
-            'translation' => Array('description' => 'Wirecard Bancontact/Mister Cash', 'additionalDescription' => '')
+            'translation' => Array('description' => 'Wirecard Bancontact', 'additionalDescription' => '')
         ),
         'PRZELEWY24' => array(
             'name' => 'przelewy24',
@@ -130,21 +129,14 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
             'description' => 'Wirecard paybox',
             'template' => '',
             'call' => WirecardCEE_QPay_PaymentType::PBX,
-            'translation' => Array('description' => 'Wirecard Mobile Phone Invoicing', 'additionalDescription' => '')
+            'translation' => Array('description' => 'Wirecard paybox', 'additionalDescription' => '')
         ),
         'PSC' => array(
             'name' => 'psc',
-            'description' => 'Wirecard paysafecard / Cash-Ticket',
+            'description' => 'Wirecard paysafecard',
             'template' => '',
             'call' => WirecardCEE_QPay_PaymentType::PSC,
-            'translation' => Array('description' => 'Wirecard paysafecard / Cash-Ticket', 'additionalDescription' => '')
-        ),
-        'QUICK' => array(
-            'name' => 'quick',
-            'description' => 'Wirecard @Quick',
-            'template' => '',
-            'call' => WirecardCEE_QPay_PaymentType::QUICK,
-            'translation' => Array('description' => 'Wirecard @Quick', 'additionalDescription' => '')
+            'translation' => Array('description' => 'Wirecard paysafecard', 'additionalDescription' => '')
         ),
         'PAYPAL' => array(
             'name' => 'paypal',
@@ -152,13 +144,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
             'template' => '',
             'call' => WirecardCEE_QPay_PaymentType::PAYPAL,
             'translation' => Array('description' => 'Wirecard PayPal', 'additionalDescription' => '')
-        ),
-        'ELV' => array(
-            'name' => 'elv',
-            'description' => 'Wirecard Lastschriftverfahren',
-            'template' => '',
-            'call' => WirecardCEE_QPay_PaymentType::ELV,
-            'translation' => Array('description' => 'Wirecard Direct Debit', 'additionalDescription' => '')
         ),
         'SEPA-DD' => array(
             'name' => 'sepa-dd',
@@ -169,31 +154,17 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
         ),
         'INVOICE' => array(
             'name' => 'invoice',
-            'description' => 'Wirecard Rechnung',
+            'description' => 'Wirecard Kauf auf Rechnung',
             'template' => 'wcp_invoice.tpl',
             'call' => WirecardCEE_QPay_PaymentType::INVOICE,
             'translation' => Array('description' => 'Wirecard Invoice', 'additionalDescription' => '')
         ),
         'INSTALLMENT' => array(
             'name' => 'installment',
-            'description' => 'Wirecard Ratenzahlung',
+            'description' => 'Wirecard Kauf auf Raten',
             'template' => 'wcp_installment.tpl',
             'call' => WirecardCEE_QPay_PaymentType::INSTALLMENT,
             'translation' => Array('description' => 'Wirecard Installment', 'additionalDescription' => '')
-        ),
-        'MPASS' => array(
-            'name' => 'mpass',
-            'description' => 'Wirecard mpass',
-            'template' => '',
-            'call' => WirecardCEE_QPay_PaymentType::MPASS,
-            'translation' => Array('description' => 'Wirecard mpass', 'additionalDescription' => '')
-        ),
-        'SKRILLDIRECT' => array(
-            'name' => 'skrilldirect',
-            'description' => 'Wirecard Skrill Direct',
-            'template' => '',
-            'call' => WirecardCEE_QPay_PaymentType::SKRILLDIRECT,
-            'translation' => Array('description' => 'Wirecard Skrill Direct', 'additionalDescription' => '')
         ),
         'SKRILLWALLET' => array(
             'name' => 'skrillwallet',

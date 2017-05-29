@@ -177,6 +177,22 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
             $em->flush();
         }
 
+        if (version_compare($version, '1.4.4', '<=')) {
+            //remove deprecated paymenttypes
+            Shopware()->Db()->delete('s_core_paymentmeans', 'name = "wcp_quick"');
+            Shopware()->Db()->delete('s_core_paymentmeans', 'name = "wcp_elv"');
+            Shopware()->Db()->delete('s_core_paymentmeans', 'name = "wcp_mpass"');
+            Shopware()->Db()->delete('s_core_paymentmeans', 'name = "wcp_skrilldirect"');
+            //removing unused restore basket
+            $em = $this->get('models');
+            $form = $this->Form();
+            $restore_basket = $form->getElement('RESTORE_BASKET');
+            if ($restore_basket !== null) {
+                $em->remove($restore_basket);
+            }
+            $em->flush();
+        }
+
         return $this->install();
     }
 
