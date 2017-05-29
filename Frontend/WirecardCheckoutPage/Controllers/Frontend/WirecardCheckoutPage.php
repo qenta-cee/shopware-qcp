@@ -342,8 +342,14 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                         return;
                     } else if ($existingOrder[0] instanceof \Shopware\Models\Order\Order) {
                         $status = $existingOrder[0]->getPaymentStatus();
-                        // No orderupdate for exisiting success order
-                        if ($status === Shopware()->WirecardCheckoutPage()->getPaymentStatusId(WirecardCEE_QPay_ReturnFactory::STATE_PENDING)) {
+                        // save existing order for failed payment
+                        $sOrderNumber = $this->savePaymentStatus(
+                            $transactionId,
+                            $paymentUniqueId,
+                            $paymentState,
+                            false
+                        );
+                        if ($status->getId() === Shopware()->WirecardCheckoutPage()->getPaymentStatusId(WirecardCEE_QPay_ReturnFactory::STATE_PENDING)) {
                             $sOrder = array(
                                 'ordernumber'        => $sOrderVariables['sOrderNumber'],
                                 'status_description' => $status->getName()
@@ -367,9 +373,6 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                                 Shopware()->Session()->offsetSet('sOrderVariables', $variables);
                             }
                         }
-
-                        Shopware()->Models()->remove($existingOrder[0]);
-                        Shopware()->Models()->flush();
                     }
                     $errors = array();
                     foreach ( $return->getErrors() as $error ) {
@@ -379,6 +382,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
 
                     break;
                 case WirecardCEE_QPay_ReturnFactory::STATE_CANCEL:
+                    break;
                 default:
             }
             $update['data'] = serialize($post);
