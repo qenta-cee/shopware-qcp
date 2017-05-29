@@ -41,10 +41,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Basket
      */
     public function getBasket()
     {
-        if (FALSE == Shopware()->WirecardCheckoutPage()->Config()->restoreBasket()) {
-            return NULL;
-        }
-
         Shopware()->Pluginlogger()->info('WirecardCheckoutPage: ID: ' . Shopware()->SessionID());
         $sql = Shopware()->Db()->select()
             ->from('s_order_basket')
@@ -64,16 +60,13 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Basket
     }
 
     /**
-     * Restore basket if it's enabled in the configuration
+     * Restore basket
      *
      * @param array $basket
      * @return bool
      */
     public function setBasket($basket = array())
     {
-        if (FALSE == Shopware()->WirecardCheckoutPage()->Config()->restoreBasket()) {
-            return FALSE;
-        }
         Shopware()->Db()->delete('s_order_basket', 'sessionID = "' . Shopware()->SessionID() . '"');
         foreach ($basket as $row) {
             Shopware()->Db()->insert('s_order_basket', $row);

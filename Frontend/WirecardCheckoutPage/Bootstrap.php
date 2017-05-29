@@ -250,20 +250,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
 
         $form->setElement(
             'checkbox',
-            'RESTORE_BASKET',
-            array(
-                'label' => 'Warenkorb wiederherstellen',
-                'value' => 0,
-                'description' => 'Falls "Ja" ausgewählt ist, wird der ursprüngliche Warenkorbinhalt wiederhergestellt, wenn der Konsument diesen während des Bezahlprozesses ändert. Falls "Nein" ausgewählt ist, wird die Bestellung nicht durchgeführt und auf den Status "Klärung notwedig" gesetzt.',
-                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
-                'required' => false,
-                'order' => ++$i
-            )
-        );
-
-
-        $form->setElement(
-            'checkbox',
             'CONFIRM_MAIL',
             array(
                 'label' => 'Benachrichtigungsmail',
@@ -475,10 +461,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 'IMAGE_URL' => Array(
                     'label' => 'URL to image on payment page',
                     'description' => 'URL to an image/logo which is displayed during the payment process in Wirecard Checkout Page (95x65 px preferred)'
-                ),
-                'RESTORE_BASKET' => Array(
-                    'label' => 'Restore basket',
-                    'description' => 'If set to "Yes", the original content of the shopping basket is restored if your consumer changed the basket during the payment process. If set to "No", the order is not executed and set to a clarification state.'
                 ),
                 'CONFIRM_MAIL' => Array(
                     'label' => 'Notification e-mail',
