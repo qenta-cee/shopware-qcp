@@ -78,8 +78,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
     {
         $oFrontendClient = $this->getFrontendClient(Shopware()->WirecardCheckoutPage()->getConfig());
         $email = (string) Shopware()->WirecardCheckoutPage()->getUser('user')->email;
-        // default setting, shipping address always set in Shopware checkout
-        $shippingProfile = 'NO_SHIPPING';
 
         $oFrontendClient->setPaymentType($paymentType)
                         ->setAmount($amount)
