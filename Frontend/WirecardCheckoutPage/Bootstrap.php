@@ -359,6 +359,19 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
 
         $form->setElement(
             'checkbox',
+            'SEND_BASKET_DATA',
+            array(
+                'label' => 'Warenkorbdaten des Konsumenten mitsenden',
+                'value' => 0,
+                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
+                'description' => 'Weiterleitung des Warenkorbs des Kunden an den Finanzdienstleister.',
+                'required' => false,
+                'order' => ++$i
+            )
+        );
+
+        $form->setElement(
+            'checkbox',
             'USE_IFRAME',
             array(
                 'label' => 'iFrame verwenden',
@@ -505,6 +518,10 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 'SEND_ADDITIONAL_DATA' => Array(
                     'label' => 'Forward consumer data',
                     'description' => 'Forwarding shipping and billing data about your consumer to the respective financial service provider.'
+                ),
+                'SEND_BASKET_DATA' => Array(
+                    'label' => 'Forward basket data',
+                    'description' => 'Forwarding basket data to the respective financial service provider.'
                 ),
                 'USE_IFRAME' => Array(
                     'label' => 'Use iframe',
