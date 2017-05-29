@@ -101,11 +101,11 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
             $oFrontendClient->setDuplicateRequestCheck(true);
         }
 
-        $oFrontendClient->generateCustomerStatement(
-            Shopware()->WirecardCheckoutPage()->getConfig()->getShopname(),
-            Shopware()->WirecardCheckoutPage()->wWirecardCheckoutPageId
-        );
-
+        $customerStatement = sprintf('%9s', substr(Shopware()->Config()->get('ShopName'), 0, 9));
+        if ($paymentType != \WirecardCEE_QPay_PaymentType::POLI) {
+            $customerStatement .= ' ' . Shopware()->WirecardCheckoutPage()->wWirecardCheckoutPageId;
+        }
+        $oFrontendClient->setCustomerStatement($customerStatement);
 
         // add custom params, will be send back by wirecard
         foreach ($params as $k => $v)
@@ -131,9 +131,14 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
      */
     protected function getPluginVersion()
     {
+        $shopversion = Shopware::VERSION;
+        if ($shopversion == '') {
+            $shopversion = '>5.2.21';
+        }
+
         return WirecardCEE_QPay_FrontendClient::generatePluginVersion(
             'Shopware',
-            Shopware()->Config()->sVERSION,
+            $shopversion,
             Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap::NAME,
             Shopware()->Plugins()->Frontend()->WirecardCheckoutPage()->getVersion()
         );
@@ -164,34 +169,21 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
         $consumerData->setIpAddress($_SERVER['REMOTE_ADDR']);
         $consumerData->setUserAgent($_SERVER['HTTP_USER_AGENT']);
 
-        if(!Shopware()->WirecardCheckoutPage()->getConfig()->send_additional_data)
-        {
-            switch($paymentType)
-            {
-                case WirecardCEE_QPay_PaymentType::P24:
-                    $consumerData->setEmail(Shopware()->WirecardCheckoutPage()->getUser('user')->email);
-                    break;
-                case WirecardCEE_QPay_PaymentType::INSTALLMENT:
-                case WirecardCEE_QPay_PaymentType::INVOICE:
-                    $consumerData->setEmail(Shopware()->WirecardCheckoutPage()->getUser('user')->email);
-                    $consumerData->addAddressInformation($this->getAddress('billing'));
-                    $birthday = $this->getDateObject(Shopware()->WirecardCheckoutPage()->getUser('billingaddress')->birthday);
-                    if (FALSE !== $birthday) {
-                        $consumerData = $consumerData->setBirthDate($birthday);
-                    }
-                    break;
-            }
-        }
-        else
+        if(Shopware()->WirecardCheckoutPage()->getConfig()->send_additional_data || ($paymentType == 'INSTALLMENT' || $paymentType == 'INVOICE' || $paymentType == 'PRZELEWY24'))
         {
             $consumerData->setEmail(Shopware()->WirecardCheckoutPage()->getUser('user')->email);
             $consumerData->addAddressInformation($this->getAddress('billing'));
             $consumerData->addAddressInformation($this->getAddress('shipping'));
-            $birthday = $this->getDateObject(Shopware()->WirecardCheckoutPage()->getUser('billingaddress')->birthday);
+
+            $userData = Shopware()->Session()->sOrderVariables['sUserData'];
+            $birthday = $userData['additional']['user']['birthday'];
+            $birthday = $this->getDateObject($birthday);
             if (FALSE !== $birthday) {
                 $consumerData = $consumerData->setBirthDate($birthday);
             }
+
         }
+
         return $consumerData;
     }
 
