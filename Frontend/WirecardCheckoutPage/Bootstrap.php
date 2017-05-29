@@ -1077,6 +1077,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
     {
         switch ($paymentName) {
             case 'invoice':
+            case 'wcp_invoice':
                 $minBasket = Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_MIN_BASKET;
                 $maxBasket = Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_MAX_BASKET;
                 $currencies = Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_CURRENCY;
@@ -1103,6 +1104,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
 
                 return true;
             case 'installment':
+            case 'wcp_installment':
                 $minBasket = Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_MIN_BASKET;
                 $maxBasket = Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_MAX_BASKET;
                 $currencies = Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_CURRENCY;
