@@ -155,14 +155,14 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
         'INVOICE' => array(
             'name' => 'invoice',
             'description' => 'Wirecard Kauf auf Rechnung',
-            'template' => 'wcp_invoice.tpl',
+            'template' => '',
             'call' => WirecardCEE_QPay_PaymentType::INVOICE,
             'translation' => Array('description' => 'Wirecard Invoice', 'additionalDescription' => '')
         ),
         'INSTALLMENT' => array(
             'name' => 'installment',
             'description' => 'Wirecard Kauf auf Raten',
-            'template' => 'wcp_installment.tpl',
+            'template' => '',
             'call' => WirecardCEE_QPay_PaymentType::INSTALLMENT,
             'translation' => Array('description' => 'Wirecard Installment', 'additionalDescription' => '')
         ),

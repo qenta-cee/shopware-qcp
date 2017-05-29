@@ -204,6 +204,15 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
     {
         $form = $this->Form();
         $i = 0;
+
+        $repository = Shopware()->Models()->getRepository('Shopware\Models\Shop\Shop');
+        $shop = $repository->findOneBy(['id' => 1]);
+        $currencies = array();
+        foreach ($shop->getCurrencies() as $elem) {
+            $currency = array($elem->getCurrency(), $elem->getName());
+            array_push($currencies, $currency);
+        }
+
         $form->setElement(
             'text',
             'CUSTOMERID',
@@ -507,6 +516,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 'value' => '',
                 'store' => $currencies,
                 'multiSelect' => true,
+                'description' => 'Bitte wählen Sie mindestens eine gültige Währung für Kauf auf Rechnung.',
                 'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
                 'required' => false,
                 'order' => ++$i
@@ -561,6 +571,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 'value' => '',
                 'store' => $currencies,
                 'multiSelect' => true,
+                'description' => 'Bitte wählen Sie mindestens eine gültige Währung für Kauf auf Raten.',
                 'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
                 'required' => false,
                 'order' => ++$i
@@ -662,7 +673,8 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     'label' => 'Invoice minimum basket size'
                 ),
                 'INVOICE_CURRENCY' => Array(
-                    'label' => 'Accepted currencies for Invoice'
+                    'label' => 'Accepted currencies for Invoice',
+                    'description' => 'Please select at least one currency to use Invoice.'
                 ),
                 'INSTALLMENT_PROVIDER' => Array(
                     'label' => 'Installment Provider'
@@ -674,8 +686,9 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     'label' => 'Installment maximum basket size'
                 ),
                 'INSTALLMENT_CURRENCY' => Array(
-                    'label' => 'Accepted currencies for Installment'
-                )
+                    'label' => 'Accepted currencies for Installment',
+                    'description' => 'Please select at least one currency to use Installment.'
+                ),
             )
         );
 
@@ -921,46 +934,23 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
         {
             case 'shippingPayment':
                 self::init();
+
+                // basket parameter for invoice/installment
+                $basketQuantity = $this->getBasketQuantity();
+                // do pre-check for invoice and installment
+                if ( ! $this->isActivePayment($basketQuantity, 'invoice')) {
+                    $view->sPayments = $this->hidePayment($view->sPayments, 'wcp_invoice');
+                }
+                if ( ! $this->isActivePayment($basketQuantity, 'installment')) {
+                    $view->sPayments = $this->hidePayment($view->sPayments, 'wcp_installment');
+                }
+
                 $view->addTemplateDir($this->Path() . 'Views/common/');
 
                 if (Shopware()->Shop()->getTemplate()->getVersion() >= 3) {
                     $view->addTemplateDir($this->Path() . 'Views/responsive/');
                 } else {
                     $view->addTemplateDir($this->Path() . 'Views/');
-                }
-                $view->years = range(date('Y'), date('Y') - 100);
-                $view->days = range(1, 31);
-                $view->months = range(1, 12);
-
-                $user = Shopware()->Session()->sOrderVariables['sUserData'];
-
-                $birth = null;
-
-                if ($this->assertMinimumVersion('5.2')) {
-                    if(!is_null($user) && isset($user['additional']['user']['birthday'])) {
-                        $birth = $user['additional']['user']['birthday'];
-                    }
-                } else {
-                    if(!is_null($user) && isset($user['billingaddress']['birthday'])) {
-                        $birth = $user['billingaddress']['birthday'];
-                    }
-                }
-
-                if ($birth == null) {
-                    $birthday = array('-', '-', '-');
-                } else {
-                    $birthday = explode('-', $birth);
-                }
-
-                $view->bYear = $birthday[0];
-                $view->bMonth = $birthday[1];
-                $view->bDay = $birthday[2];
-
-                $view->wcpPayolutionTerms = Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS;
-
-                if ($this->getPayolutionLink()) {
-                    $view->wcpPayolutionLink1 = '<a id="wcp-payolutionlink" href="https://payment.payolution.com/payolution-payment/infoport/dataprivacyconsent?mId=' . $this->getPayolutionLink() . '" target="_blank">';
-                    $view->wcpPayolutionLink2 = '</a>';
                 }
 
                 // Output of common errors
@@ -981,6 +971,59 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 if (null != Shopware()->WirecardCheckoutPage()->wirecard_action) {
                     self::showErrorMessages($view);
                 }
+
+                // basket parameter for invoice/installment
+                $basketQuantity = $this->getBasketQuantity();
+
+                //redirect to payment choice if not-active payment was chosen (invoice/installment)
+                $paymentName = Shopware()->Session()->sOrderVariables['sUserData']['additional']['payment']['name'];
+                $view->paymentDesc = Shopware()->Session()->sOrderVariables['sUserData']['additional']['payment']['description'];
+                $view->paymentName = $paymentName;
+                $view->paymentLogo = 'frontend/_public/images/' . $paymentName . '.png';
+
+                if ( ! $this->isActivePayment($basketQuantity, $paymentName)) {
+                    $controller->forward('shippingPayment');
+                }
+
+                $user                     = Shopware()->Session()->sOrderVariables['sUserData'];
+                $birth                    = null;
+
+                if ( ! is_null($user) && isset($user['additional']['user']['birthday'])) {
+                    $birth = $user['additional']['user']['birthday'];
+                } else if ( ! is_null($user) && isset($user['billingaddress']['birthday'])) {
+                    $birth = $user['billingaddress']['birthday'];
+                }
+
+                // Values for datefields
+                $view->years  = range(date('Y'), date('Y') - 100);
+                $view->days   = range(1, 31);
+                $view->months = range(1, 12);
+
+                $birthday = array('-', '-', '-');
+                if ($birth != null) {
+                    $birthday = explode('-', $birth);
+                }
+
+                $view->bYear  = $birthday[0];
+                $view->bMonth = $birthday[1];
+                $view->bDay   = $birthday[2];
+
+                if (Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_PROVIDER == 'payolution' && $paymentName == 'wcp_invoice') {
+                    $view->payolutionTerms = Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS;
+                    if (Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS) {
+                        $view->wcpPayolutionLink1 = '<a id="wcp-payolutionlink" href="https://payment.payolution.com/payolution-payment/infoport/dataprivacyconsent?mId=' . $this->getPayolutionLink() . '" target="_blank">';
+                        $view->wcpPayolutionLink2 = '</a>';
+                    }
+                }
+
+                if (Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_PROVIDER == 'payolution' && $paymentName == 'wcp_installment') {
+                    $view->payolutionTerms = Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS;
+                    if (Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS) {
+                        $view->wcpPayolutionLink1 = '<a id="wcp-payolutionlink" href="https://payment.payolution.com/payolution-payment/infoport/dataprivacyconsent?mId=' . $this->getPayolutionLink() . '" target="_blank">';
+                        $view->wcpPayolutionLink2 = '</a>';
+                    }
+                }
+
                 break;
 
             case 'finish':
@@ -1000,6 +1043,116 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
             default:
                 return;
         }
+    }
+
+    /**
+     * Returns size of basket including shipping as item
+     *
+     * @return int
+     */
+    protected function getBasketQuantity()
+    {
+        $quantity      = 0;
+        $basketContent = Shopware()->Session()->sOrderVariables['sBasket'];
+        foreach ($basketContent['content'] as $cart_item) {
+            $quantity += $cart_item['quantity'];
+        }
+        if (isset($basketContent['sShippingcosts']) && $basketContent['sShippingcosts'] > 0) {
+            $quantity++;
+        }
+
+        return $quantity;
+    }
+
+    /**
+     * Pre-check for invoice and installment payments
+     *
+     * @param $quantity
+     * @param $amount
+     * @param $paymentName
+     *
+     * @return bool
+     */
+    private function isActivePayment($quantity, $paymentName)
+    {
+        switch ($paymentName) {
+            case 'invoice':
+                $minBasket = Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_MIN_BASKET;
+                $maxBasket = Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_MAX_BASKET;
+                $currencies = Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_CURRENCY;
+
+                if ($minBasket != '' && $minBasket > $quantity) {
+                    return false;
+                }
+                if ($maxBasket != '' && $maxBasket < $quantity) {
+                    return false;
+                }
+
+                if (isset($currencies)) {
+                    $currentCurrency = Shopware()->Shop()->getCurrency()->getCurrency();
+
+                    foreach ($currencies as $currency) {
+                        if ((string)$currency == (string)$currentCurrency) {
+                            return true;
+                        }
+                    }
+                    if ($currencies->count()) {
+                        return false;
+                    }
+                }
+
+                return true;
+            case 'installment':
+                $minBasket = Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_MIN_BASKET;
+                $maxBasket = Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_MAX_BASKET;
+                $currencies = Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_CURRENCY;
+
+                if ($minBasket != '' && $minBasket > $quantity) {
+                    return false;
+                }
+                if ($maxBasket != '' && $maxBasket < $quantity) {
+                    return false;
+                }
+
+                if (isset($currencies)) {
+                    $currentCurrency = Shopware()->Shop()->getCurrency()->getCurrency();
+
+                    foreach ($currencies as $currency) {
+                        if ((string)$currency == (string)$currentCurrency) {
+                            return true;
+                        }
+                    }
+                    if ($currencies->count()) {
+                        return false;
+                    }
+                }
+                return true;
+            default:
+                return true;
+        }
+    }
+
+    /**
+     * Remove payment from active payments
+     *
+     * @param $payments
+     * @param $paymentName
+     *
+     * @return mixed
+     */
+    protected function hidePayment($payments, $paymentName)
+    {
+        if (is_array($payments)) {
+            foreach ($payments as $key => $value) {
+                if ($value['name'] == $paymentName) {
+                    unset($payments[$key]);
+
+                    return $payments;
+                }
+            }
+        }
+
+        return $payments;
     }
 
     /**
