@@ -1,4 +1,4 @@
-{namespace name='frontend/plugins/payment/logo'}
+{namespace name='frontend/plugins/payment/wirecard_logos'}
 {if $sUserData.additional.payment.name == 'wcp_ccard'|| $sUserData.additional.payment.name == 'wcp_ccard-moto'}
     <img src="{link file='frontend/_public/images/ccard.png'}"/>
 {/if}
