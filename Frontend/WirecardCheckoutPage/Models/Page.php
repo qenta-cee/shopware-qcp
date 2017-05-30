@@ -169,8 +169,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
         $consumerData->setIpAddress($_SERVER['REMOTE_ADDR']);
         $consumerData->setUserAgent($_SERVER['HTTP_USER_AGENT']);
 
-        if(Shopware()->WirecardCheckoutPage()->getConfig()->send_additional_data || ($paymentType == 'INSTALLMENT' || $paymentType == 'INVOICE' || $paymentType == 'PRZELEWY24'))
-        {
+        if (Shopware()->WirecardCheckoutPage()->getConfig()->send_additional_data || ($paymentType == WirecardCEE_QPay_PaymentType::INSTALLMENT || $paymentType == WirecardCEE_QPay_PaymentType::INVOICE || $paymentType == WirecardCEE_QPay_PaymentType::P24)) {
             $consumerData->setEmail(Shopware()->WirecardCheckoutPage()->getUser('user')->email);
             $consumerData->addAddressInformation($this->getAddress('billing'));
             $consumerData->addAddressInformation($this->getAddress('shipping'));
@@ -178,7 +177,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
             $userData = Shopware()->Session()->sOrderVariables['sUserData'];
             $birthday = $userData['additional']['user']['birthday'];
             $birthday = $this->getDateObject($birthday);
-            if (FALSE !== $birthday) {
+            if (false !== $birthday) {
                 $consumerData = $consumerData->setBirthDate($birthday);
             }
 
