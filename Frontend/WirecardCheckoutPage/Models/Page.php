@@ -94,7 +94,11 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
         if ($paymentType == \WirecardCEE_QPay_PaymentType::MASTERPASS) {
             $oFrontendClient->setShippingProfile('NO_SHIPPING');
         }
-        if (Shopware()->WirecardCheckoutPage()->getConfig()->SEND_BASKET_DATA) {
+        if (Shopware()->WirecardCheckoutPage()->getConfig()->SEND_BASKET_DATA
+            || $paymentType == WirecardCEE_QPay_PaymentType::INVOICE
+            || $paymentType == WirecardCEE_QPay_PaymentType::INSTALLMENT
+            || $paymentType == WirecardCEE_QPay_PaymentType::PAYPAL
+        ) {
             $oFrontendClient->setBasket($this->getShoppingBasket());
         }
         if(Shopware()->WirecardCheckoutPage()->getConfig()->ENABLE_DUPLICATE_REQUEST_CHECK){
@@ -169,7 +173,11 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
         $consumerData->setIpAddress($_SERVER['REMOTE_ADDR']);
         $consumerData->setUserAgent($_SERVER['HTTP_USER_AGENT']);
 
-        if (Shopware()->WirecardCheckoutPage()->getConfig()->send_additional_data || ($paymentType == WirecardCEE_QPay_PaymentType::INSTALLMENT || $paymentType == WirecardCEE_QPay_PaymentType::INVOICE || $paymentType == WirecardCEE_QPay_PaymentType::P24)) {
+        if (Shopware()->WirecardCheckoutPage()->getConfig()->send_additional_data
+            || $paymentType == WirecardCEE_QPay_PaymentType::INSTALLMENT
+            || $paymentType == WirecardCEE_QPay_PaymentType::INVOICE
+            || $paymentType == WirecardCEE_QPay_PaymentType::P24
+        ) {
             $consumerData->setEmail(Shopware()->WirecardCheckoutPage()->getUser('user')->email);
             $consumerData->addAddressInformation($this->getAddress('billing'));
             $consumerData->addAddressInformation($this->getAddress('shipping'));
