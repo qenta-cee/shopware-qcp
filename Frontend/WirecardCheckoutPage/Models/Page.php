@@ -95,9 +95,8 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
             $oFrontendClient->setShippingProfile('NO_SHIPPING');
         }
         if (Shopware()->WirecardCheckoutPage()->getConfig()->SEND_BASKET_DATA
-            || $paymentType == WirecardCEE_QPay_PaymentType::INVOICE
-            || $paymentType == WirecardCEE_QPay_PaymentType::INSTALLMENT
-            || $paymentType == WirecardCEE_QPay_PaymentType::PAYPAL
+            || ($paymentType == WirecardCEE_QPay_PaymentType::INVOICE && Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_PROVIDER == 'payolution')
+            || ($paymentType == WirecardCEE_QPay_PaymentType::INSTALLMENT && Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_PROVIDER == 'payolution')
         ) {
             $oFrontendClient->setBasket($this->getShoppingBasket());
         }
