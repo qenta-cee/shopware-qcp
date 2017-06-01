@@ -134,11 +134,9 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function secureUninstall()
     {
-        if ($this->assertMinimumVersion('5')) {
-            /** @var \Shopware\Components\CacheManager $cacheManager */
-            $cacheManager = $this->get('shopware.cache_manager');
-            $cacheManager->clearThemeCache();
-        }
+        /** @var \Shopware\Components\CacheManager $cacheManager */
+        $cacheManager = $this->get('shopware.cache_manager');
+        $cacheManager->clearThemeCache();
 
         return array(
             'success' => true,
@@ -888,12 +886,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 }
 
                 $view->addTemplateDir($this->Path() . 'Views/common/');
-
-                if (Shopware()->Shop()->getTemplate()->getVersion() >= 3) {
-                    $view->addTemplateDir($this->Path() . 'Views/responsive/');
-                } else {
-                    $view->addTemplateDir($this->Path() . 'Views/');
-                }
+                $view->addTemplateDir($this->Path() . 'Views/responsive/');
 
                 // Output of common errors
                 if (null != Shopware()->WirecardCheckoutPage()->wirecard_action) {
@@ -903,12 +896,8 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
             case 'confirm':
                 self::init();
                 $view->addTemplateDir($this->Path() . 'Views/common/');
+                $view->addTemplateDir($this->Path() . 'Views/responsive/');
 
-                if (Shopware()->Shop()->getTemplate()->getVersion() >= 3) {
-                    $view->addTemplateDir($this->Path() . 'Views/responsive/');
-                } else {
-                    $view->addTemplateDir($this->Path() . 'Views/');
-                }
                 // Output of common errors
                 if (null != Shopware()->WirecardCheckoutPage()->wirecard_action) {
                     self::showErrorMessages($view);
@@ -947,34 +936,21 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 $view->bMonth = $birthday[1];
                 $view->bDay   = $birthday[2];
 
-                if (Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_PROVIDER == 'payolution' && $paymentName == 'wcp_invoice') {
+                if ((Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_PROVIDER == 'payolution' && $paymentName == 'wcp_invoice') ||
+                        (Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_PROVIDER == 'payolution' && $paymentName == 'wcp_installment')){
                     $view->payolutionTerms = Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS;
                     if (Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS) {
                         $view->wcpPayolutionLink1 = '<a id="wcp-payolutionlink" href="https://payment.payolution.com/payolution-payment/infoport/dataprivacyconsent?mId=' . $this->getPayolutionLink() . '" target="_blank">';
                         $view->wcpPayolutionLink2 = '</a>';
                     }
                 }
-
-                if (Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_PROVIDER == 'payolution' && $paymentName == 'wcp_installment') {
-                    $view->payolutionTerms = Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS;
-                    if (Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS) {
-                        $view->wcpPayolutionLink1 = '<a id="wcp-payolutionlink" href="https://payment.payolution.com/payolution-payment/infoport/dataprivacyconsent?mId=' . $this->getPayolutionLink() . '" target="_blank">';
-                        $view->wcpPayolutionLink2 = '</a>';
-                    }
-                }
-
                 break;
 
             case 'finish':
                 self::init();
 
                 $view->addTemplateDir($this->Path() . 'Views/common/');
-                if (Shopware()->Shop()->getTemplate()->getVersion() >= 3) {
-                    $view->addTemplateDir($this->Path() . 'Views/responsive/');
-                } else {
-                    $view->addTemplateDir($this->Path() . 'Views/');
-                $view->extendsTemplate('frontend/checkout/wirecard_finish.tpl');
-                }
+                $view->addTemplateDir($this->Path() . 'Views/responsive/');
 
                 $view->pendingPayment = $args->getSubject()->Request()->get('pending');
                 break;
@@ -1079,16 +1055,12 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
         /** @var $cronManager Enlight_Components_Cron_Manager */
         $cronManager = Shopware()->Cron();
         //we have to do a workaround due to a bug in Shopware 5s Cron DBAL Adapter (http://jira.shopware.de/?ticket=SW-11682)
-        if($this->assertMinimumVersion('5')) {
-            foreach($cronManager->getAllJobs() AS $job) {
-                if($job->getName() == $cronName) {
-                    return true;
-                }
-            }
-            return false;
-        } else {
-            return $cronManager->getJobByName($cronName) ? true : false;
+        foreach($cronManager->getAllJobs() AS $job) {
+           if($job->getName() == $cronName) {
+              return true;
+           }
         }
+        return false;
     }
 
 }

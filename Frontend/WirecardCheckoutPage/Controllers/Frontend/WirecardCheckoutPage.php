@@ -119,12 +119,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
 
         if($bUseIframe)
         {
-            if (Shopware()->Shop()->getTemplate()->getVersion() >= 3) {
-                $this->View()->loadTemplate('responsive/frontend/wirecard_checkout_page/index.tpl');
-            } else {
-            $this->View()->loadTemplate('frontend/checkout/wirecard_page.tpl');
-            }
-
+            $this->View()->loadTemplate('responsive/frontend/wirecard_checkout_page/index.tpl');
             $this->View()->assign(
                 'redirectUrl',
                 $sRedirectUrl
@@ -472,12 +467,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
 
         if($bUseIframe)
         {
-            if (Shopware()->Shop()->getTemplate()->getVersion() >= 3) {
-                $this->View()->loadTemplate('responsive/frontend/wirecard_checkout_page/return.tpl');
-            } else {
-            $this->View()->loadTemplate('frontend/checkout/wirecard_return.tpl');
-            }
-
+            $this->View()->loadTemplate('responsive/frontend/wirecard_checkout_page/return.tpl');
             $this->View()->redirectUrl = $sRedirectUrl;
         }
         else
