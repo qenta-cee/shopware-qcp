@@ -18,16 +18,34 @@
             if (birthdate < limit) {
                 $('#wcp-birthdate').val(dateStr);
                 $('#wcpPayolutionAging').hide();
-                $('.is--primary').attr('disabled', false);
+                if ($('#wcpInvoiceTermsChecked').is(':checked')) {
+                    $('#wcpPayolutionTermsAccept').hide();
+                    $('.is--primary').attr('disabled', false);
+                }
+                else
+                {
+                    $('.is--primary').attr('disabled', true);
+                    $('#wcpPayolutionTermsAccept').show();
+                }
             }
             else {
+                $('#wcpPayolutionTermsAccept').hide();
                 $('#wcp-birthdate').val("");
                 if ($('#wcp-day').is(":visible") == true) {
                     $('#wcpPayolutionAging').show();
                     $('.is--primary').attr('disabled', true);
                 }
             }
-        }
+        };
+
+        window.onload = function() {
+            $(document).ready(function() {
+                if ( {$paymentName|json_encode} == 'wcp_invoice' || {$paymentName|json_encode} == 'wcp_installment')
+                {
+                    checkbirthday();
+                }
+            });
+        };
     </script>
 {/block}
 
@@ -84,11 +102,10 @@
             <div class="payment--selection-label is--underline">
                 {s name="WirecardCheckoutPagePayolutionTermsHeader"}Payolution Konditionen{/s}
             </div>
-            <div class="wirecard--field">
                 <ul class="list--checkbox list--unstyled">
                     <li class="block-group row--tos">
 					            <span class="column--checkbox">
-						            <input type="checkbox" required="required" aria-required="true" id="wcpInvoiceTermsChecked" name="wcpInvoiceTermsChecked">
+						            <input type="checkbox" required="required" aria-required="true" id="wcpInvoiceTermsChecked" onchange="checkbirthday()" name="wcpInvoiceTermsChecked">
 					            </span>
                         <span class="column--checkbox">
 						            <label for="wcpInvoiceTermsChecked">{if $wcpPayolutionLink1}
@@ -106,7 +123,10 @@
 					            </span>
                     </li>
                 </ul>
-            </div>
+            <span id="wcpPayolutionTermsAccept" style="color:red;font-weight:bold;display:none;">
+                            {s name="WirecardCheckoutPagePayolutionTermsAccept"}Bitte akzeptieren Sie die payolution Konditionen.{/s}
+                        </span>
+            <div class="clear" style="content:''; clear:both; float:none;"></div>
             <div class="wirecard--clearer"></div>
         {/if}
     </div>
