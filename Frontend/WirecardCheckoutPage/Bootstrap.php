@@ -688,6 +688,12 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
             'onPostDispatch'
         );
 
+        // Save selected POST parameters (financial institutions)
+        $this->subscribeEvent(
+                'Enlight_Controller_Action_PreDispatch',
+                'onPreDispatch'
+        );
+
         // Subscribe the needed event for less merge and compression
         $this->subscribeEvent(
             'Theme_Compiler_Collect_Plugin_Less',
@@ -849,6 +855,20 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
         }
     }
 
+    /**
+     * Save selected POST paramter for payment methods with required
+     * financial institutions in session
+     *
+     * @param Enlight_Event_EventArgs $args
+     */
+    public function onPreDispatch(Enlight_Event_EventArgs $args)
+    {
+        $financialInstitution = $args->getSubject()->Request()->get('financialInstitution');
+        if (isset($financialInstitution)) {
+            self::init();
+            Shopware()->WirecardCheckoutPage()->financialInstitution = $financialInstitution;
+        }
+    }
 
     /**
      * Display additional data for seamless payment methods and
@@ -913,8 +933,8 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     $controller->forward('shippingPayment');
                 }
 
-                $user                     = Shopware()->Session()->sOrderVariables['sUserData'];
-                $birth                    = null;
+                $user  = Shopware()->Session()->sOrderVariables['sUserData'];
+                $birth = null;
 
                 if ( ! is_null($user) && isset($user['additional']['user']['birthday'])) {
                     $birth = $user['additional']['user']['birthday'];
@@ -937,12 +957,25 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 $view->bDay   = $birthday[2];
 
                 if ((Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_PROVIDER == 'payolution' && $paymentName == 'wcp_invoice') ||
-                        (Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_PROVIDER == 'payolution' && $paymentName == 'wcp_installment')){
+                        (Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_PROVIDER == 'payolution' && $paymentName == 'wcp_installment')
+                ) {
                     $view->payolutionTerms = Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS;
                     if (Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS) {
-                        $view->wcpPayolutionLink1 = '<a id="wcp-payolutionlink" href="https://payment.payolution.com/payolution-payment/infoport/dataprivacyconsent?mId=' . $this->getPayolutionLink() . '" target="_blank">';
+                        $view->wcpPayolutionLink1 = '<a id="wcp-payolutionlink" href="https://payment.payolution.com/payolution-payment/infoport/dataprivacyconsent?mId='.$this->getPayolutionLink().'" target="_blank">';
                         $view->wcpPayolutionLink2 = '</a>';
                     }
+                }
+
+                if ($paymentName == 'wcp_eps') {
+                    $view->financialInstitutions         = WirecardCEE_QPay_PaymentType::getFinancialInstitutions('EPS');
+                    $view->wcpAdditional                 = 'financialInstitutions';
+                    $view->financialInstitutionsSelected = Shopware()->WirecardCheckoutPage()->financialInstitution;
+                }
+
+                if ($paymentName == 'wcp_ideal') {
+                    $view->financialInstitutions         = WirecardCEE_QPay_PaymentType::getFinancialInstitutions('IDL');
+                    $view->wcpAdditional                 = 'financialInstitutions';
+                    $view->financialInstitutionsSelected = Shopware()->WirecardCheckoutPage()->financialInstitution;
                 }
                 break;
 

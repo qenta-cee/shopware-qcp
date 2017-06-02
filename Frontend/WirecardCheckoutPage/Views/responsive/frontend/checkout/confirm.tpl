@@ -38,11 +38,20 @@
             }
         };
 
+        function setFinancialInstitution() {
+            var paymentForm = $('#confirm--form');
+            paymentForm.append('<input type="hidden" name="financialInstitution" value="' + $('#financialInstitutions').val() + '" />');
+        }
+
         window.onload = function() {
             $(document).ready(function() {
                 if ( {$paymentName|json_encode} == 'wcp_invoice' || {$paymentName|json_encode} == 'wcp_installment')
                 {
                     checkbirthday();
+                }
+                else if ( {$paymentName|json_encode} == 'wcp_ideal' || {$paymentName|json_encode} == 'wcp_eps')
+                {
+                    setFinancialInstitution();
                 }
             });
         };
@@ -50,7 +59,30 @@
 {/block}
 
 {block name='frontend_checkout_confirm_product_table' prepend}
-    {if 'wcp_invoice' eq $paymentName || 'wcp_installment' eq $paymentName}
+    {if $wcpAdditional  eq 'financialInstitutions'}
+        <div class="panel has--border is--rounded" id="wd_payment_fields">
+            <div class="panel--title is--underline">
+                <img src="{link file={$paymentLogo}}"/>{$wirecardAdditionalHeadline}
+            </div>
+
+            <div class="panel--body is--wide">
+                <div class="wirecard--field">
+
+                    {*<label for="ccard_cardholdername">{s name='WirecardFinancialInstitutions'}Finanzinstitut{/s}:</label>*}
+                    <select name="financialInstitution" id="financialInstitutions" onchange="setFinancialInstitution()">
+
+                        {foreach from=$financialInstitutions item=bank key=short}
+                            <option value="{$short}"
+                                    {if $short eq $financialInstitutionsSelected}selected="selected" {/if}>
+                                {$bank}
+                            </option>
+                        {/foreach}
+                    </select>
+                </div>
+                <div class="wirecard--clearer"></div>
+            </div>
+        </div>
+    {elseif 'wcp_invoice' eq $paymentName || 'wcp_installment' eq $paymentName}
         <div class="panel has--border is--rounded" id="wd_payment_fields">
         <div class="panel--title is--underline">
             <img src="{link file={$paymentLogo}}"/>{$paymentDesc}
