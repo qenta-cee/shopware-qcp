@@ -46,14 +46,13 @@ return array(
         'frontend/checkout/confirm' => array(
             'WirecardMessageActionCancel' => 'Der Zahlungsvorgang wurde von Ihnen abgebrochen.',
             'WirecardMessageActionFailure' => 'W&auml;hrend des Zahlungsvorgangs ist ein Fehler aufgetreten. Bitte versuchen Sie es noch einmal oder w&auml;hlen eine andere Zahlungsart aus.',
-        ),
-        'frontend/WirecardCheckoutPage/payment' => array(
             'WirecardCheckoutPagePayolutionTermsHeader' => 'Payolution Konditionen',
             'WirecardCheckoutPagePayolutionConsent1' => 'Mit der Übermittlung jener Daten an payolution, die für die Abwicklung von Zahlungen mit Kauf auf Rechnung und die Identitäts- und Bonitätsprüfung erforderlich sind, bin ich einverstanden. Meine ',
             'WirecardCheckoutPagePayolutionConsent2' => ' kann ich jederzeit mit Wirkung für die Zukunft widerrufen.',
             'WirecardCheckoutPagePayolutionLink' => 'Bewilligung',
             'WirecardCheckoutPageBirthday' => 'Geburtsdatum',
             'WirecardCheckoutPageBirthdayInformation' => 'Sie müssen mindestens 18 Jahre alt sein, um dieses Zahlungsmittel nutzen zu können.',
+            'WirecardCheckoutPagePayolutionTermsAccept' => 'Bitte akzeptieren Sie die payolution Konditionen.',
         ),
     )
 );

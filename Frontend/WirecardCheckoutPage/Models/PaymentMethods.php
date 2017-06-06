@@ -46,39 +46,46 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
         'CCARD' => array(
             'name' => 'ccard',
             'description' => 'Wirecard Kreditkarte',
-            'template' => '',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::CCARD,
             'translation' => Array('description' => 'Wirecard Credit Card', 'additionalDescription' => '')
         ),
 
         'CCARD-MOTO' => array(
             'name' => 'ccard-moto',
-            'description' => 'Wirecard Kreditkarte (Backoffice)',
-            'template' => '',
+            'description' => 'Wirecard Kreditkarte - Post / Telefonbestellung',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::CCARD_MOTO,
-            'translation' => Array('description' => 'Wirecard Credit Card (backoffice)', 'additionalDescription' => '')
+            'translation' => Array('description' => 'Wirecard Credit Card - Mail Order and Telephone Order', 'additionalDescription' => '')
         ),
 
-        //Masterpass disabled because of compatibility issues with WCS plugin
-        /*'MASTERPASS' => array(
+        'MASTERPASS' => array(
             'name' => 'masterpass',
             'description' => 'Wirecard Masterpass',
-            'template' => '',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::MASTERPASS,
             'translation' => Array('description' => 'Wirecard Masterpass', 'additionalDescription' => '')
-        ),*/
+        ),
+
+        'MAESTRO' => array(
+            'name' => 'maestro',
+            'description' => 'Wirecard Maestro SecureCode',
+            'template' => 'wirecard_logos.tpl',
+            'call' => WirecardCEE_QPay_PaymentType::MAESTRO,
+            'translation' => Array('description' => 'Wirecard Maestro SecureCode', 'additionalDescription' => '')
+        ),
 
         'EPS' => array(
             'name' => 'eps',
             'description' => 'Wirecard eps Online-&Uuml;berweisung',
-            'template' => '',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::EPS,
             'translation' => Array('description' => 'Wirecard eps Online Bank Transfer', 'additionalDescription' => '')
         ),
         'IDEAL' => array(
             'name' => 'ideal',
             'description' => 'Wirecard iDEAL',
-            'template' => '',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::IDL,
             'translation' => Array('description' => 'Wirecard iDEAL', 'additionalDescription' => '')
 
@@ -86,154 +93,126 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
         'GIROPAY' => array(
             'name' => 'giropay',
             'description' => 'Wirecard giropay',
-            'template' => '',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::GIROPAY,
             'translation' => Array('description' => 'Wirecard giropay', 'additionalDescription' => '')
         ),
         'SOFORTUEBERWEISUNG' => array(
             'name' => 'sofortueberweisung',
-            'description' => 'Wirecard sofort&uuml;berweisung (PIN/TAN)',
-            'template' => '',
+            'description' => 'Wirecard SOFORT &Uuml;berweisung',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::SOFORTUEBERWEISUNG,
-            'translation' => Array('description' => 'Wirecard sofortbanking (PIN/TAN)', 'additionalDescription' => '')
+            'translation' => Array('description' => 'Wirecard SOFORT banking', 'additionalDescription' => '')
         ),
         'BANCONTACT_MISTERCASH' => array(
             'name' => 'bancontact_mistercash',
-            'description' => 'Wirecard Bancontact/Mister Cash',
-            'template' => '',
+            'description' => 'Wirecard Bancontact',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::BMC,
-            'translation' => Array('description' => 'Wirecard Bancontact/Mister Cash', 'additionalDescription' => '')
+            'translation' => Array('description' => 'Wirecard Bancontact', 'additionalDescription' => '')
         ),
         'PRZELEWY24' => array(
             'name' => 'przelewy24',
             'description' => 'Wirecard Przelewy24',
-            'template' => '',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::P24,
             'translation' => Array('description' => 'Wirecard Przelewy24', 'additionalDescription' => '')
         ),
         'MONETA' => array(
             'name' => 'moneta',
             'description' => 'Wirecard moneta.ru',
-            'template' => '',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::MONETA,
             'translation' => Array('description' => 'Wirecard moneta.ru', 'additionalDescription' => '')
         ),
         'POLI' => array(
             'name' => 'poli',
             'description' => 'Wirecard POLi',
-            'template' => '',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::POLI,
             'translation' => Array('description' => 'Wirecard POLi', 'additionalDescription' => '')
         ),
         'PBX' => array(
             'name' => 'pbx',
             'description' => 'Wirecard paybox',
-            'template' => '',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::PBX,
-            'translation' => Array('description' => 'Wirecard Mobile Phone Invoicing', 'additionalDescription' => '')
+            'translation' => Array('description' => 'Wirecard paybox', 'additionalDescription' => '')
         ),
         'PSC' => array(
             'name' => 'psc',
-            'description' => 'Wirecard paysafecard / Cash-Ticket',
-            'template' => '',
+            'description' => 'Wirecard paysafecard',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::PSC,
-            'translation' => Array('description' => 'Wirecard paysafecard / Cash-Ticket', 'additionalDescription' => '')
-        ),
-        'QUICK' => array(
-            'name' => 'quick',
-            'description' => 'Wirecard @Quick',
-            'template' => '',
-            'call' => WirecardCEE_QPay_PaymentType::QUICK,
-            'translation' => Array('description' => 'Wirecard @Quick', 'additionalDescription' => '')
+            'translation' => Array('description' => 'Wirecard paysafecard', 'additionalDescription' => '')
         ),
         'PAYPAL' => array(
             'name' => 'paypal',
             'description' => 'Wirecard PayPal',
-            'template' => '',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::PAYPAL,
             'translation' => Array('description' => 'Wirecard PayPal', 'additionalDescription' => '')
-        ),
-        'ELV' => array(
-            'name' => 'elv',
-            'description' => 'Wirecard Lastschriftverfahren',
-            'template' => '',
-            'call' => WirecardCEE_QPay_PaymentType::ELV,
-            'translation' => Array('description' => 'Wirecard Direct Debit', 'additionalDescription' => '')
         ),
         'SEPA-DD' => array(
             'name' => 'sepa-dd',
             'description' => 'Wirecard SEPA Lastschrift',
-            'template' => '',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::SEPADD,
             'translation' => Array('description' => 'Wirecard SEPA Direct Debit', 'additionalDescription' => '')
         ),
         'INVOICE' => array(
             'name' => 'invoice',
-            'description' => 'Wirecard Rechnung',
-            'template' => 'wcp_invoice.tpl',
+            'description' => 'Wirecard Kauf auf Rechnung',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::INVOICE,
             'translation' => Array('description' => 'Wirecard Invoice', 'additionalDescription' => '')
         ),
         'INSTALLMENT' => array(
             'name' => 'installment',
-            'description' => 'Wirecard Ratenzahlung',
-            'template' => 'wcp_installment.tpl',
+            'description' => 'Wirecard Kauf auf Raten',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::INSTALLMENT,
             'translation' => Array('description' => 'Wirecard Installment', 'additionalDescription' => '')
-        ),
-        'MPASS' => array(
-            'name' => 'mpass',
-            'description' => 'Wirecard mpass',
-            'template' => '',
-            'call' => WirecardCEE_QPay_PaymentType::MPASS,
-            'translation' => Array('description' => 'Wirecard mpass', 'additionalDescription' => '')
-        ),
-        'SKRILLDIRECT' => array(
-            'name' => 'skrilldirect',
-            'description' => 'Wirecard Skrill Direct',
-            'template' => '',
-            'call' => WirecardCEE_QPay_PaymentType::SKRILLDIRECT,
-            'translation' => Array('description' => 'Wirecard Skrill Direct', 'additionalDescription' => '')
         ),
         'SKRILLWALLET' => array(
             'name' => 'skrillwallet',
             'description' => 'Wirecard Skrill Digital Wallet',
-            'template' => '',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::SKRILLWALLET,
             'translation' => Array('description' => 'Wirecard Skrill Digital Wallet', 'additionalDescription' => '')
         ),
         'EKONTO' => array(
             'name' => 'ekonto',
             'description' => 'Wirecard eKonto',
-            'template' => '',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::EKONTO,
             'translation' => Array('description' => 'Wirecard eKonto', 'additionalDescription' => '')
         ),
         'TRUSTLY' => array(
             'name' => 'trustly',
             'description' => 'Wirecard Trustly',
-            'template' => '',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::TRUSTLY,
             'translation' => Array('description' => 'Wirecard Trustly', 'additionalDescription' => '')
         ),
         'TATRAPAY' => array(
             'name' => 'tatrapay',
             'description' => 'Wirecard TatraPay',
-            'template' => '',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::TATRAPAY,
             'translation' => Array('description' => 'Wirecard TatraPay', 'additionalDescription' => '')
         ),
         'EPAY' => array(
             'name' => 'epay',
             'description' => 'Wirecard ePay.bg',
-            'template' => '',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::EPAYBG,
             'translation' => Array('description' => 'Wirecard ePay.bg', 'additionalDescription' => '')
         ),
         'VOUCHER' => array(
             'name' => 'voucher',
             'description' => 'Wirecard Gutschein',
-            'template' => '',
+            'template' => 'wirecard_logos.tpl',
             'call' => WirecardCEE_QPay_PaymentType::VOUCHER,
             'translation' => Array('description' => 'Wirecard Voucher', 'additionalDescription' => '')
         )

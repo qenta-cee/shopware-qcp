@@ -35,6 +35,15 @@
  */
 class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Config
 {
+	/**
+	 * List of payment methods with required financial institution
+	 *
+	 * @var array
+	 */
+	private static $paymentsFinancialInstitution = array(
+		'eps',
+		'idl'
+	);
 
     /**
      * Returns shop name
@@ -212,4 +221,14 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Config
     {
         return realpath(__DIR__ . '/../assets');
     }
+
+	/**
+	 * Returns payment methods with required financial institutions
+	 *
+	 * @return array
+	 */
+	public function getPaymentsFinancialInstitution()
+	{
+		return self::$paymentsFinancialInstitution;
+	}
 }

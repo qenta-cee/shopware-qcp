@@ -30,66 +30,93 @@
  * Please do not use the plugin if you do not agree to these terms of use!
  */
 
+
 /**
- * class representing a basket object stored to the database
+ * @name WirecardCEE_QMore_Request_Backend_TransferFund_Existing
+ * @category WirecardCEE
+ * @package WirecardCEE_QMore
  */
-class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Basket
+class WirecardCEE_QPay_Request_Backend_TransferFund extends WirecardCEE_QPay_ToolkitClient
 {
-    /**
-     * getter for basket content
-     * @return array|null
-     */
-    public function getBasket()
-    {
-        if (FALSE == Shopware()->WirecardCheckoutPage()->Config()->restoreBasket()) {
-            return NULL;
-        }
 
-        Shopware()->Pluginlogger()->info('WirecardCheckoutPage: ID: ' . Shopware()->SessionID());
-        $sql = Shopware()->Db()->select()
-            ->from('s_order_basket')
-            ->where('sessionID = ?', array(Shopware()->SessionID()));
-        $basket = Shopware()->Db()->fetchAll($sql);
-        return $basket;
+    /**
+     * fundTransferType.
+     *
+     * @var string
+     */
+    const FUNDTRANSFERTYPE = 'fundTransferType';
+
+
+    public function __construct($config = null)
+    {
+        parent::__construct($config);
+        $this->_requestData[self::COMMAND] = self::$COMMAND_TRANSFER_FUND;
     }
 
     /**
-     * getter for serialized basket item
+     * seter for fundTransferType field
      *
-     * @return string
+     * @param $fundTransferType
      */
-    public function getSerializedBasket()
+    public function setType($fundTransferType)
     {
-        return serialize($this->getBasket());
+        $this->_requestData[self::FUNDTRANSFERTYPE] = $fundTransferType;
     }
 
     /**
-     * Restore basket if it's enabled in the configuration
+     * seter for orderNumber field
      *
-     * @param array $basket
-     * @return bool
+     * @param $orderNumber
+     *
+     * @return $this
      */
-    public function setBasket($basket = array())
+    public function setOrderNumber($orderNumber)
     {
-        if (FALSE == Shopware()->WirecardCheckoutPage()->Config()->restoreBasket()) {
-            return FALSE;
-        }
-        Shopware()->Db()->delete('s_order_basket', 'sessionID = "' . Shopware()->SessionID() . '"');
-        foreach ($basket as $row) {
-            Shopware()->Db()->insert('s_order_basket', $row);
-        }
-        return TRUE;
+        $this->_setField(self::ORDER_NUMBER, $orderNumber);
+
+        return $this;
     }
 
     /**
-     * setter for serialized basketItems
+     * seter for orderReference field
      *
-     * @param $basket
-     * @return bool
+     * @param $orderReference
+     *
+     * @return $this
      */
-    public function setSerializedBasket($basket)
+    public function setOrderReference($orderReference)
     {
-        return $this->setBasket(unserialize($basket));
+        $this->_setField(self::ORDER_REFERENCE, $orderReference);
+
+        return $this;
+    }
+
+    /**
+     * seter for creditNumber field
+     *
+     * @param $creditNumber
+     *
+     * @return $this
+     */
+    public function setCreditNumber($creditNumber)
+    {
+        $this->_setField(self::CREDIT_NUMBER, $creditNumber);
+
+        return $this;
+    }
+
+    /**
+     * seter for customerStatement field
+     *
+     * @param $customerStatement
+     *
+     * @return $this
+     */
+    public function setCustomerStatement($customerStatement)
+    {
+        $this->_setField(self::CUSTOMER_STATEMENT, $customerStatement);
+
+        return $this;
     }
 
 }

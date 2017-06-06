@@ -77,9 +77,10 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
     public function initiatePayment($paymentType, $amount, $currency, $returnUrl, $confimUrl, $params = array())
     {
         $oFrontendClient = $this->getFrontendClient(Shopware()->WirecardCheckoutPage()->getConfig());
+        if (in_array(strtolower($paymentType), Shopware()->WirecardCheckoutPage()->getConfig()->getPaymentsFinancialInstitution())) {
+            $oFrontendClient->setFinancialInstitution(Shopware()->WirecardCheckoutPage()->financialInstitution);
+        }
         $email = (string) Shopware()->WirecardCheckoutPage()->getUser('user')->email;
-        // default setting, shipping address always set in Shopware checkout
-        $shippingProfile = 'NO_SHIPPING';
 
         $oFrontendClient->setPaymentType($paymentType)
                         ->setAmount($amount)
@@ -91,18 +92,26 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
                         ->setConfirmUrl($confimUrl)
                         ->setDisplayText($confimUrl)
                         ->setConsumerData($this->getConsumerData($paymentType))
-                        ->createConsumerMerchantCrmId($email)
-                        ->setShippingProfile($shippingProfile);
+                        ->createConsumerMerchantCrmId($email);
 
+        if ($paymentType == \WirecardCEE_QPay_PaymentType::MASTERPASS) {
+            $oFrontendClient->setShippingProfile('NO_SHIPPING');
+        }
+        if (Shopware()->WirecardCheckoutPage()->getConfig()->SEND_BASKET_DATA
+            || ($paymentType == WirecardCEE_QPay_PaymentType::INVOICE && Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_PROVIDER == 'payolution')
+            || ($paymentType == WirecardCEE_QPay_PaymentType::INSTALLMENT && Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_PROVIDER == 'payolution')
+        ) {
+            $oFrontendClient->setBasket($this->getShoppingBasket());
+        }
         if(Shopware()->WirecardCheckoutPage()->getConfig()->ENABLE_DUPLICATE_REQUEST_CHECK){
             $oFrontendClient->setDuplicateRequestCheck(true);
         }
 
-        $oFrontendClient->generateCustomerStatement(
-            Shopware()->WirecardCheckoutPage()->getConfig()->getShopname(),
-            Shopware()->WirecardCheckoutPage()->wWirecardCheckoutPageId
-        );
-
+        $customerStatement = sprintf('%9s', substr(Shopware()->Config()->get('ShopName'), 0, 9));
+        if ($paymentType != \WirecardCEE_QPay_PaymentType::POLI) {
+            $customerStatement .= ' ' . Shopware()->WirecardCheckoutPage()->wWirecardCheckoutPageId;
+        }
+        $oFrontendClient->setCustomerStatement($customerStatement);
 
         // add custom params, will be send back by wirecard
         foreach ($params as $k => $v)
@@ -128,9 +137,14 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
      */
     protected function getPluginVersion()
     {
+        $shopversion = Shopware::VERSION;
+        if ( ! strlen($shopversion)) {
+            $shopversion = '>5.2.21';
+        }
+
         return WirecardCEE_QPay_FrontendClient::generatePluginVersion(
             'Shopware',
-            Shopware()->Config()->sVERSION,
+            $shopversion,
             Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap::NAME,
             Shopware()->Plugins()->Frontend()->WirecardCheckoutPage()->getVersion()
         );
@@ -161,34 +175,24 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
         $consumerData->setIpAddress($_SERVER['REMOTE_ADDR']);
         $consumerData->setUserAgent($_SERVER['HTTP_USER_AGENT']);
 
-        if(!Shopware()->WirecardCheckoutPage()->getConfig()->send_additional_data)
-        {
-            switch($paymentType)
-            {
-                case WirecardCEE_QPay_PaymentType::P24:
-                    $consumerData->setEmail(Shopware()->WirecardCheckoutPage()->getUser('user')->email);
-                    break;
-                case WirecardCEE_QPay_PaymentType::INSTALLMENT:
-                case WirecardCEE_QPay_PaymentType::INVOICE:
-                    $consumerData->setEmail(Shopware()->WirecardCheckoutPage()->getUser('user')->email);
-                    $consumerData->addAddressInformation($this->getAddress('billing'));
-                    $birthday = $this->getDateObject(Shopware()->WirecardCheckoutPage()->getUser('billingaddress')->birthday);
-                    if (FALSE !== $birthday) {
-                        $consumerData = $consumerData->setBirthDate($birthday);
-                    }
-                    break;
-            }
-        }
-        else
-        {
+        if (Shopware()->WirecardCheckoutPage()->getConfig()->send_additional_data
+            || $paymentType == WirecardCEE_QPay_PaymentType::INSTALLMENT
+            || $paymentType == WirecardCEE_QPay_PaymentType::INVOICE
+            || $paymentType == WirecardCEE_QPay_PaymentType::P24
+        ) {
             $consumerData->setEmail(Shopware()->WirecardCheckoutPage()->getUser('user')->email);
             $consumerData->addAddressInformation($this->getAddress('billing'));
             $consumerData->addAddressInformation($this->getAddress('shipping'));
-            $birthday = $this->getDateObject(Shopware()->WirecardCheckoutPage()->getUser('billingaddress')->birthday);
-            if (FALSE !== $birthday) {
+
+            $userData = Shopware()->Session()->sOrderVariables['sUserData'];
+            $birthday = $userData['additional']['user']['birthday'];
+            $birthday = $this->getDateObject($birthday);
+            if (false !== $birthday) {
                 $consumerData = $consumerData->setBirthDate($birthday);
             }
+
         }
+
         return $consumerData;
     }
 
@@ -243,6 +247,44 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
         else {
             return FALSE;
         }
+    }
+
+    /**
+     * Returns basket including basket items
+     *
+     * @return WirecardCEE_Stdlib_Basket
+     */
+    protected function getShoppingBasket()
+    {
+        $basket = new WirecardCEE_Stdlib_Basket();
+        $basketContent = Shopware()->Session()->sOrderVariables['sBasket'];
+
+        // Shopware uses fix precision (2) for number_format
+        foreach ( $basketContent['content'] as $cart_item_key => $cart_item) {
+            $item = new WirecardCEE_Stdlib_Basket_Item($cart_item['articleID']);
+            $item->setUnitGrossAmount($cart_item['price'])
+                 ->setUnitNetAmount(number_format($cart_item['netprice'], 2, '.', ''))
+                 ->setUnitTaxAmount(number_format($cart_item['price'] - $cart_item['netprice'], 2, '.', ''))
+                 ->setUnitTaxRate($cart_item['tax_rate'])
+                 ->setDescription( substr( strip_tags( $cart_item['additional_details']['description']), 0, 127 ) )
+                 ->setName($cart_item['additional_details']['articleName'])
+                 ->setImageUrl( isset($cart_item['image']) ? $cart_item['image']['source'] : '' );
+
+            $basket->addItem( $item, $cart_item['quantity']);
+        }
+
+        if (isset($basketContent['sShippingcosts']) && $basketContent['sShippingcosts'] > 0) {
+            $item = new WirecardCEE_Stdlib_Basket_Item('shipping');
+            $item->setUnitGrossAmount($basketContent['sShippingcostsWithTax'])
+                 ->setUnitNetAmount($basketContent['sShippingcostsNet'])
+                 ->setUnitTaxRate($basketContent['sShippingcostsTax'])
+                 ->setUnitTaxAmount($basketContent['sShippingcostsWithTax'] - $basketContent['sShippingcostsNet'])
+                 ->setName('Shipping')
+                 ->setDescription('Shipping');
+            $basket->addItem($item);
+        }
+
+        return $basket;
     }
 
 }

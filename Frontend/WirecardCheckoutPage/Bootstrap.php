@@ -71,7 +71,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.4.3';
+        return '1.5.0';
     }
 
     /**
@@ -91,15 +91,20 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getInfo()
     {
+        $image = dirname(__FILE__) . '/wirecard-logo.png';
+        $imageData = base64_encode(file_get_contents($image));
+
+        $src = 'data: '.mime_content_type($image).';base64,'.$imageData;
+
         return array(
             'version' => $this->getVersion(),
-            'autor' => 'Wirecard Central Eastern Europe GmbH',
-            'copyright' => 'Wirecard Central Eastern Europe GmbH',
+            'autor' => 'Wirecard',
+            'copyright' => 'Wirecard',
             'label' => $this->getLabel(),
             'support' => 'http://www.wirecard.at/en/get-in-contact/',
             'link' => 'http://www.wirecard.at',
-            'description' => '<div style="line-height: 1.6em"><h1>Wirecard Checkout Page</h1><p>'
-                . file_get_contents(dirname(__FILE__) . '/info.txt') . '</p>'
+            'description' => '<img src="'.$src.'" /><div style="line-height: 1.6em"><h3>WIRECARD - YOUR FULL SERVICE PAYMENT PROVIDER - COMPREHENSIVE SOLUTIONS FROM ONE SINGLE SOURCE</h3>'
+                . '<p>' . file_get_contents(dirname(__FILE__) . '/info.txt') . '</p></div>'
         );
     }
 
@@ -129,11 +134,9 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function secureUninstall()
     {
-        if ($this->assertMinimumVersion('5')) {
-            /** @var \Shopware\Components\CacheManager $cacheManager */
-            $cacheManager = $this->get('shopware.cache_manager');
-            $cacheManager->clearThemeCache();
-        }
+        /** @var \Shopware\Components\CacheManager $cacheManager */
+        $cacheManager = $this->get('shopware.cache_manager');
+        $cacheManager->clearThemeCache();
 
         return array(
             'success' => true,
@@ -177,6 +180,22 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
             $em->flush();
         }
 
+        if (version_compare($version, '1.4.4', '<=')) {
+            //remove deprecated paymenttypes
+            Shopware()->Db()->delete('s_core_paymentmeans', 'name = "wcp_quick"');
+            Shopware()->Db()->delete('s_core_paymentmeans', 'name = "wcp_elv"');
+            Shopware()->Db()->delete('s_core_paymentmeans', 'name = "wcp_mpass"');
+            Shopware()->Db()->delete('s_core_paymentmeans', 'name = "wcp_skrilldirect"');
+            //removing unused restore basket
+            $em = $this->get('models');
+            $form = $this->Form();
+            $restore_basket = $form->getElement('RESTORE_BASKET');
+            if ($restore_basket !== null) {
+                $em->remove($restore_basket);
+            }
+            $em->flush();
+        }
+
         return $this->install();
     }
 
@@ -188,6 +207,15 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
     {
         $form = $this->Form();
         $i = 0;
+
+        $repository = Shopware()->Models()->getRepository('Shopware\Models\Shop\Shop');
+        $shop = $repository->findOneBy(['id' => 1]);
+        $currencies = array();
+        foreach ($shop->getCurrencies() as $elem) {
+            $currency = array($elem->getCurrency(), $elem->getName());
+            array_push($currencies, $currency);
+        }
+
         $form->setElement(
             'text',
             'CUSTOMERID',
@@ -250,20 +278,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
 
         $form->setElement(
             'checkbox',
-            'RESTORE_BASKET',
-            array(
-                'label' => 'Warenkorb wiederherstellen',
-                'value' => 0,
-                'description' => 'Falls "Ja" ausgewählt ist, wird der ursprüngliche Warenkorbinhalt wiederhergestellt, wenn der Konsument diesen während des Bezahlprozesses ändert. Falls "Nein" ausgewählt ist, wird die Bestellung nicht durchgeführt und auf den Status "Klärung notwedig" gesetzt.',
-                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
-                'required' => false,
-                'order' => ++$i
-            )
-        );
-
-
-        $form->setElement(
-            'checkbox',
             'CONFIRM_MAIL',
             array(
                 'label' => 'Benachrichtigungsmail',
@@ -289,32 +303,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
             )
         );
 
-
-        $form->setElement(
-            'checkbox',
-            'PAYOLUTION_TERMS',
-            array(
-                'label' => 'Payolution Konditionen',
-                'value' => 1,
-                'description' => 'Anzeige der Checkbox mit den payolution-Bedingungen, die vom Kunden während des Bezahlprozesses bestätigt werden müssen, wenn Ihr Onlineshop als "Trusted Shop" zertifiziert ist.',
-                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
-                'required' => false,
-                'order' => ++$i
-            )
-        );
-
-        $form->setElement(
-            'text',
-            'PAYOLUTION_MID',
-            array(
-                'label' => 'Payolution mID',
-                'value' => '',
-                'description' => 'payolution-Händler-ID, bestehend aus dem Base64-enkodierten Firmennamen, die für den Link "Einwilligen" gesetzt werden kann.',
-                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
-                'required' => false,
-                'order' => ++$i
-            )
-        );
 
         $form->setElement(
             'numberfield',
@@ -350,6 +338,19 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 'value' => 0,
                 'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
                 'description' => 'Weiterleitung der Rechnungs- und Versanddaten des Kunden an den Finanzdienstleister.',
+                'required' => false,
+                'order' => ++$i
+            )
+        );
+
+        $form->setElement(
+            'checkbox',
+            'SEND_BASKET_DATA',
+            array(
+                'label' => 'Warenkorbdaten des Konsumenten mitsenden',
+                'value' => 0,
+                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
+                'description' => 'Weiterleitung des Warenkorbs des Kunden an den Finanzdienstleister.',
                 'required' => false,
                 'order' => ++$i
             )
@@ -442,6 +443,95 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 'order' => ++$i
             )
         );
+
+        $form->setElement(
+            'checkbox',
+            'PAYOLUTION_TERMS',
+            array(
+                'label' => 'Payolution Konditionen',
+                'value' => 1,
+                'description' => 'Anzeige der Checkbox mit den payolution-Bedingungen, die vom Kunden während des Bezahlprozesses bestätigt werden müssen, wenn Ihr Onlineshop als "Trusted Shop" zertifiziert ist.',
+                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
+                'required' => false,
+                'order' => ++$i
+            )
+        );
+
+        $form->setElement(
+            'text',
+            'PAYOLUTION_MID',
+            array(
+                'label' => 'Payolution mID',
+                'value' => '',
+                'description' => 'payolution-Händler-ID, bestehend aus dem Base64-enkodierten Firmennamen, die für den Link "Einwilligen" gesetzt werden kann.',
+                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
+                'required' => false,
+                'order' => ++$i
+            )
+        );
+
+        $form->setElement(
+            'select',
+            'INVOICE_PROVIDER',
+            array(
+                'label' => 'Provider für Kauf auf Rechnung',
+                'value' => 'payolution',
+                'store' => array(
+                    array('payolution', 'payolution'),
+                    array('ratepay', 'RatePay'),
+                    array('wirecard', 'Wirecard')
+                ),
+                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
+                'required' => false,
+                'order' => ++$i
+            )
+        );
+
+        $form->setElement(
+            'select',
+            'INVOICE_CURRENCY',
+            array(
+                'label' => 'Akzeptierte Währungen für Kauf auf Rechnung',
+                'value' => '',
+                'store' => $currencies,
+                'multiSelect' => true,
+                'description' => 'Bitte wählen Sie mindestens eine gültige Währung für Kauf auf Rechnung.',
+                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
+                'required' => false,
+                'order' => ++$i
+            )
+        );
+
+        $form->setElement(
+            'select',
+            'INSTALLMENT_PROVIDER',
+            array(
+                'label' => 'Provider für Kauf auf Raten',
+                'value' => 'payolution',
+                'store' => array(
+                    array('payolution', 'payolution'),
+                    array('ratepay', 'RatePay')
+                ),
+                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
+                'required' => false,
+                'order' => ++$i
+            )
+        );
+
+        $form->setElement(
+            'select',
+            'INSTALLMENT_CURRENCY',
+            array(
+                'label' => 'Akzeptierte Währungen für Kauf auf Raten',
+                'value' => '',
+                'store' => $currencies,
+                'multiSelect' => true,
+                'description' => 'Bitte wählen Sie mindestens eine gültige Währung für Kauf auf Raten.',
+                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
+                'required' => false,
+                'order' => ++$i
+            )
+        );
     }
 
     /**
@@ -476,10 +566,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     'label' => 'URL to image on payment page',
                     'description' => 'URL to an image/logo which is displayed during the payment process in Wirecard Checkout Page (95x65 px preferred)'
                 ),
-                'RESTORE_BASKET' => Array(
-                    'label' => 'Restore basket',
-                    'description' => 'If set to "Yes", the original content of the shopping basket is restored if your consumer changed the basket during the payment process. If set to "No", the order is not executed and set to a clarification state.'
-                ),
                 'CONFIRM_MAIL' => Array(
                     'label' => 'Notification e-mail',
                     'description' => 'Receiving notification by e-mail regarding the orders of your consumers if an error occurred in the communication between Wirecard and your online shop.'
@@ -508,6 +594,10 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     'label' => 'Forward consumer data',
                     'description' => 'Forwarding shipping and billing data about your consumer to the respective financial service provider.'
                 ),
+                'SEND_BASKET_DATA' => Array(
+                    'label' => 'Forward basket data',
+                    'description' => 'Forwarding basket data to the respective financial service provider.'
+                ),
                 'USE_IFRAME' => Array(
                     'label' => 'Use iframe',
                     'description' => 'Display Wirecard Checkout Page in an iframe.',
@@ -527,7 +617,21 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 'ENABLE_DUPLICATE_REQUEST_CHECK' => Array(
                     'label' => 'Check for duplicate requests',
                     'description' => 'Checking duplicate requests made by your consumer.'
-                )
+                ),
+                'INVOICE_PROVIDER' => Array(
+                    'label' => 'Invoice Provider'
+                ),
+                'INVOICE_CURRENCY' => Array(
+                    'label' => 'Accepted currencies for Invoice',
+                    'description' => 'Please select at least one currency to use Invoice.'
+                ),
+                'INSTALLMENT_PROVIDER' => Array(
+                    'label' => 'Installment Provider'
+                ),
+                'INSTALLMENT_CURRENCY' => Array(
+                    'label' => 'Accepted currencies for Installment',
+                    'description' => 'Please select at least one currency to use Installment.'
+                ),
             )
         );
 
@@ -582,6 +686,12 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
         $this->subscribeEvent(
             'Enlight_Controller_Action_PostDispatch',
             'onPostDispatch'
+        );
+
+        // Save selected POST parameters (financial institutions)
+        $this->subscribeEvent(
+                'Enlight_Controller_Action_PreDispatch',
+                'onPreDispatch'
         );
 
         // Subscribe the needed event for less merge and compression
@@ -745,6 +855,20 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
         }
     }
 
+    /**
+     * Save selected POST paramter for payment methods with required
+     * financial institutions in session
+     *
+     * @param Enlight_Event_EventArgs $args
+     */
+    public function onPreDispatch(Enlight_Event_EventArgs $args)
+    {
+        $financialInstitution = $args->getSubject()->Request()->get('financialInstitution');
+        if (isset($financialInstitution)) {
+            self::init();
+            Shopware()->WirecardCheckoutPage()->financialInstitution = $financialInstitution;
+        }
+    }
 
     /**
      * Display additional data for seamless payment methods and
@@ -773,47 +897,16 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
         {
             case 'shippingPayment':
                 self::init();
+                // do pre-check for invoice and installment
+                if ( ! $this->isActivePayment('invoice')) {
+                    $view->sPayments = $this->hidePayment($view->sPayments, 'wcp_invoice');
+                }
+                if ( ! $this->isActivePayment('installment')) {
+                    $view->sPayments = $this->hidePayment($view->sPayments, 'wcp_installment');
+                }
+
                 $view->addTemplateDir($this->Path() . 'Views/common/');
-
-                if (Shopware()->Shop()->getTemplate()->getVersion() >= 3) {
-                    $view->addTemplateDir($this->Path() . 'Views/responsive/');
-                } else {
-                    $view->addTemplateDir($this->Path() . 'Views/');
-                }
-                $view->years = range(date('Y'), date('Y') - 100);
-                $view->days = range(1, 31);
-                $view->months = range(1, 12);
-
-                $user = Shopware()->Session()->sOrderVariables['sUserData'];
-
-                $birth = null;
-
-                if ($this->assertMinimumVersion('5.2')) {
-                    if(!is_null($user) && isset($user['additional']['user']['birthday'])) {
-                        $birth = $user['additional']['user']['birthday'];
-                    }
-                } else {
-                    if(!is_null($user) && isset($user['billingaddress']['birthday'])) {
-                        $birth = $user['billingaddress']['birthday'];
-                    }
-                }
-
-                if ($birth == null) {
-                    $birthday = array('-', '-', '-');
-                } else {
-                    $birthday = explode('-', $birth);
-                }
-
-                $view->bYear = $birthday[0];
-                $view->bMonth = $birthday[1];
-                $view->bDay = $birthday[2];
-
-                $view->wcpPayolutionTerms = Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS;
-
-                if ($this->getPayolutionLink()) {
-                    $view->wcpPayolutionLink1 = '<a id="wcp-payolutionlink" href="https://payment.payolution.com/payolution-payment/infoport/dataprivacyconsent?mId=' . $this->getPayolutionLink() . '" target="_blank">';
-                    $view->wcpPayolutionLink2 = '</a>';
-                }
+                $view->addTemplateDir($this->Path() . 'Views/responsive/');
 
                 // Output of common errors
                 if (null != Shopware()->WirecardCheckoutPage()->wirecard_action) {
@@ -823,15 +916,66 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
             case 'confirm':
                 self::init();
                 $view->addTemplateDir($this->Path() . 'Views/common/');
+                $view->addTemplateDir($this->Path() . 'Views/responsive/');
 
-                if (Shopware()->Shop()->getTemplate()->getVersion() >= 3) {
-                    $view->addTemplateDir($this->Path() . 'Views/responsive/');
-                } else {
-                    $view->addTemplateDir($this->Path() . 'Views/');
-                }
                 // Output of common errors
                 if (null != Shopware()->WirecardCheckoutPage()->wirecard_action) {
                     self::showErrorMessages($view);
+                }
+
+                //redirect to payment choice if not-active payment was chosen (invoice/installment)
+                $paymentName = Shopware()->Session()->sOrderVariables['sUserData']['additional']['payment']['name'];
+                $view->paymentDesc = Shopware()->Session()->sOrderVariables['sUserData']['additional']['payment']['description'];
+                $view->paymentName = $paymentName;
+                $view->paymentLogo = 'frontend/_public/images/' . $paymentName . '.png';
+
+                if ( ! $this->isActivePayment($paymentName)) {
+                    $controller->forward('shippingPayment');
+                }
+
+                $user  = Shopware()->Session()->sOrderVariables['sUserData'];
+                $birth = null;
+
+                if ( ! is_null($user) && isset($user['additional']['user']['birthday'])) {
+                    $birth = $user['additional']['user']['birthday'];
+                } else if ( ! is_null($user) && isset($user['billingaddress']['birthday'])) {
+                    $birth = $user['billingaddress']['birthday'];
+                }
+
+                // Values for datefields
+                $view->years  = range(date('Y'), date('Y') - 100);
+                $view->days   = range(1, 31);
+                $view->months = range(1, 12);
+
+                $birthday = array('-', '-', '-');
+                if ($birth != null) {
+                    $birthday = explode('-', $birth);
+                }
+
+                $view->bYear  = $birthday[0];
+                $view->bMonth = $birthday[1];
+                $view->bDay   = $birthday[2];
+
+                if ((Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_PROVIDER == 'payolution' && $paymentName == 'wcp_invoice') ||
+                        (Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_PROVIDER == 'payolution' && $paymentName == 'wcp_installment')
+                ) {
+                    $view->payolutionTerms = Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS;
+                    if (Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS) {
+                        $view->wcpPayolutionLink1 = '<a id="wcp-payolutionlink" href="https://payment.payolution.com/payolution-payment/infoport/dataprivacyconsent?mId='.$this->getPayolutionLink().'" target="_blank">';
+                        $view->wcpPayolutionLink2 = '</a>';
+                    }
+                }
+
+                if ($paymentName == 'wcp_eps') {
+                    $view->financialInstitutions         = WirecardCEE_QPay_PaymentType::getFinancialInstitutions('EPS');
+                    $view->wcpAdditional                 = 'financialInstitutions';
+                    $view->financialInstitutionsSelected = Shopware()->WirecardCheckoutPage()->financialInstitution;
+                }
+
+                if ($paymentName == 'wcp_ideal') {
+                    $view->financialInstitutions         = WirecardCEE_QPay_PaymentType::getFinancialInstitutions('IDL');
+                    $view->wcpAdditional                 = 'financialInstitutions';
+                    $view->financialInstitutionsSelected = Shopware()->WirecardCheckoutPage()->financialInstitution;
                 }
                 break;
 
@@ -839,12 +983,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 self::init();
 
                 $view->addTemplateDir($this->Path() . 'Views/common/');
-                if (Shopware()->Shop()->getTemplate()->getVersion() >= 3) {
-                    $view->addTemplateDir($this->Path() . 'Views/responsive/');
-                } else {
-                    $view->addTemplateDir($this->Path() . 'Views/');
-                $view->extendsTemplate('frontend/checkout/wirecard_finish.tpl');
-                }
+                $view->addTemplateDir($this->Path() . 'Views/responsive/');
 
                 $view->pendingPayment = $args->getSubject()->Request()->get('pending');
                 break;
@@ -852,6 +991,78 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
             default:
                 return;
         }
+    }
+
+    /**
+     * Pre-check for invoice and installment payments
+     *
+     * @param $paymentName
+     *
+     * @return bool
+     */
+    private function isActivePayment($paymentName)
+    {
+        switch ($paymentName) {
+            case 'invoice':
+            case 'wcp_invoice':
+                $currencies = Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_CURRENCY;
+                if (isset($currencies)) {
+                    $currentCurrency = Shopware()->Shop()->getCurrency()->getCurrency();
+
+                    foreach ($currencies as $currency) {
+                        if ((string)$currency == (string)$currentCurrency) {
+                            return true;
+                        }
+                    }
+                    if ($currencies->count()) {
+                        return false;
+                    }
+                }
+
+                return true;
+            case 'installment':
+            case 'wcp_installment':
+                $currencies = Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_CURRENCY;
+                if (isset($currencies)) {
+                    $currentCurrency = Shopware()->Shop()->getCurrency()->getCurrency();
+
+                    foreach ($currencies as $currency) {
+                        if ((string)$currency == (string)$currentCurrency) {
+                            return true;
+                        }
+                    }
+                    if ($currencies->count()) {
+                        return false;
+                    }
+                }
+
+                return true;
+            default:
+                return true;
+        }
+    }
+
+    /**
+     * Remove payment from active payments
+     *
+     * @param $payments
+     * @param $paymentName
+     *
+     * @return mixed
+     */
+    protected function hidePayment($payments, $paymentName)
+    {
+        if (is_array($payments)) {
+            foreach ($payments as $key => $value) {
+                if ($value['name'] == $paymentName) {
+                    unset($payments[$key]);
+
+                    return $payments;
+                }
+            }
+        }
+
+        return $payments;
     }
 
     /**
@@ -877,16 +1088,12 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
         /** @var $cronManager Enlight_Components_Cron_Manager */
         $cronManager = Shopware()->Cron();
         //we have to do a workaround due to a bug in Shopware 5s Cron DBAL Adapter (http://jira.shopware.de/?ticket=SW-11682)
-        if($this->assertMinimumVersion('5')) {
-            foreach($cronManager->getAllJobs() AS $job) {
-                if($job->getName() == $cronName) {
-                    return true;
-                }
-            }
-            return false;
-        } else {
-            return $cronManager->getJobByName($cronName) ? true : false;
+        foreach($cronManager->getAllJobs() AS $job) {
+           if($job->getName() == $cronName) {
+              return true;
+           }
         }
+        return false;
     }
 
 }
