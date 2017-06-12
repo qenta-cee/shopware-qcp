@@ -49,7 +49,7 @@ return array(
             'WirecardCheckoutPagePayolutionTermsHeader' => 'Payolution Konditionen',
             'WirecardCheckoutPagePayolutionConsent1' => 'Mit der Übermittlung jener Daten an payolution, die für die Abwicklung von Zahlungen mit Kauf auf Rechnung und die Identitäts- und Bonitätsprüfung erforderlich sind, bin ich einverstanden. Meine ',
             'WirecardCheckoutPagePayolutionConsent2' => ' kann ich jederzeit mit Wirkung für die Zukunft widerrufen.',
-            'WirecardCheckoutPagePayolutionLink' => 'Bewilligung',
+            'WirecardCheckoutPagePayolutionLink' => 'Einwilligung',
             'WirecardCheckoutPageBirthday' => 'Geburtsdatum',
             'WirecardCheckoutPageBirthdayInformation' => 'Sie müssen mindestens 18 Jahre alt sein, um dieses Zahlungsmittel nutzen zu können.',
             'WirecardCheckoutPagePayolutionTermsAccept' => 'Bitte akzeptieren Sie die payolution Konditionen.',
