@@ -71,7 +71,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.5.0';
+        return '1.5.1';
     }
 
     /**
@@ -1014,7 +1014,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                             return true;
                         }
                     }
-                    if ($currencies->count()) {
+                    if (count($currencies)) {
                         return false;
                     }
                 }
@@ -1031,7 +1031,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                             return true;
                         }
                     }
-                    if ($currencies->count()) {
+                    if (count($currencies)) {
                         return false;
                     }
                 }
