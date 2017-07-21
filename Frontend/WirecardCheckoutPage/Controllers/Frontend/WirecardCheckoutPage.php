@@ -387,12 +387,12 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
             Shopware()->Pluginlogger()->info('WirecardCheckoutPage: ' . __METHOD__ . '.--' . __LINE__ . ':' . $e->getMessage());
             print WirecardCEE_QPay_ReturnFactory::generateConfirmResponseString(htmlspecialchars($e->getMessage()));
 
-            return;
+            exit;
         }
 
         print WirecardCEE_QPay_ReturnFactory::generateConfirmResponseString($message);
 
-        return;
+        exit;
     }
 
     /**
