@@ -154,9 +154,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
 
             if ( ! $return->validate()) {
                 Shopware()->Pluginlogger()->info('WirecardCheckoutPage: ' . __METHOD__ . ':Validation error: invalid response');
-                print WirecardCEE_QPay_ReturnFactory::generateConfirmResponseString('Validation error: invalid response');
-
-                return;
+                die(WirecardCEE_QPay_ReturnFactory::generateConfirmResponseString('Validation error: invalid response'));
             }
 
             $oOrder = $this->getOrderByUniqueId($paymentUniqueId);
@@ -332,9 +330,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
 
                     if (($existingOrder[0] instanceof \Shopware\Models\Order\Order) && $existingOrder[0]->getPaymentStatus()->getId() !== Shopware()->WirecardCheckoutPage()->getPaymentStatusId(WirecardCEE_QPay_ReturnFactory::STATE_PENDING)) {
                         Shopware()->Pluginlogger()->info('WirecardCheckoutPage: ' . __METHOD__ . ': do not modify payment status as the order is in a final state!');
-                        print WirecardCEE_QPay_ReturnFactory::generateConfirmResponseString('Can not overwrite payment status as the order is in a final state!');
-
-                        return;
+                        die(WirecardCEE_QPay_ReturnFactory::generateConfirmResponseString('Can not overwrite payment status as the order is in a final state!'));
                     } else if ($existingOrder[0] instanceof \Shopware\Models\Order\Order) {
                         $status = $existingOrder[0]->getPaymentStatus();
                         if ($status->getId() === Shopware()->WirecardCheckoutPage()->getPaymentStatusId(WirecardCEE_QPay_ReturnFactory::STATE_PENDING)) {
@@ -385,14 +381,10 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
 
         } catch (Exception $e) {
             Shopware()->Pluginlogger()->info('WirecardCheckoutPage: ' . __METHOD__ . '.--' . __LINE__ . ':' . $e->getMessage());
-            print WirecardCEE_QPay_ReturnFactory::generateConfirmResponseString(htmlspecialchars($e->getMessage()));
-
-            exit;
+            die(WirecardCEE_QPay_ReturnFactory::generateConfirmResponseString(htmlspecialchars($e->getMessage())));
         }
 
-        print WirecardCEE_QPay_ReturnFactory::generateConfirmResponseString($message);
-
-        exit;
+        die(WirecardCEE_QPay_ReturnFactory::generateConfirmResponseString($message));
     }
 
     /**
