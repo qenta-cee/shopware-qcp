@@ -267,7 +267,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
                  ->setUnitTaxAmount(number_format($cart_item['price'] - $cart_item['netprice'], 2, '.', ''))
                  ->setUnitTaxRate($cart_item['tax_rate'])
                  ->setDescription( substr( strip_tags( $cart_item['additional_details']['description']), 0, 127 ) )
-                 ->setName($cart_item['additional_details']['articleName'])
+                 ->setName(isset($cart_item['additional_details']['articleName']) ? $cart_item['additional_details']['articleName'] : 'FixCosts')
                  ->setImageUrl( isset($cart_item['image']) ? $cart_item['image']['source'] : '' );
 
             $basket->addItem( $item, $cart_item['quantity']);
