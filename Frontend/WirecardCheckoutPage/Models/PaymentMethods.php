@@ -46,7 +46,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
         'CCARD' => array(
             'name' => 'ccard',
             'description' => 'Wirecard Kreditkarte',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_ccard.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::CCARD,
             'translation' => Array('description' => 'Wirecard Credit Card', 'additionalDescription' => '')
         ),
@@ -54,7 +54,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
         'CCARD-MOTO' => array(
             'name' => 'ccard-moto',
             'description' => 'Wirecard Kreditkarte - Post / Telefonbestellung',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_ccard.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::CCARD_MOTO,
             'translation' => Array('description' => 'Wirecard Credit Card - Mail Order and Telephone Order', 'additionalDescription' => '')
         ),
@@ -62,7 +62,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
         'MASTERPASS' => array(
             'name' => 'masterpass',
             'description' => 'Wirecard Masterpass',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_masterpass.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::MASTERPASS,
             'translation' => Array('description' => 'Wirecard Masterpass', 'additionalDescription' => '')
         ),
@@ -70,7 +70,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
         'MAESTRO' => array(
             'name' => 'maestro',
             'description' => 'Wirecard Maestro SecureCode',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_maestro.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::MAESTRO,
             'translation' => Array('description' => 'Wirecard Maestro SecureCode', 'additionalDescription' => '')
         ),
@@ -78,14 +78,14 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
         'EPS' => array(
             'name' => 'eps',
             'description' => 'Wirecard eps Online-&Uuml;berweisung',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_eps.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::EPS,
             'translation' => Array('description' => 'Wirecard eps Online Bank Transfer', 'additionalDescription' => '')
         ),
         'IDEAL' => array(
             'name' => 'ideal',
             'description' => 'Wirecard iDEAL',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_ideal.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::IDL,
             'translation' => Array('description' => 'Wirecard iDEAL', 'additionalDescription' => '')
 
@@ -93,126 +93,126 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
         'GIROPAY' => array(
             'name' => 'giropay',
             'description' => 'Wirecard giropay',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_giropay.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::GIROPAY,
             'translation' => Array('description' => 'Wirecard giropay', 'additionalDescription' => '')
         ),
         'SOFORTUEBERWEISUNG' => array(
             'name' => 'sofortueberweisung',
             'description' => 'Wirecard SOFORT &Uuml;berweisung',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_sofortueberweisung.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::SOFORTUEBERWEISUNG,
             'translation' => Array('description' => 'Wirecard SOFORT banking', 'additionalDescription' => '')
         ),
         'BANCONTACT_MISTERCASH' => array(
             'name' => 'bancontact_mistercash',
             'description' => 'Wirecard Bancontact',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_bancontact_mistercash.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::BMC,
             'translation' => Array('description' => 'Wirecard Bancontact', 'additionalDescription' => '')
         ),
         'PRZELEWY24' => array(
             'name' => 'przelewy24',
             'description' => 'Wirecard Przelewy24',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_przelewy24.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::P24,
             'translation' => Array('description' => 'Wirecard Przelewy24', 'additionalDescription' => '')
         ),
         'MONETA' => array(
             'name' => 'moneta',
             'description' => 'Wirecard moneta.ru',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_moneta.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::MONETA,
             'translation' => Array('description' => 'Wirecard moneta.ru', 'additionalDescription' => '')
         ),
         'POLI' => array(
             'name' => 'poli',
             'description' => 'Wirecard POLi',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_poli.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::POLI,
             'translation' => Array('description' => 'Wirecard POLi', 'additionalDescription' => '')
         ),
         'PBX' => array(
             'name' => 'pbx',
             'description' => 'Wirecard paybox',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_pbx.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::PBX,
             'translation' => Array('description' => 'Wirecard paybox', 'additionalDescription' => '')
         ),
         'PSC' => array(
             'name' => 'psc',
             'description' => 'Wirecard paysafecard',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_psc.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::PSC,
             'translation' => Array('description' => 'Wirecard paysafecard', 'additionalDescription' => '')
         ),
         'PAYPAL' => array(
             'name' => 'paypal',
             'description' => 'Wirecard PayPal',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_paypal.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::PAYPAL,
             'translation' => Array('description' => 'Wirecard PayPal', 'additionalDescription' => '')
         ),
         'SEPA-DD' => array(
             'name' => 'sepa-dd',
             'description' => 'Wirecard SEPA Lastschrift',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_sepa-dd.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::SEPADD,
             'translation' => Array('description' => 'Wirecard SEPA Direct Debit', 'additionalDescription' => '')
         ),
         'INVOICE' => array(
             'name' => 'invoice',
             'description' => 'Wirecard Kauf auf Rechnung',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_invoice.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::INVOICE,
             'translation' => Array('description' => 'Wirecard Invoice', 'additionalDescription' => '')
         ),
         'INSTALLMENT' => array(
             'name' => 'installment',
             'description' => 'Wirecard Kauf auf Raten',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_installment.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::INSTALLMENT,
             'translation' => Array('description' => 'Wirecard Installment', 'additionalDescription' => '')
         ),
         'SKRILLWALLET' => array(
             'name' => 'skrillwallet',
             'description' => 'Wirecard Skrill Digital Wallet',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_skrillwallet.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::SKRILLWALLET,
             'translation' => Array('description' => 'Wirecard Skrill Digital Wallet', 'additionalDescription' => '')
         ),
         'EKONTO' => array(
             'name' => 'ekonto',
             'description' => 'Wirecard eKonto',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_ekonto.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::EKONTO,
             'translation' => Array('description' => 'Wirecard eKonto', 'additionalDescription' => '')
         ),
         'TRUSTLY' => array(
             'name' => 'trustly',
             'description' => 'Wirecard Trustly',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_trustly.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::TRUSTLY,
             'translation' => Array('description' => 'Wirecard Trustly', 'additionalDescription' => '')
         ),
         'TATRAPAY' => array(
             'name' => 'tatrapay',
             'description' => 'Wirecard TatraPay',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_tatrapay.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::TATRAPAY,
             'translation' => Array('description' => 'Wirecard TatraPay', 'additionalDescription' => '')
         ),
         'EPAY' => array(
             'name' => 'epay',
             'description' => 'Wirecard ePay.bg',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_epay.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::EPAYBG,
             'translation' => Array('description' => 'Wirecard ePay.bg', 'additionalDescription' => '')
         ),
         'VOUCHER' => array(
             'name' => 'voucher',
             'description' => 'Wirecard Gutschein',
-            'template' => 'wirecard_logos.tpl',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_voucher.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::VOUCHER,
             'translation' => Array('description' => 'Wirecard Voucher', 'additionalDescription' => '')
         )

@@ -71,7 +71,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.5.2';
+        return '1.5.3';
     }
 
     /**
@@ -747,7 +747,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     'active' => (isset($pm['active'])) ? (int)$pm['active'] : 0,
                     'position' => $i,
                     'pluginID' => $this->getId(),
-                    'additionalDescription' => ''
+                    'additionalDescription' => $pm['additionalDescription']
                 );
                 if (isset($pm['template']) && !is_null($pm['template'])) {
                     $payment['template'] = $pm['template'];
@@ -757,6 +757,15 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 if (isset($pm['template']) && !is_null($pm['template'])) {
                     $oPayment->setTemplate($pm['template']);
                 }
+	            if (isset($pm['additionalDescription']) && $pm['additionalDescription'] != '') {
+		            $additional = $oPayment->getAdditionalDescription();
+		            if ( $additional === '' ) {
+			            if ($oPayment->getTemplate() == 'wirecard_logos.tpl') {
+				            $oPayment->setTemplate(null);
+			            }
+			            $oPayment->setAdditionalDescription($pm['additionalDescription']);
+		            }
+	            }
             }
 
             $aTranslations[$oPayment->getId()] = $pm['translation'];
