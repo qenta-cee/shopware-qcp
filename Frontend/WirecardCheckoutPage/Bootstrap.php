@@ -979,7 +979,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 $view->addTemplateDir($this->Path() . 'Views/common/');
                 $view->addTemplateDir($this->Path() . 'Views/responsive/');
 
-                $view->pendingPayment = $args->getSubject()->Request()->get('pending');
+                $view->wcpPendingPayment = $args->getSubject()->Request()->get('ispending');
                 break;
 
             default:

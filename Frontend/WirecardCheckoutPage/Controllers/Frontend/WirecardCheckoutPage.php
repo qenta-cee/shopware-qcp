@@ -420,7 +420,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                 case WirecardCEE_QPay_ReturnFactory::STATE_PENDING:
                     /** @var $return WirecardCEE_QPay_Return_Pending */
                 $sRedirectUrl = $this->Front()->Router()->assemble(
-                    Array('controller' => 'checkout', 'action' => 'finish', 'sUseSSL' => true, 'pending' => true)
+                    Array('controller' => 'checkout', 'action' => 'finish', 'sUseSSL' => true, 'ispending' => true)
                 );
                 break;
 
