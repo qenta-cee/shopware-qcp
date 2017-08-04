@@ -747,7 +747,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     'active' => (isset($pm['active'])) ? (int)$pm['active'] : 0,
                     'position' => $i,
                     'pluginID' => $this->getId(),
-                    'additionalDescription' => $pm['additionalDescription']
+                    'additionalDescription' => strlen($pm['additionalDescription']) ? $pm['additionalDescription'] : 'Pay with Wirecard'
                 );
                 if (isset($pm['template']) && !is_null($pm['template'])) {
                     $payment['template'] = $pm['template'];
@@ -757,7 +757,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 if (isset($pm['template']) && !is_null($pm['template'])) {
                     $oPayment->setTemplate($pm['template']);
                 }
-	            if (isset($pm['additionalDescription']) && $pm['additionalDescription'] != '') {
+	            if (isset($pm['additionalDescription']) && strlen($pm['additionalDescription']) && !is_null($pm['additionalDescription'])) {
 		            $additional = $oPayment->getAdditionalDescription();
 		            if ( $additional === '' ) {
 			            if ($oPayment->getTemplate() == 'wirecard_logos.tpl') {

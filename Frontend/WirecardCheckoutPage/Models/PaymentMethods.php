@@ -39,7 +39,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
         'SELECT' => array(
             'name' => 'select',
             'description' => 'Auswahl auf Wirecard Checkout Page',
-            'template' => '',
+            'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wirecard-logo.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::SELECT,
             'translation' => Array( 'description' => 'Selection within wirecard checkout page', 'additionalDescription' => '')
         ),
