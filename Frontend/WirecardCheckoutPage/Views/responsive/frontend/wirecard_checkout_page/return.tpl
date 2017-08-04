@@ -34,11 +34,9 @@
             parent.location.href = redirectUrl;
         }
 
-        (function($) {
-            $(document).ready(function() {
+        window.onload = function() {
                 iframeBreakout('{$redirectUrl}');
-            });
-        })(jQuery);
+        };
     </script>
 {/block}
 

@@ -71,7 +71,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.5.2';
+        return '1.5.3';
     }
 
     /**
@@ -747,7 +747,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     'active' => (isset($pm['active'])) ? (int)$pm['active'] : 0,
                     'position' => $i,
                     'pluginID' => $this->getId(),
-                    'additionalDescription' => ''
+                    'additionalDescription' => strlen($pm['additionalDescription']) ? $pm['additionalDescription'] : 'Pay with Wirecard'
                 );
                 if (isset($pm['template']) && !is_null($pm['template'])) {
                     $payment['template'] = $pm['template'];
@@ -757,6 +757,15 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 if (isset($pm['template']) && !is_null($pm['template'])) {
                     $oPayment->setTemplate($pm['template']);
                 }
+	            if (isset($pm['additionalDescription']) && strlen($pm['additionalDescription']) && !is_null($pm['additionalDescription'])) {
+		            $additional = $oPayment->getAdditionalDescription();
+		            if ( $additional === '' ) {
+			            if ($oPayment->getTemplate() == 'wirecard_logos.tpl') {
+				            $oPayment->setTemplate(null);
+			            }
+			            $oPayment->setAdditionalDescription($pm['additionalDescription']);
+		            }
+	            }
             }
 
             $aTranslations[$oPayment->getId()] = $pm['translation'];
@@ -979,7 +988,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 $view->addTemplateDir($this->Path() . 'Views/common/');
                 $view->addTemplateDir($this->Path() . 'Views/responsive/');
 
-                $view->pendingPayment = $args->getSubject()->Request()->get('pending');
+                $view->wcpPendingPayment = $args->getSubject()->Request()->get('ispending');
                 break;
 
             default:
