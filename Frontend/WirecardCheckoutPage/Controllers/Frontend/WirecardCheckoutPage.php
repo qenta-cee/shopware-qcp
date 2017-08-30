@@ -120,6 +120,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
         if($bUseIframe)
         {
             $this->View()->loadTemplate('responsive/frontend/wirecard_checkout_page/index.tpl');
+            $this->View()->assign('headerTemplate', 'frontend/checkout/confirm.tpl');
             $this->View()->assign(
                 'redirectUrl',
                 $sRedirectUrl
