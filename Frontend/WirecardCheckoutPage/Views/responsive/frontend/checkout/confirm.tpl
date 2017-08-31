@@ -3,6 +3,9 @@
 {namespace name="frontend/checkout/confirm"}
 
 {block name="frontend_index_header_javascript" append}
+    {if isset($wcpConsumerDeviceIdScript)}
+        {$wcpConsumerDeviceIdScript}
+    {/if}
     <script type="text/javascript">
         function checkbirthday() {
             var m = $('#wcp-month').val();
