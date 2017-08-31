@@ -71,7 +71,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.5.4';
+        return '1.5.5';
     }
 
     /**
@@ -932,6 +932,19 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 $view->paymentName = $paymentName;
                 $view->paymentLogo = 'frontend/_public/images/' . $paymentName . '.png';
 
+                if(Shopware()->Session()->offsetGet('wcpConsumerDeviceId') != null) {
+                    $consumerDeviceId = Shopware()->Session()->offsetGet('wcpConsumerDeviceId');
+                } else {
+                    $timestamp = microtime();
+                    $consumerDeviceId = md5(Shopware()->WirecardCheckoutPage()->getConfig()->customerid . "_" . $timestamp);
+                    Shopware()->Session()->offsetSet('wcpConsumerDeviceId', $consumerDeviceId);
+                }
+                $ratepay = '<script language="JavaScript">var di = {t:"'.$consumerDeviceId.'",v:"WDWL",l:"Checkout"};</script>';
+                $ratepay .= '<script type="text/javascript" src="//d.ratepay.com/'.$consumerDeviceId.'/di.js"></script>';
+                $ratepay .= '<noscript><link rel="stylesheet" type="text/css" href="//d.ratepay.com/di.css?t='.$consumerDeviceId.'&v=WDWL&l=Checkout"></noscript>';
+                $ratepay .= '<object type="application/x-shockwave-flash" data="//d.ratepay.com/WDWL/c.swf" width="0" height="0"><param name="movie" value="//d.ratepay.com/WDWL/c.swf" /><param name="flashvars" value="t='.$consumerDeviceId.'&v=WDWL"/><param name="AllowScriptAccess" value="always"/></object>';
+                $view->wcpConsumerDeviceIdScript = $ratepay;
+
                 if ( ! $this->isActivePayment($paymentName)) {
                     $controller->forward('shippingPayment');
                 }
@@ -1006,6 +1019,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
     private function isActivePayment($paymentName)
     {
         switch ($paymentName) {
+            case 'invoice':
             case 'wcp_invoice':
                 $currencies = Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_CURRENCY;
                 if (isset($currencies)) {
@@ -1022,6 +1036,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 }
 
                 return true;
+            case 'installment':
             case 'wcp_installment':
                 $currencies = Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_CURRENCY;
                 if (isset($currencies)) {
