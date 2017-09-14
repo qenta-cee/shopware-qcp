@@ -1019,7 +1019,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
     private function isActivePayment($paymentName)
     {
         switch ($paymentName) {
-            case 'invoice':
             case 'wcp_invoice':
                 $currencies = Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_CURRENCY;
                 if (isset($currencies)) {
@@ -1036,7 +1035,6 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 }
 
                 return true;
-            case 'installment':
             case 'wcp_installment':
                 $currencies = Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_CURRENCY;
                 if (isset($currencies)) {
