@@ -53,6 +53,12 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
      */
     public function indexAction()
     {
+	    $basket = Shopware()->Modules()->Basket();
+	    $basketQuantities = $basket->sCheckBasketQuantities();
+	    if (!empty($basketQuantities['hideBasket'])) {
+		    return $this->redirect(array('controller' => 'checkout'));
+	    }
+
         /** @var Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page $oPageModel */
         $oPageModel = Shopware()->WirecardCheckoutPage()->getPage();
 
