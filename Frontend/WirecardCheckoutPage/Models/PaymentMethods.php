@@ -99,10 +99,10 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
         ),
         'SOFORTUEBERWEISUNG' => array(
             'name' => 'sofortueberweisung',
-            'description' => 'Wirecard SOFORT &Uuml;berweisung',
+            'description' => 'Wirecard Sofort.',
             'additionalDescription' => '<img src="{link file=\'frontend/_public/images/wcp_sofortueberweisung.png\'}" class="wirecard-brand"/>&nbsp;',
             'call' => WirecardCEE_QPay_PaymentType::SOFORTUEBERWEISUNG,
-            'translation' => Array('description' => 'Wirecard SOFORT banking', 'additionalDescription' => '')
+            'translation' => Array('description' => 'Wirecard Online bank transfer.', 'additionalDescription' => '')
         ),
         'BANCONTACT_MISTERCASH' => array(
             'name' => 'bancontact_mistercash',
