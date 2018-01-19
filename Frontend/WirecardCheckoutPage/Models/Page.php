@@ -77,7 +77,10 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
     public function initiatePayment($paymentType, $amount, $currency, $returnUrl, $confimUrl, $params = array())
     {
         $oFrontendClient = $this->getFrontendClient(Shopware()->WirecardCheckoutPage()->getConfig());
-        if (in_array(strtolower($paymentType), Shopware()->WirecardCheckoutPage()->getConfig()->getPaymentsFinancialInstitution())) {
+        if (Shopware()->WirecardCheckoutPage()->getConfig()->FINANCIAL_INSTITUTION_SELECTION_ENABLED
+            && in_array(strtolower($paymentType),
+                Shopware()->WirecardCheckoutPage()->getConfig()->getPaymentsFinancialInstitution())
+        ) {
             $oFrontendClient->setFinancialInstitution(Shopware()->WirecardCheckoutPage()->financialInstitution);
         }
         $email = (string) Shopware()->WirecardCheckoutPage()->getUser('user')->email;

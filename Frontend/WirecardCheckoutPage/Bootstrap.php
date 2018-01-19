@@ -71,7 +71,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.5.8';
+        return '1.5.9';
     }
 
     /**
@@ -526,6 +526,18 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 'order' => ++$i
             )
         );
+
+        $form->setElement(
+            'checkbox',
+            'FINANCIAL_INSTITUTION_SELECTION_ENABLED',
+            array(
+                'label' => 'Auswahl des Finanzinstitutes erlauben.',
+                'value' => 1,
+                'description' => 'Bei Zahlungsmittel wie EPS und iDeal die Auswahl des Finanzinstitutes vor der Weiterleitung zum PSP erlauben.',
+                'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
+                'required' => false,
+                'order' => ++$i
+            ));
     }
 
     /**
@@ -626,6 +638,10 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     'label' => 'Accepted currencies for Installment',
                     'description' => 'Please select at least one currency to use Installment.'
                 ),
+                'FINANCIAL_INSTITUTION_SELECTION_ENABLED' => Array(
+                    'label' => 'Selection of financial institute allowed.',
+                    'description' => 'Allow financial institute selection for payment methods like EPS or iDeal.'
+                )
             )
         );
 
@@ -931,6 +947,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 $view->paymentDesc = Shopware()->Session()->sOrderVariables['sUserData']['additional']['payment']['description'];
                 $view->paymentName = $paymentName;
                 $view->paymentLogo = 'frontend/_public/images/' . $paymentName . '.png';
+                $view->financialInstitutionSelectionEnabled = Shopware()->WirecardCheckoutPage()->getConfig()->FINANCIAL_INSTITUTION_SELECTION_ENABLED;
 
                 if(Shopware()->Session()->offsetGet('wcpConsumerDeviceId') != null) {
                     $consumerDeviceId = Shopware()->Session()->offsetGet('wcpConsumerDeviceId');
