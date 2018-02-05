@@ -957,8 +957,8 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     Shopware()->Session()->offsetSet('wcpConsumerDeviceId', $consumerDeviceId);
                 }
                 $paymentName = Shopware()->WirecardCheckoutPage()->getPaymentShortName();
-                if ((Shopware()->WirecardCheckoutPage()->Config()->INVOICE_PROVIDER == 'ratepay' && $paymentName == 'invoice') ||
-                    Shopware()->WirecardCheckoutPage()->Config()->INSTALLMENT_PROVIDER == 'ratepay' && $paymentName == 'installment') {
+                if ((Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_PROVIDER == 'ratepay' && $paymentName == 'wcp_invoice') ||
+                    (Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_PROVIDER == 'ratepay' && $paymentName == 'wcp_installment')) {
                     $ratepay = '<script language="JavaScript">var di = {t:"' . $consumerDeviceId . '",v:"WDWL",l:"Checkout"};</script>';
                     $ratepay .= '<script type="text/javascript" src="//d.ratepay.com/' . $consumerDeviceId . '/di.js"></script>';
                     $ratepay .= '<noscript><link rel="stylesheet" type="text/css" href="//d.ratepay.com/di.css?t=' . $consumerDeviceId . '&v=WDWL&l=Checkout"></noscript>';
