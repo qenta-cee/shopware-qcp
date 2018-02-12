@@ -10,7 +10,7 @@
 {block name="frontend_index_content"}
     <div class="content block">
         <div id="payment" class="grid_20">
-            <iframe src="{$redirectUrl}" height="660" id="wcp_iframe" style="border: 0; margin: auto;"></iframe>
+            <iframe src="{$redirectUrl}" height="660" id="wcp_iframe" style="border: 0; margin: auto; width: 100%"></iframe>
         </div>
     </div>
 {/block}
