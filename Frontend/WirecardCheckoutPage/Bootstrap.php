@@ -1002,17 +1002,10 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     }
                 }
 
-                if ($paymentName == 'wcp_eps') {
-                    $view->financialInstitutions         = WirecardCEE_QPay_PaymentType::getFinancialInstitutions('EPS');
-                    $view->wcpAdditional                 = 'financialInstitutions';
-                    $view->financialInstitutionsSelected = Shopware()->WirecardCheckoutPage()->financialInstitution;
-                }
+                $view->epsFinancialInstitutions         = WirecardCEE_QPay_PaymentType::getFinancialInstitutions('EPS');
+                $view->idlFinancialInstitutions = WirecardCEE_QPay_PaymentType::getFinancialInstitutions('IDL');
+                $view->financialInstitutionsSelected = Shopware()->WirecardCheckoutPage()->financialInstitution;
 
-                if ($paymentName == 'wcp_ideal') {
-                    $view->financialInstitutions         = WirecardCEE_QPay_PaymentType::getFinancialInstitutions('IDL');
-                    $view->wcpAdditional                 = 'financialInstitutions';
-                    $view->financialInstitutionsSelected = Shopware()->WirecardCheckoutPage()->financialInstitution;
-                }
                 break;
 
             case 'finish':
