@@ -21,17 +21,12 @@
             if (birthdate < limit) {
                 $('#wcp-birthdate').val(dateStr);
                 $('#wcpPayolutionAging').hide();
-                if ($('#wcsInvoiceTermsChecked').length) {
-                    if ($('#wcpInvoiceTermsChecked').is(':checked')) {
-                        $('#wcpPayolutionTermsAccept').hide();
-                        $('.is--primary').attr('disabled', false);
-                    } else {
-                        $('.is--primary').attr('disabled', true);
-                        $('#wcpPayolutionTermsAccept').show();
-                    }
-                } else {
-                    $('#wcsPayolutionTermsAccept').hide();
+                if ($('#wcpInvoiceTermsChecked').is(':checked')) {
+                    $('#wcpPayolutionTermsAccept').hide();
                     $('.is--primary').attr('disabled', false);
+                } else {
+                    $('.is--primary').attr('disabled', true);
+                    $('#wcpPayolutionTermsAccept').show();
                 }
             }
             else {

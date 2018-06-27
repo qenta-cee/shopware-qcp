@@ -992,12 +992,12 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 $view->bMonth = $birthday[1];
                 $view->bDay   = $birthday[2];
 
-                if ((Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_PROVIDER == 'payolution' && $paymentName == 'wcp_invoice') ||
-                        (Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_PROVIDER == 'payolution' && $paymentName == 'wcp_installment')
+                if ((Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_PROVIDER == 'payolution') ||
+                    (Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_PROVIDER == 'payolution')
                 ) {
                     $view->payolutionTerms = Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS;
                     if (Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS) {
-                        $view->wcpPayolutionLink1 = '<a id="wcp-payolutionlink" href="https://payment.payolution.com/payolution-payment/infoport/dataprivacyconsent?mId='.$this->getPayolutionLink().'" target="_blank">';
+                        $view->wcpPayolutionLink1 = '<a id="wcp-payolutionlink" href="https://payment.payolution.com/payolution-payment/infoport/dataprivacyconsent?mId=' . $this->getPayolutionLink() . '" target="_blank">';
                         $view->wcpPayolutionLink2 = '</a>';
                     }
                 }
