@@ -137,6 +137,25 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
         }
     }
 
+    public function pendingAction()
+    {
+        /** @var $return WirecardCEE_QPay_Return_Pending */
+        $sRedirectUrl = $this->Front()->Router()->assemble(
+            Array('action' => 'pending', 'sUseSSL' => true)
+        );
+        $bUseIframe = (Shopware()->WirecardCheckoutPage()->getConfig()->use_iframe == 1);
+
+        if($bUseIframe)
+        {
+            $this->View()->loadTemplate('responsive/frontend/wirecard_checkout_page/pending.tpl');
+            $this->View()->redirectUrl = $sRedirectUrl;
+        }
+        else
+        {
+            $this->redirect($sRedirectUrl);
+        }
+    }
+
     public function confirmAction()
     {
         try {
@@ -277,7 +296,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                     }
                     break;
                 case WirecardCEE_QPay_ReturnFactory::STATE_PENDING:
-                    $existingOrder = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findByNumber($sOrderVariables['sOrderNumber']);
+                    /*$existingOrder = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findByNumber($sOrderVariables['sOrderNumber']);
                     if ( ! $existingOrder[0] instanceof \Shopware\Models\Order\Order) {
                         $sOrderNumber = $this->saveOrder(
                             $transactionId,
@@ -331,7 +350,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                         if (Shopware()->WirecardCheckoutPage()->getConfig()->saveResponseTo()) {
                             $this->saveComments($return, $sOrderVariables['sOrderNumber']);
                         }
-                    }
+                    }*/
                     break;
                 case WirecardCEE_QPay_ReturnFactory::STATE_FAILURE:
                     $sOrderVariables = Shopware()->Session()->sOrderVariables;
@@ -432,8 +451,9 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                 case WirecardCEE_QPay_ReturnFactory::STATE_PENDING:
                     /** @var $return WirecardCEE_QPay_Return_Pending */
                 $sRedirectUrl = $this->Front()->Router()->assemble(
-                    Array('controller' => 'checkout', 'action' => 'finish', 'sUseSSL' => true, 'ispending' => true)
+                    Array('action' => 'pending', 'sUseSSL' => true)
                 );
+                    //return $this->redirect(['action' => 'direct', 'forceSecure' => true]);
                 break;
 
                 case WirecardCEE_QPay_ReturnFactory::STATE_CANCEL:

@@ -40,7 +40,7 @@ return array(
             'WirecardCheckoutPagePaymentRedirectLinkText' => 'Falls Sie nicht weitergeleitet werden, klicken Sie bitte',
             'WirecardCheckoutPagePaymentRedirectLink' => 'hier',
         ),
-        'frontend/checkout/finish' => array(
+        'frontend/checkout/pending' => array(
             'WirecardCheckoutPageMessageActionPending' => 'Ihre Zahlung wurde vom Finanzinstitut noch nicht best&auml;tigt.',
         ),
         'frontend/checkout/confirm' => array(

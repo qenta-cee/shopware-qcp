@@ -869,7 +869,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
         $paymentaction = $additional['payment']['action'];
 
         //only prevent confirmationmail for WirecardCheckoutPage payment action
-        if($paymentaction == 'WirecardCheckoutPage') {
+        if($paymentaction == 'WirecardCheckoutPage' && Shopware()->WirecardCheckoutPage()->getConfig()->SEND_PENDING_MAILS) {
             return false;
         }
     }
