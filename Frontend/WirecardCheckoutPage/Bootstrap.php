@@ -1017,7 +1017,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                     }
                 }
 
-                $view->epsFinancialInstitutions         = WirecardCEE_QPay_PaymentType::getFinancialInstitutions('EPS');
+                $view->epsFinancialInstitutions = WirecardCEE_QPay_PaymentType::getFinancialInstitutions('EPS');
                 $view->idlFinancialInstitutions = WirecardCEE_QPay_PaymentType::getFinancialInstitutions('IDL');
                 $view->financialInstitutionsSelected = Shopware()->WirecardCheckoutPage()->financialInstitution;
 
