@@ -864,12 +864,27 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function defineSending(Enlight_Event_EventArgs $args)
     {
+        $context = $args->getContext();
+        $existingOrder   = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findByNumber($context['sOrderNumber']);
+
+        $pending = false;
+        if ($existingOrder[0] instanceof \Shopware\Models\Order\Order) {
+            //Check for pending payment state
+            if (isset(Shopware()->Session()->sOrderVariables['wirecardState'])) {
+                $pending = Shopware()->Session()->sOrderVariables['wirecardState'];
+                unset(Shopware()->Session()->sOrderVariables['wirecardState']);
+            }
+        }
         $userData = Shopware()->Session()->sOrderVariables['sUserData'];
         $additional = $userData['additional'];
         $paymentaction = $additional['payment']['action'];
 
         //only prevent confirmationmail for WirecardCheckoutPage payment action
-        if($paymentaction == 'WirecardCheckoutPage' && Shopware()->WirecardCheckoutPage()->getConfig()->SEND_PENDING_MAILS) {
+        if(($paymentaction == 'WirecardCheckoutPage') && $pending) {
+            //save mail confirmation for later usage
+            if (isset($args['mail'])) {
+                Shopware()->Session()->sWirecardConfirmMail = $args['mail'];
+            }
             return false;
         }
     }

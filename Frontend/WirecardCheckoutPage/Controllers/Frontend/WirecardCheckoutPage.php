@@ -189,47 +189,10 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
 
             // data for confirm mail
             $sOrderVariables = Shopware()->Session()->sOrderVariables;
-            $userData        = Shopware()->Session()->sOrderVariables['sUserData'];
-            $basketData      = Shopware()->Session()->sOrderVariables['sBasket'];
-
-            $shop     = Shopware()->Shop();
-            $mainShop = $shop->getMain() !== null ? $shop->getMain() : $shop;
-            $details  = $basketData['content'];
-
-            $context = array(
-                'sOrderDetails'   => $details,
-                'billingaddress'  => $userData['billingaddress'],
-                'shippingaddress' => $userData['shippingaddress'],
-                'additional'      => $userData['additional'],
-
-                'sShippingCosts' => $sOrderVariables['sShippingcosts'] . ' ' . $basketData['sCurrencyName'],
-                'sAmount'        => $sOrderVariables['sAmount'] . ' ' . $basketData['sCurrencyName'],
-                'sAmountNet'     => $sOrderVariables['sAmountNet'] . ' ' . $basketData['sCurrencyName'],
-                'sDispatch'      => $sOrderVariables['sDispatch'],
-
-                'sOrderNumber' => $sOrderVariables['sOrderNumber'],
-                'sComment'     => $sOrderVariables['sComment'],
-                'sCurrency'    => $basketData['sCurrencyName'],
-                'sLanguage'    => $shop->getId(),
-
-                'sSubShop'  => $mainShop->getId(),
-                'sNet'      => ! $userData['additional']['show_net'],
-                'sEsd'      => $userData['additional']['payment']['esdactive'],
-                'sTaxRates' => $sOrderVariables['sTaxRates'],
-            );
-
-            $sUser = array(
-                'billing_salutation' => $userData['billingaddress']['salutation'],
-                'billing_firstname'  => $userData['billingaddress']['firstname'],
-                'billing_lastname'   => $userData['billingaddress']['lastname']
-            );
 
             $message = null;
             switch ($return->getPaymentState()) {
                 case WirecardCEE_QPay_ReturnFactory::STATE_SUCCESS:
-                    $context['sOrderDay']  = date("d.m.Y");
-                    $context['sOrderTime'] = date("H:i");
-
                     $existingOrder = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findByNumber($sOrderVariables['sOrderNumber']);
                     if ($existingOrder[0] instanceof \Shopware\Models\Order\Order) {
                         $sOrderNumber = $this->savePaymentStatus(
@@ -238,26 +201,10 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                             $paymentState,
                             false
                         );
-
-                        $context['sOrderNumber'] = Shopware()->Session()->sOrderVariables['sOrderNumber'];
-
-                        // Sending confirm mail for successfull order after pending
-                        $mail = Shopware()->TemplateMail()->createMail('sORDER', $context);
-                        $mail->addTo($userData['additional']['user']['email']);
-                        if ( ! Shopware()->Config()->get('sNO_ORDER_MAIL')) {
-                            $mail->addBcc(Shopware()->Config()->get('mail'));
-                        }
-
-                        try {
-                            $mail->send();
-                        } catch (\Exception $e) {
-                            $variables                              = Shopware()->Session()->offsetGet('sOrderVariables');
-                            $variables['sOrderNumber']              = $context['sOrderNumber'];
-                            $variables['confirmMailDeliveryFailed'] = true;
-                            Shopware()->Session()->offsetSet('sOrderVariables', $variables);
-                        }
-                        if (Shopware()->WirecardCheckoutPage()->getConfig()->saveResponseTo()) {
-                            $this->saveComments($return, $sOrderVariables['sOrderNumber']);
+                        //load confirmmail if pending mail confirmation is deactivated
+                        if (isset(Shopware()->Session()->sWirecardConfirmMail)) {
+                            Shopware()->Session()->sWirecardConfirmMail->send();
+                            unset(Shopware()->Session()->sWirecardConfirmMail);
                         }
                     } else {
                         $sOrderNumber = $this->saveOrder(
@@ -267,90 +214,33 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                             false
                         );
 
-                        if ( ! $sOrderNumber) {
+                        if (!$sOrderNumber) {
                             throw new Enlight_Exception(sprintf('Unabled to save order (%s) with transactionId %s. Shopware orderState: %s',
                                 $sOrderNumber, $paymentUniqueId, $paymentState));
-                        }
-
-                        $context['sOrderNumber'] = Shopware()->Session()->sOrderVariables['sOrderNumber'];
-
-                        // Sending confirm mail for successfull order
-                        $mail = Shopware()->TemplateMail()->createMail('sORDER', $context);
-                        $mail->addTo($userData['additional']['user']['email']);
-                        if ( ! Shopware()->Config()->get('sNO_ORDER_MAIL')) {
-                            $mail->addBcc(Shopware()->Config()->get('mail'));
-                        }
-
-                        try {
-                            $mail->send();
-                        } catch (\Exception $e) {
-                            $variables                              = Shopware()->Session()->offsetGet('sOrderVariables');
-                            $variables['sOrderNumber']              = $context['sOrderNumber'];
-                            $variables['confirmMailDeliveryFailed'] = true;
-                            Shopware()->Session()->offsetSet('sOrderVariables', $variables);
                         }
                     }
 
                     if (Shopware()->WirecardCheckoutPage()->getConfig()->saveResponseTo()) {
-                        $this->saveComments($return, $sOrderVariables['sOrderNumber']);
+                        $this->saveComments($return, Shopware()->Session()->sOrderVariables['sOrderNumber']);
                     }
                     break;
                 case WirecardCEE_QPay_ReturnFactory::STATE_PENDING:
-                    /*$existingOrder = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findByNumber($sOrderVariables['sOrderNumber']);
-                    if ( ! $existingOrder[0] instanceof \Shopware\Models\Order\Order) {
-                        $sOrderNumber = $this->saveOrder(
-                            $transactionId,
-                            $paymentUniqueId,
-                            $paymentState,
-                            false
-                        );
+                    //Set wirecardState for pending mail check
+                    Shopware()->Session()->sOrderVariables['wirecardState'] = 'pending';
+                    $sOrderNumber = $this->saveOrder(
+                        $transactionId,
+                        $paymentUniqueId,
+                        $paymentState,
+                        false
+                    );
 
-                        if ( ! $sOrderNumber) {
-                            throw new Enlight_Exception(sprintf('Unabled to save order (%s) with transactionId %s. Shopware orderState: %s',
-                                $sOrderNumber, $paymentUniqueId, $paymentState));
-                        }
-
-                        //only send pendingmail if configured
-                        if (Shopware()->WirecardCheckoutPage()->getConfig()->SEND_PENDING_MAILS) {
-                            $existingOrder = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findByNumber($sOrderVariables['sOrderNumber']);
-                            $status        = $existingOrder[0]->getPaymentStatus();
-
-                            $orderDate = 'dd.mm.yyyy';
-
-                            if ($details != null) {
-                                $orderDate = $details[0]['datum'];
-                            }
-                            $sOrder = array(
-                                'ordernumber'        => $sOrderVariables['sOrderNumber'],
-                                'status_description' => Shopware()->Snippets()->getNamespace('backend/static/order_status')->get(
-                                    $status->getName(),
-                                    $status->getDescription()
-                                ),
-                                'ordertime'          => $orderDate
-                            );
-
-                            $pendingContext = array(
-                                'sUser'  => $sUser,
-                                'sOrder' => $sOrder
-                            );
-
-                            // Sending information mail for successfull order
-                            $mail = Shopware()->TemplateMail()->createMail('sORDERSTATEMAIL1', $pendingContext);
-                            $mail->addTo($userData['additional']['user']['email']);
-
-                            try {
-                                $mail->send();
-                            } catch (\Exception $e) {
-                                $variables                              = Shopware()->Session()->offsetGet('sOrderVariables');
-                                $variables['sOrderNumber']              = $sOrderVariables['sOrderNumber'];
-                                $variables['confirmMailDeliveryFailed'] = true;
-                                Shopware()->Session()->offsetSet('sOrderVariables', $variables);
-                            }
-                        }
-                        if (Shopware()->WirecardCheckoutPage()->getConfig()->saveResponseTo()) {
-                            $this->saveComments($return, $sOrderVariables['sOrderNumber']);
-                        }
-                    }*/
+                    if (!$sOrderNumber) {
+                        throw new Enlight_Exception(sprintf('Unabled to save order (%s) with transactionId %s. Shopware orderState: %s',
+                            $sOrderNumber, $paymentUniqueId, $paymentState));
+                    }
+                    if (Shopware()->WirecardCheckoutPage()->getConfig()->saveResponseTo()) {
+                        $this->saveComments($return, Shopware()->Session()->sOrderVariables['sOrderNumber']);
+                    }
                     break;
                 case WirecardCEE_QPay_ReturnFactory::STATE_FAILURE:
                     $sOrderVariables = Shopware()->Session()->sOrderVariables;
@@ -369,32 +259,6 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                                 $paymentState,
                                 false
                             );
-
-                            $sOrder = array(
-                                'ordernumber'        => $sOrderVariables['sOrderNumber'],
-                                'status_description' => Shopware()->Snippets()->getNamespace('backend/static/order_status')->get(
-                                    $status->getName(),
-                                    $status->getDescription()
-                                )
-                            );
-
-                            $pendingContext = array(
-                                'sUser'  => $sUser,
-                                'sOrder' => $sOrder
-                            );
-
-                            // Sending information mail for failed order after pending
-                            $mail = Shopware()->TemplateMail()->createMail('sORDERSTATEMAIL4', $pendingContext);
-                            $mail->addTo($userData['additional']['user']['email']);
-
-                            try {
-                                $mail->send();
-                            } catch (\Exception $e) {
-                                $variables                              = Shopware()->Session()->offsetGet('sOrderVariables');
-                                $variables['sOrderNumber']              = $context['sOrderNumber'];
-                                $variables['confirmMailDeliveryFailed'] = true;
-                                Shopware()->Session()->offsetSet('sOrderVariables', $variables);
-                            }
                         }
                     }
                     $errors = array();
