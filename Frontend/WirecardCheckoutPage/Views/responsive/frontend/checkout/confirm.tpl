@@ -21,17 +21,12 @@
             if (birthdate < limit) {
                 $('#wcp-birthdate').val(dateStr);
                 $('#wcpPayolutionAging').hide();
-                if ($('#wcsInvoiceTermsChecked').length) {
-                    if ($('#wcpInvoiceTermsChecked').is(':checked')) {
-                        $('#wcpPayolutionTermsAccept').hide();
-                        $('.is--primary').attr('disabled', false);
-                    } else {
-                        $('.is--primary').attr('disabled', true);
-                        $('#wcpPayolutionTermsAccept').show();
-                    }
-                } else {
-                    $('#wcsPayolutionTermsAccept').hide();
+                if ($('#wcpInvoiceTermsChecked').is(':checked')) {
+                    $('#wcpPayolutionTermsAccept').hide();
                     $('.is--primary').attr('disabled', false);
+                } else {
+                    $('.is--primary').attr('disabled', true);
+                    $('#wcpPayolutionTermsAccept').show();
                 }
             }
             else {
@@ -84,7 +79,7 @@
 {/block}
 
 {block name='frontend_checkout_confirm_product_table' prepend}
-    {if $wcpAdditional  eq 'financialInstitutions'}
+    {if 'wcp_ideal' eq $paymentName}
         {if $financialInstitutionSelectionEnabled}
             <div class="panel has--border is--rounded" id="wd_payment_fields">
                 <div class="panel--title is--underline">
@@ -93,11 +88,32 @@
 
                 <div class="panel--body is--wide">
                     <div class="wirecard--field">
-
-                        {*<label for="ccard_cardholdername">{s name='WirecardFinancialInstitutions'}Finanzinstitut{/s}:</label>*}
                         <select name="financialInstitution" id="financialInstitutions" onchange="setFinancialInstitution()">
 
-                            {foreach from=$financialInstitutions item=bank key=short}
+                            {foreach from=$idlFinancialInstitutions item=bank key=short}
+                                <option value="{$short}"
+                                        {if $short eq $financialInstitutionsSelected}selected="selected" {/if}>
+                                    {$bank}
+                                </option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="wirecard--clearer"></div>
+                </div>
+            </div>
+        {/if}
+    {elseif 'wcp_eps' eq $paymentName}
+        {if $financialInstitutionSelectionEnabled}
+            <div class="panel has--border is--rounded" id="wd_payment_fields">
+                <div class="panel--title is--underline">
+                    <img src="{link file={$paymentLogo}}"/>{$wirecardAdditionalHeadline}
+                </div>
+
+                <div class="panel--body is--wide">
+                    <div class="wirecard--field">
+                        <select name="financialInstitution" id="financialInstitutions" onchange="setFinancialInstitution()">
+
+                            {foreach from=$epsFinancialInstitutions item=bank key=short}
                                 <option value="{$short}"
                                         {if $short eq $financialInstitutionsSelected}selected="selected" {/if}>
                                     {$bank}

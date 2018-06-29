@@ -71,7 +71,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.5.10';
+        return '1.6.0';
     }
 
     /**
@@ -858,18 +858,33 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
     }
 
     /**
-     * set confirmmail after ordercreation false (only for WirecardCheckoutSeamless)
+     * set confirmmail after ordercreation false (only for WirecardCheckoutPage)
      * @param Enlight_Event_EventArgs $args
      * @return bool
      */
     public function defineSending(Enlight_Event_EventArgs $args)
     {
+        $context = $args->getContext();
+        $existingOrder   = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findByNumber($context['sOrderNumber']);
+
+        $pending = false;
+        if ($existingOrder[0] instanceof \Shopware\Models\Order\Order) {
+            //Check for pending payment state
+            if (isset(Shopware()->Session()->sOrderVariables['wirecardState'])) {
+                $pending = Shopware()->Session()->sOrderVariables['wirecardState'];
+                unset(Shopware()->Session()->sOrderVariables['wirecardState']);
+            }
+        }
         $userData = Shopware()->Session()->sOrderVariables['sUserData'];
         $additional = $userData['additional'];
         $paymentaction = $additional['payment']['action'];
 
         //only prevent confirmationmail for WirecardCheckoutPage payment action
-        if($paymentaction == 'WirecardCheckoutPage') {
+        if(($paymentaction == 'WirecardCheckoutPage') && $pending) {
+            //save mail confirmation for later usage
+            if (isset($args['mail'])) {
+                Shopware()->Session()->sWirecardConfirmMail = $args['mail'];
+            }
             return false;
         }
     }
@@ -992,27 +1007,20 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 $view->bMonth = $birthday[1];
                 $view->bDay   = $birthday[2];
 
-                if ((Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_PROVIDER == 'payolution' && $paymentName == 'wcp_invoice') ||
-                        (Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_PROVIDER == 'payolution' && $paymentName == 'wcp_installment')
+                if ((Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_PROVIDER == 'payolution') ||
+                    (Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_PROVIDER == 'payolution')
                 ) {
                     $view->payolutionTerms = Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS;
                     if (Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS) {
-                        $view->wcpPayolutionLink1 = '<a id="wcp-payolutionlink" href="https://payment.payolution.com/payolution-payment/infoport/dataprivacyconsent?mId='.$this->getPayolutionLink().'" target="_blank">';
+                        $view->wcpPayolutionLink1 = '<a id="wcp-payolutionlink" href="https://payment.payolution.com/payolution-payment/infoport/dataprivacyconsent?mId=' . $this->getPayolutionLink() . '" target="_blank">';
                         $view->wcpPayolutionLink2 = '</a>';
                     }
                 }
 
-                if ($paymentName == 'wcp_eps') {
-                    $view->financialInstitutions         = WirecardCEE_QPay_PaymentType::getFinancialInstitutions('EPS');
-                    $view->wcpAdditional                 = 'financialInstitutions';
-                    $view->financialInstitutionsSelected = Shopware()->WirecardCheckoutPage()->financialInstitution;
-                }
+                $view->epsFinancialInstitutions = WirecardCEE_QPay_PaymentType::getFinancialInstitutions('EPS');
+                $view->idlFinancialInstitutions = WirecardCEE_QPay_PaymentType::getFinancialInstitutions('IDL');
+                $view->financialInstitutionsSelected = Shopware()->WirecardCheckoutPage()->financialInstitution;
 
-                if ($paymentName == 'wcp_ideal') {
-                    $view->financialInstitutions         = WirecardCEE_QPay_PaymentType::getFinancialInstitutions('IDL');
-                    $view->wcpAdditional                 = 'financialInstitutions';
-                    $view->financialInstitutionsSelected = Shopware()->WirecardCheckoutPage()->financialInstitution;
-                }
                 break;
 
             case 'finish':
