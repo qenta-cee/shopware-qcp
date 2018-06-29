@@ -71,7 +71,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.5.10';
+        return '1.6.0';
     }
 
     /**
@@ -858,7 +858,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
     }
 
     /**
-     * set confirmmail after ordercreation false (only for WirecardCheckoutSeamless)
+     * set confirmmail after ordercreation false (only for WirecardCheckoutPage)
      * @param Enlight_Event_EventArgs $args
      * @return bool
      */
