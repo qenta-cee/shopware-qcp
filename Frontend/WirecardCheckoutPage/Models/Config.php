@@ -122,29 +122,24 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Config
     public function getDbTables()
     {
         $aReturn = array();
-        //array('1' => array('locale' => 'de_DE', 'snippets' => array()));
-        foreach($this->getLanguageDefinition() AS $iLanguage => $aLanguage)
-        {
-            if(array_key_exists('snippets', $aLanguage))
-            {
-                foreach($aLanguage['snippets'] AS $sNamespace => $aTranslations)
-                {
-                    foreach($aTranslations AS $sKey => $sValue)
-                    {
-                        $sql = sprintf('SELECT id FROM s_core_snippets WHERE namespace="%s" AND shopID = 1 AND localeID = "%s" AND name = "%s";', $sNamespace, $iLanguage, $sKey);
+	    $shopModel = Shopware()->Models()->getRepository('Shopware\Models\Shop\Shop')->getActiveDefault();
+	    $shopId = $shopModel->getId();
+
+        foreach ($this->getLanguageDefinition() AS $iLanguage => $aLanguage) {
+            if (array_key_exists('snippets', $aLanguage)) {
+                foreach ($aLanguage['snippets'] AS $sNamespace => $aTranslations) {
+                    foreach ($aTranslations AS $sKey => $sValue) {
+                        $sql = sprintf('SELECT id FROM s_core_snippets WHERE namespace="%s" AND shopID = "%o" AND localeID = "%s" AND name = "%s";', $sNamespace, $shopId, $iLanguage, $sKey);
                         $aResult = Shopware()->Db()->fetchAll($sql);
-                        if(count($aResult))
-                        {
+                        if (count($aResult)) {
                             $id = $aReturn[0]['id'];
                             $sql = sprintf('Update s_core_snippets SET value="%s" WHERE id="%s";', $sValue, $id);
-                        }
-                        else
-                        {
+                        } else {
                             $sql = sprintf('INSERT INTO s_core_snippets SET namespace = "%s",
-                                                                            shopID = "%s",
+                                                                            shopID = "%o",
                                                                             localeID = "%s",
                                                                             name = "%s",
-                                                                            value = "%s"', $sNamespace, 1, $iLanguage, $sKey, $sValue);
+                                                                            value = "%s"', $sNamespace, $shopId,$iLanguage, $sKey, $sValue);
                         }
                         $aReturn[] = $sql;
                     }
