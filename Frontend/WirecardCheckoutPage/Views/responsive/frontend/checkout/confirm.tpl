@@ -7,6 +7,11 @@
         {$wcpConsumerDeviceIdScript}
     {/if}
     <script type="text/javascript">
+        function enableButton() {
+            $('#wcsPayolutionTermsAccept').hide();
+            $('.is--primary').attr('disabled', false);
+        }
+
         function checkbirthday() {
             var m = $('#wcp-month').val();
             var d = $('#wcp-day').val();
@@ -15,18 +20,20 @@
             var minAge = 18;
 
             var birthdate = new Date(dateStr);
-            var year = birthdate.getFullYear();
             var today = new Date();
             var limit = new Date((today.getFullYear() - minAge), today.getMonth(), today.getDate());
             if (birthdate < limit) {
                 $('#wcp-birthdate').val(dateStr);
                 $('#wcpPayolutionAging').hide();
-                if ($('#wcpInvoiceTermsChecked').is(':checked')) {
-                    $('#wcpPayolutionTermsAccept').hide();
-                    $('.is--primary').attr('disabled', false);
+                if ($('#wcsInvoiceTermsChecked').length) {
+                    if ($('#wcpInvoiceTermsChecked').is(':checked')) {
+                        enableButton();
+                    } else {
+                        $('.is--primary').attr('disabled', true);
+                        $('#wcpPayolutionTermsAccept').show();
+                    }
                 } else {
-                    $('.is--primary').attr('disabled', true);
-                    $('#wcpPayolutionTermsAccept').show();
+                    enableButton();
                 }
             }
             else {

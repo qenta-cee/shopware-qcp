@@ -97,7 +97,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
                         ->setConsumerData($this->getConsumerData($paymentType))
                         ->createConsumerMerchantCrmId($email);
 
-        if(Shopware()->Session()->offsetGet('wcpConsumerDeviceId') != null) {
+        if (Shopware()->Session()->offsetGet('wcpConsumerDeviceId') != null) {
             $oFrontendClient->consumerDeviceId = Shopware()->Session()->offsetGet('wcpConsumerDeviceId');
             //default set to null, but no effect
             Shopware()->Session()->offsetSet('wcpConsumerDeviceId', null);
@@ -112,7 +112,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
         ) {
             $oFrontendClient->setBasket($this->getShoppingBasket());
         }
-        if(Shopware()->WirecardCheckoutPage()->getConfig()->ENABLE_DUPLICATE_REQUEST_CHECK){
+        if (Shopware()->WirecardCheckoutPage()->getConfig()->ENABLE_DUPLICATE_REQUEST_CHECK){
             $oFrontendClient->setDuplicateRequestCheck(true);
         }
 
