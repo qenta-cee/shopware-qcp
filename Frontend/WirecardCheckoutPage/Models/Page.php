@@ -195,11 +195,12 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
 
             $userData = Shopware()->Session()->sOrderVariables['sUserData'];
             $birthday = $userData['additional']['user']['birthday'];
-            $birthday = $this->getDateObject($birthday);
-            if (false !== $birthday) {
-                $consumerData = $consumerData->setBirthDate($birthday);
+            if (!empty($birthday)) {
+                $birthday = $this->getDateObject($birthday);
+                if (false !== $birthday) {
+                    $consumerData = $consumerData->setBirthDate($birthday);
+                }
             }
-
         }
 
         return $consumerData;
