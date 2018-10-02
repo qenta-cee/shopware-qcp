@@ -57,7 +57,7 @@
             $(document).ready(function() {
                 if ( {$paymentName|json_encode} == 'wcp_invoice' || {$paymentName|json_encode} == 'wcp_installment')
                 {
-                    $('#confirm--form').append('<input type="hidden" name="birthdate" id="wcs-birthdate" value="" />');
+                    $('#confirm--form').append('<input type="hidden" name="birthdate" id="wcp-birthdate" value="" />');
                     checkbirthday();
                 }
                 {if $financialInstitutionSelectionEnabled}
