@@ -71,7 +71,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.6.1';
+        return '1.6.2';
     }
 
     /**
@@ -901,6 +901,11 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
         if (isset($financialInstitution)) {
             self::init();
             Shopware()->WirecardCheckoutPage()->financialInstitution = $financialInstitution;
+        }
+        $birthDate = $args->getSubject()->Request()->get('birthdate');
+        if (!empty($birthDate)) {
+            self::init();
+            Shopware()->Session()->sOrderVariables['sUserData']['additional']['user']['birthday'] = $birthDate;
         }
     }
 

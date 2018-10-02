@@ -8,7 +8,7 @@
     {/if}
     <script type="text/javascript">
         function enableButton() {
-            $('#wcsPayolutionTermsAccept').hide();
+            $('#wcpPayolutionTermsAccept').hide();
             $('.is--primary').attr('disabled', false);
         }
 
@@ -25,7 +25,7 @@
             if (birthdate < limit) {
                 $('#wcp-birthdate').val(dateStr);
                 $('#wcpPayolutionAging').hide();
-                if ($('#wcsInvoiceTermsChecked').length) {
+                if ($('#wcpInvoiceTermsChecked').length) {
                     if ($('#wcpInvoiceTermsChecked').is(':checked')) {
                         enableButton();
                     } else {
@@ -49,7 +49,6 @@
         {if $financialInstitutionSelectionEnabled}
         function setFinancialInstitution() {
             var paymentForm = $('#confirm--form');
-            console.log($('#financialInstitutions').val());
             paymentForm.append('<input type="hidden" name="financialInstitution" value="' + $('#financialInstitutions').val() + '" />');
         }
         {/if}
@@ -58,13 +57,14 @@
             $(document).ready(function() {
                 if ( {$paymentName|json_encode} == 'wcp_invoice' || {$paymentName|json_encode} == 'wcp_installment')
                 {
+                    $('#confirm--form').append('<input type="hidden" name="birthdate" id="wcp-birthdate" value="" />');
                     checkbirthday();
                 }
                 {if $financialInstitutionSelectionEnabled}
-                else if ( {$paymentName|json_encode} == 'wcp_ideal' || {$paymentName|json_encode} == 'wcp_eps')
-                {
-                    setFinancialInstitution();
-                }
+                    if ( {$paymentName|json_encode} == 'wcp_ideal' || {$paymentName|json_encode} == 'wcp_eps')
+                    {
+                        setFinancialInstitution();
+                    }
                 {/if}
             });
         };
@@ -141,7 +141,6 @@
         <div class="payment--selection-label is--underline" name="birthdate">{s name="WirecardCheckoutPageBirthday"}Geburtsdatum{/s}</div>
         <div class="payment--form-group">
             <div class="row">
-                <input type="hidden" name="birthdate" id="wcp-birthdate" value="" />
                 <select name="days" id="wcp-day" onchange="checkbirthday();" required>
                     <option value="0">-</option>
                     {foreach from=$days item=v}
