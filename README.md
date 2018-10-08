@@ -2,7 +2,8 @@
 
 [![License](https://img.shields.io/badge/license-GPLv2-blue.svg)](https://raw.githubusercontent.com/wirecard/shopware-wcp/master/LICENSE)
 [![Shopware](https://img.shields.io/badge/Shopware-v5.2.0--v5.5.1-green.svg)](https://www.shopware.com/)
-[![PHP v7](https://img.shields.io/badge/php-v7-yellow.svg)](http://www.php.net)
+[![PHP v7.0](https://img.shields.io/badge/php-v7.0-yellow.svg)](http://www.php.net)
+[![PHP v7.1](https://img.shields.io/badge/php-v7.1-yellow.svg)](http://www.php.net)
 [![PHP v5.6](https://img.shields.io/badge/php-v5.6-yellow.svg)](http://www.php.net)
 
 Wirecard Checkout Page plugin for Shopware. 
