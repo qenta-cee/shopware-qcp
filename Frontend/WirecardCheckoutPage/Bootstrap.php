@@ -773,15 +773,15 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 if (isset($pm['template']) && !is_null($pm['template'])) {
                     $oPayment->setTemplate($pm['template']);
                 }
-	            if (isset($pm['additionalDescription']) && strlen($pm['additionalDescription']) && !is_null($pm['additionalDescription'])) {
-		            $additional = $oPayment->getAdditionalDescription();
-		            if ( $additional === '' ) {
-			            if ($oPayment->getTemplate() == 'wirecard_logos.tpl') {
-				            $oPayment->setTemplate(null);
-			            }
-			            $oPayment->setAdditionalDescription($pm['additionalDescription']);
-		            }
-	            }
+                if (isset($pm['additionalDescription']) && strlen($pm['additionalDescription']) && !is_null($pm['additionalDescription'])) {
+                    $additional = $oPayment->getAdditionalDescription();
+                    if ( $additional === '' ) {
+                        if ($oPayment->getTemplate() == 'wirecard_logos.tpl') {
+                            $oPayment->setTemplate(null);
+                        }
+                        $oPayment->setAdditionalDescription($pm['additionalDescription']);
+                    }
+                }
             }
 
             $aTranslations[$oPayment->getId()] = $pm['translation'];
@@ -1012,8 +1012,8 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
                 $view->bMonth = $birthday[1];
                 $view->bDay   = $birthday[2];
 
-                if ((Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_PROVIDER == 'payolution') ||
-                    (Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_PROVIDER == 'payolution')
+                if ((Shopware()->WirecardCheckoutPage()->getConfig()->INVOICE_PROVIDER == 'payolution' && $paymentName == 'INVOICE') ||
+                    (Shopware()->WirecardCheckoutPage()->getConfig()->INSTALLMENT_PROVIDER == 'payolution' && $paymentName == 'INSTALLMENT')
                 ) {
                     $view->payolutionTerms = Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS;
                     if (Shopware()->WirecardCheckoutPage()->getConfig()->PAYOLUTION_TERMS) {
