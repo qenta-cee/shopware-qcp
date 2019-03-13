@@ -57,6 +57,11 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Resources
     protected $oPage;
 
     /**
+     * @var Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Transaction
+     */
+    protected $oTransaction;
+
+    /**
      * @var Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_PaymentMethods
      */
     protected $oPaymentMethods;
@@ -116,6 +121,18 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Resources
             $this->oLoader = new Shopware_Plugins_Frontend_WirecardCheckoutPage_Components_Loader();
         }
         return $this->oLoader;
+    }
+
+    /**
+     * @return Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Transaction
+     */
+    public function getTransaction()
+    {
+        if(!$this->oTransaction)
+        {
+            $this->oTransaction = new Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Transaction();
+        }
+        return $this->oTransaction;
     }
 
     /**
