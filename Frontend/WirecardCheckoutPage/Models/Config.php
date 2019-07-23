@@ -35,15 +35,15 @@
  */
 class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Config
 {
-	/**
-	 * List of payment methods with required financial institution
-	 *
-	 * @var array
-	 */
-	private static $paymentsFinancialInstitution = array(
-		'eps',
-		'idl'
-	);
+    /**
+     * List of payment methods with required financial institution
+     *
+     * @var array
+     */
+    private static $paymentsFinancialInstitution = array(
+        'eps',
+        'idl'
+    );
 
     /**
      * Returns shop name
@@ -146,6 +146,22 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Config
                 }
             }
         }
+
+        $aReturn[] = 'CREATE TABLE IF NOT EXISTS `wirecard_checkout_page` (
+                        `uniqueId` varchar(80) NOT NULL DEFAULT \'\',
+                        `hash` varchar(80) DEFAULT NULL,
+                        `state` varchar(30) DEFAULT NULL,
+                        `orderdate` datetime DEFAULT NULL,
+                        `method` varchar(30) DEFAULT NULL,
+                        `transactionId` varchar(30) DEFAULT NULL,
+                        `orderNumber` varchar(32) DEFAULT NULL,
+                        `orderId` varchar(30) DEFAULT NULL,
+                        `data` text DEFAULT NULL,
+                        `session` mediumblob DEFAULT NULL,
+                        `remoteAddr` varchar(80) NULL,
+                        PRIMARY KEY (`uniqueId`),
+                        KEY `hash` (`hash`)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
 
         return $aReturn;
     }

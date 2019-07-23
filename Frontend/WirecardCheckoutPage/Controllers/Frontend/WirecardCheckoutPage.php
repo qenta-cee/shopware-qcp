@@ -53,11 +53,11 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
      */
     public function indexAction()
     {
-	    $basket = Shopware()->Modules()->Basket();
-	    $basketQuantities = $basket->sCheckBasketQuantities();
-	    if (!empty($basketQuantities['hideBasket'])) {
-		    return $this->redirect(array('controller' => 'checkout'));
-	    }
+        $basket = Shopware()->Modules()->Basket();
+        $basketQuantities = $basket->sCheckBasketQuantities();
+        if (!empty($basketQuantities['hideBasket'])) {
+            return $this->redirect(array('controller' => 'checkout'));
+        }
 
         /** @var Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page $oPageModel */
         $oPageModel = Shopware()->WirecardCheckoutPage()->getPage();
@@ -78,8 +78,7 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
         $sConfigmrUrl = $router->assemble(
             array(
                 'action' => 'confirm',
-                'forceSecure' => true,
-                'appendSession' => true
+                'forceSecure' => true
             )
         );
 
@@ -95,12 +94,21 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
         );
         $bUseIframe = (Shopware()->WirecardCheckoutPage()->getConfig()->use_iframe == 1);
 
-	    $sOrderVariables = Shopware()->Session()->sOrderVariables;
-	    $existingOrder = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findByNumber($sOrderVariables['sOrderNumber']);
-	    if ($existingOrder[0] instanceof \Shopware\Models\Order\Order && isset($_SESSION["wcp_redirect_url"])) {
+        $sOrderVariables = Shopware()->Session()->sOrderVariables;
+        $existingOrder = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findByNumber($sOrderVariables['sOrderNumber']);
+        if ($existingOrder[0] instanceof \Shopware\Models\Order\Order && isset($_SESSION["wcp_redirect_url"])) {
             $sRedirectUrl = $_SESSION["wcp_redirect_url"];
             unset($_SESSION["wcp_redirect_url"]);
         } else {
+
+            /** @var Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Transaction $oTransaction */
+            $oTransaction = Shopware()->WirecardCheckoutPage()->getTransaction();
+
+            $oTransaction->create($aParams['wWirecardCheckoutPageId'],
+                $oTransaction->generateHash($aParams['wWirecardCheckoutPageId'], $fAmount, $sCurrency),
+                Shopware()->WirecardCheckoutPage()->getPaymentShortName(),
+                $_SESSION);
+
             $oResponse = $oPageModel->initiatePayment($sPaymentType, $fAmount, $sCurrency, $sReturnUrl, $sConfigmrUrl, $aParams);
             if ($oResponse === null) {
                 $this->redirect($checkoutUrl);
@@ -137,8 +145,14 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
         }
     }
 
+    /**
+     * server2server request, since 5.5.7 we have no session available anymore
+     */
     public function confirmAction()
     {
+        /** @var Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Transaction $oTransaction */
+        $oTransaction = Shopware()->WirecardCheckoutPage()->getTransaction();
+
         try {
             Shopware()->Plugins()->Controller()->ViewRenderer()->setNoRender();
 
@@ -154,6 +168,24 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
             }
             $transactionId = $this->Request()->getParam($sTransactionIdField, $paymentUniqueId);
 
+            $transactionData = $oTransaction->read($paymentUniqueId);
+            if (!is_array($transactionData)) {
+                Shopware()->Pluginlogger()->info('WirecardCheckoutPage: ' . __METHOD__ . ':invalid transaction data');
+                die(WirecardCEE_QPay_ReturnFactory::generateConfirmResponseString('invalid transaction data'));
+            }
+
+            $sessionData = unserialize($transactionData['session']);
+            if($sessionData === false) {
+                Shopware()->Pluginlogger()->info('WirecardCheckoutPage: '. __METHOD__ . ':Validation error: invalid session data');
+                die(WirecardCEE_QPay_ReturnFactory::generateConfirmResponseString('Validation error: invalid session data'));
+            }
+
+            // restore session
+            $_SESSION = $sessionData;
+
+            // restore remote address
+            $_SERVER['REMOTE_ADDR'] = $transactionData['remoteAddr'];
+
             $return       = WirecardCEE_QPay_ReturnFactory::getInstance($post,
                 Shopware()->WirecardCheckoutPage()->getConfig()->SECRET);
             $paymentState = Shopware()->WirecardCheckoutPage()->getPaymentStatusId($return->getPaymentState());
@@ -162,6 +194,8 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                 Shopware()->Pluginlogger()->info('WirecardCheckoutPage: ' . __METHOD__ . ':Validation error: invalid response');
                 die(WirecardCEE_QPay_ReturnFactory::generateConfirmResponseString('Validation error: invalid response'));
             }
+
+            $update = array('state' => strtolower($return->getPaymentState()));
 
             $oOrder = $this->getOrderByUniqueId($paymentUniqueId);
             if ( ! empty($oOrder) && $oOrder->temporaryID == $oOrder->transactionID && $paymentUniqueId != $transactionId) {
@@ -174,6 +208,10 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
             $message = null;
             switch ($return->getPaymentState()) {
                 case WirecardCEE_QPay_ReturnFactory::STATE_SUCCESS:
+
+                    /** @var WirecardCEE_QPay_Return_Success $return */
+                    $update['orderNumber'] = $return->getOrderNumber();
+
                     $existingOrder = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findByNumber($sOrderVariables['sOrderNumber']);
                     if ($existingOrder[0] instanceof \Shopware\Models\Order\Order) {
                         $sOrderNumber = $this->savePaymentStatus(
@@ -199,6 +237,8 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                             throw new Enlight_Exception(sprintf('Unabled to save order (%s) with transactionId %s. Shopware orderState: %s',
                                 $sOrderNumber, $paymentUniqueId, $paymentState));
                         }
+
+                        $update['orderId'] = $sOrderNumber;
                     }
 
                     if (Shopware()->WirecardCheckoutPage()->getConfig()->saveResponseTo()) {
@@ -206,6 +246,8 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                     }
                     break;
                 case WirecardCEE_QPay_ReturnFactory::STATE_PENDING:
+                    /** @var WirecardCEE_QPay_Return_Pending $return */
+
                     //Set wirecardState for pending mail check
                     Shopware()->Session()->sOrderVariables['wirecardState'] = 'pending';
                     $sendMail = false;
@@ -223,6 +265,9 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                         throw new Enlight_Exception(sprintf('Unabled to save order (%s) with transactionId %s. Shopware orderState: %s',
                             $sOrderNumber, $paymentUniqueId, $paymentState));
                     }
+
+                    $update['orderId'] = $sOrderNumber;
+
                     if (Shopware()->WirecardCheckoutPage()->getConfig()->saveResponseTo()) {
                         $this->saveComments($return, Shopware()->Session()->sOrderVariables['sOrderNumber']);
                     }
@@ -261,6 +306,8 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
                 default:
             }
             $update['data'] = serialize($post);
+            $update['session'] = serialize($_SESSION); // save back ev. modified sessiondata
+            $oTransaction->update($paymentUniqueId, $update);
 
         } catch (Exception $e) {
             Shopware()->Pluginlogger()->info('WirecardCheckoutPage: ' . __METHOD__ . '.--' . __LINE__ . ':' . $e->getMessage());
@@ -276,6 +323,17 @@ class Shopware_Controllers_Frontend_WirecardCheckoutPage extends Shopware_Contro
     public function returnAction()
     {
         $paymentUniqueId = $this->Request()->getParam('wWirecardCheckoutPageId');
+
+        /** @var Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Transaction $oTransaction */
+        $oTransaction = Shopware()->WirecardCheckoutPage()->getTransaction();
+        $transactionData = $oTransaction->read($paymentUniqueId);
+
+        // write back modified sessiondata, might be modified by the confirm (server2server) request
+        $savedSessionData = unserialize($transactionData['session']);
+        if (is_array($savedSessionData) && isset($savedSessionData['Shopware'])) {
+            Shopware()->Session()->offsetSet('sOrderVariables', $savedSessionData['Shopware']['sOrderVariables']);
+            Shopware()->Session()->offsetSet('sWirecardConfirmMail', $savedSessionData['Shopware']['sWirecardConfirmMail']);
+        }
 
         $result = $this->getOrderByUniqueId($paymentUniqueId);
         if(!$result->cleared)
