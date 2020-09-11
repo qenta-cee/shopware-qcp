@@ -146,7 +146,14 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Models_Page
      */
     protected function getPluginVersion()
     {
-        $shopversion = Shopware::VERSION;
+        $shopversion = '';
+
+        if(defined('Shopware::VERSION')){
+            $shopversion = Shopware::VERSION;
+        } else {
+            $shopversion = \PackageVersions\Versions::getVersion('shopware/shopware');
+        }
+
         if ( ! strlen($shopversion)) {
             $shopversion = '>5.2.21';
         }
