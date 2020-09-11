@@ -71,7 +71,7 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
      */
     public function getVersion()
     {
-        return '1.6.3';
+        return '1.6.4';
     }
 
     /**
@@ -750,7 +750,24 @@ class Shopware_Plugins_Frontend_WirecardCheckoutPage_Bootstrap extends Shopware_
 
         $prefixName = $oConfig->getPrefix('name');
 
-        $translation = new Shopware_Components_Translation();
+        /** @since 1.6.4
+         * @var $reflectedMethod
+         * added checks for the presence of parameters in the constructor of Shopware_Components_Translation as
+         * Shopware 5.6 uses a new class which requires explicit DBAL connection and container as parameters
+         */
+        $reflectedMethod = new ReflectionMethod('Shopware_Components_Translation', '__construct');
+        $translation     = null;
+        if (count($reflectedMethod->getParameters()) == 2) {
+            // Shopware >= 5.6
+            $translation = new Shopware_Components_Translation(
+                Shopware()->Container()->get('dbal_connection'),
+                Shopware()->Container()
+            );
+        } else {
+            // Shopware < 5.6
+            $translation = new Shopware_Components_Translation();
+        }
+
         $aTranslations = array();
         $i = 80;
         foreach (Shopware()->WirecardCheckoutPage()->getPaymentMethods()->getList() as $pm) {
