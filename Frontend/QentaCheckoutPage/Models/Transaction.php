@@ -37,14 +37,14 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Transaction
 {
 
     /**
-     * @param $wirecardCheckoutPageId
+     * @param $qentaCheckoutPageId
      * @param $hash
      * @param $method
      * @param $sessionData
      *
      * @throws Zend_Db_Adapter_Exception
      */
-    public function create($wirecardCheckoutPageId, $hash, $method, $sessionData)
+    public function create($qentaCheckoutPageId, $hash, $method, $sessionData)
     {
         $sql = 'INSERT INTO `qenta_checkout_page` '
                . '(`uniqueId`, `hash`, `state`, `orderdate`, `method`, `transactionId`, `session`, `remoteAddr`) '
@@ -62,7 +62,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Transaction
         Shopware()->Db()->query(
             $sql,
             array(
-                ':uniqueId'      => $wirecardCheckoutPageId,
+                ':uniqueId'      => $qentaCheckoutPageId,
                 ':hash'          => $hash,
                 ':orderdate'     => date('Y-m-d H:i:s'),
                 ':state'         => 'progress',
@@ -76,31 +76,31 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Transaction
     }
 
     /**
-     * @param $wirecardCheckoutPageId
+     * @param $qentaCheckoutPageId
      *
      * @return mixed
      */
-    public function read($wirecardCheckoutPageId)
+    public function read($qentaCheckoutPageId)
     {
         $sql = Shopware()->Db()->select()
             ->from('qenta_checkout_page')
-            ->where('uniqueId = ?', array($wirecardCheckoutPageId));
+            ->where('uniqueId = ?', array($qentaCheckoutPageId));
 
         return Shopware()->Db()->fetchRow($sql);
     }
 
     /**
-     * @param $wirecardCheckoutPageId
+     * @param $qentaCheckoutPageId
      * @param array $update
      *
      * @throws Zend_Db_Adapter_Exception
      */
-    public function update($wirecardCheckoutPageId, $update)
+    public function update($qentaCheckoutPageId, $update)
     {
         Shopware()->Db()->update(
             'qenta_checkout_page',
             $update,
-            "uniqueId = '$wirecardCheckoutPageId'"
+            "uniqueId = '$qentaCheckoutPageId'"
         );
     }
 

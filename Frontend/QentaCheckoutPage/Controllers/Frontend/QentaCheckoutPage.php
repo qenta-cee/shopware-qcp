@@ -248,8 +248,8 @@ class Shopware_Controllers_Frontend_QentaCheckoutPage extends Shopware_Controlle
                 case QentaCEE_QPay_ReturnFactory::STATE_PENDING:
                     /** @var QentaCEE_QPay_Return_Pending $return */
 
-                    //Set wirecardState for pending mail check
-                    Shopware()->Session()->sOrderVariables['wirecardState'] = 'pending';
+                    //Set qentaState for pending mail check
+                    Shopware()->Session()->sOrderVariables['qentaState'] = 'pending';
                     $sendMail = false;
                     if (Shopware()->QentaCheckoutPage()->getConfig()->SEND_PENDING_MAILS) {
                         $sendMail = true;

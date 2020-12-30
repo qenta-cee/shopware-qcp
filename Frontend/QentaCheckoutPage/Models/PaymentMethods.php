@@ -41,7 +41,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_PaymentMethods
             'description' => 'Auswahl auf Qenta Checkout Page',
             'additionalDescription' => '<img src="{link file=\'frontend/_public/images/qenta-logo.png\'}" class="qenta-brand"/>&nbsp;',
             'call' => QentaCEE_QPay_PaymentType::SELECT,
-            'translation' => Array( 'description' => 'Selection within wirecard checkout page', 'additionalDescription' => '')
+            'translation' => Array( 'description' => 'Selection within qenta checkout page', 'additionalDescription' => '')
         ),
         'CCARD' => array(
             'name' => 'ccard',
@@ -225,7 +225,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_PaymentMethods
 
     public function getPaymentMethodName($id = 0)
     {
-        $cacheId = 'wirecardcheckoutpage_paymentmethods';
+        $cacheId = 'qentacheckoutpage_paymentmethods';
         if (Shopware()->Cache()->test($cacheId)) {
             $paymentmeans = Shopware()->Cache()->load($cacheId);
         } else {
