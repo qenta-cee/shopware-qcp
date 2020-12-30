@@ -122,7 +122,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Page
         }
         $oFrontendClient->setCustomerStatement($customerStatement);
 
-        // add custom params, will be send back by wirecard
+        // add custom params, will be send back by qenta
         foreach ($params as $k => $v)
             $oFrontendClient->$k = $v;
 

@@ -86,7 +86,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Config
 
     public function saveResponseTo()
     {
-        switch ($this->WIRECARD_SAVERESPONSE) {
+        switch ($this->QENTA_SAVERESPONSE) {
             case 2:
                 return 'internalcomment'; break;
             case 3:

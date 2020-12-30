@@ -98,12 +98,12 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
 
         return array(
             'version' => $this->getVersion(),
-            'autor' => 'Wirecard',
-            'copyright' => 'Wirecard',
+            'autor' => 'Qenta',
+            'copyright' => 'Qenta',
             'label' => $this->getLabel(),
-            'support' => 'http://www.wirecard.at/en/get-in-contact/',
-            'link' => 'http://www.wirecard.at',
-            'description' => '<img src="'.$src.'" /><div style="line-height: 1.6em"><h3>WIRECARD - YOUR FULL SERVICE PAYMENT PROVIDER - COMPREHENSIVE SOLUTIONS FROM ONE SINGLE SOURCE</h3>'
+            'support' => 'http://www.qenta.com/en/get-in-contact/',
+            'link' => 'http://www.qenta.com',
+            'description' => '<img src="'.$src.'" /><div style="line-height: 1.6em"><h3>QENTA - YOUR FULL SERVICE PAYMENT PROVIDER - COMPREHENSIVE SOLUTIONS FROM ONE SINGLE SOURCE</h3>'
                 . '<p>' . file_get_contents(dirname(__FILE__) . '/info.txt') . '</p></div>'
         );
     }
@@ -168,7 +168,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
             //removing old logging method
             $em = $this->get('models');
             $form = $this->Form();
-            $qenta_log = $form->getElement('WIRECARD_LOG');
+            $qenta_log = $form->getElement('QENTA_LOG');
             if ($qenta_log !== null) {
                 $em->remove($qenta_log);
             }
@@ -214,7 +214,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
             array(
                 'label' => 'Kundennummer',
                 'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
-                'description' => 'Ihre Wirecard-Kundennummer (customerId, im Format D2#####).',
+                'description' => 'Ihre Qenta-Kundennummer (customerId, im Format D2#####).',
                 'required' => true,
                 'order' => ++$i
             )
@@ -363,7 +363,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
 
         $form->setElement(
             'select',
-            'WIRECARD_SAVERESPONSE',
+            'QENTA_SAVERESPONSE',
             array(
                 'label' => 'Speichern der Bezahlprozess-Ergebnisse',
                 'value' => 1,
@@ -471,7 +471,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
                 'store' => array(
                     array('payolution', 'payolution'),
                     array('ratepay', 'RatePay'),
-                    array('wirecard', 'Wirecard')
+                    array('qenta', 'Qenta')
                 ),
                 'scope' => \Shopware\Models\Config\Element::SCOPE_SHOP,
                 'required' => false,
@@ -608,7 +608,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
                     'label' => 'Use iframe',
                     'description' => 'Display Qenta Checkout Page in an iframe.',
                 ),
-                'WIRECARD_SAVERESPONSE' => Array(
+                'QENTA_SAVERESPONSE' => Array(
                     'label' => 'Save payment process results',
                     'description' => 'Save all results regarding the payment process, i.e. each Qenta Checkout Server response to the confirmation URL to the defined field.'
                 ),
@@ -780,7 +780,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
                     'active' => (isset($pm['active'])) ? (int)$pm['active'] : 0,
                     'position' => $i,
                     'pluginID' => $this->getId(),
-                    'additionalDescription' => strlen($pm['additionalDescription']) ? $pm['additionalDescription'] : 'Pay with Wirecard'
+                    'additionalDescription' => strlen($pm['additionalDescription']) ? $pm['additionalDescription'] : 'Pay with Qenta'
                 );
                 if (isset($pm['template']) && !is_null($pm['template'])) {
                     $payment['template'] = $pm['template'];
@@ -887,9 +887,9 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
         $pending = false;
         if ($existingOrder[0] instanceof \Shopware\Models\Order\Order) {
             //Check for pending payment state
-            if (isset(Shopware()->Session()->sOrderVariables['wirecardState'])) {
-                $pending = Shopware()->Session()->sOrderVariables['wirecardState'];
-                unset(Shopware()->Session()->sOrderVariables['wirecardState']);
+            if (isset(Shopware()->Session()->sOrderVariables['qentaState'])) {
+                $pending = Shopware()->Session()->sOrderVariables['qentaState'];
+                unset(Shopware()->Session()->sOrderVariables['qentaState']);
             }
         }
         $userData = Shopware()->Session()->sOrderVariables['sUserData'];

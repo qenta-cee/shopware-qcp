@@ -90,11 +90,11 @@
         {if $financialInstitutionSelectionEnabled}
             <div class="panel has--border is--rounded" id="wd_payment_fields">
                 <div class="panel--title is--underline">
-                    <img src="{link file={$paymentLogo}}"/>{$wirecardAdditionalHeadline}
+                    <img src="{link file={$paymentLogo}}"/>{$qentaAdditionalHeadline}
                 </div>
 
                 <div class="panel--body is--wide">
-                    <div class="wirecard--field">
+                    <div class="qenta--field">
                         <select name="financialInstitution" id="financialInstitutions" onchange="setFinancialInstitution()">
 
                             {foreach from=$idlFinancialInstitutions item=bank key=short}
@@ -105,7 +105,7 @@
                             {/foreach}
                         </select>
                     </div>
-                    <div class="wirecard--clearer"></div>
+                    <div class="qenta--clearer"></div>
                 </div>
             </div>
         {/if}
@@ -113,11 +113,11 @@
         {if $financialInstitutionSelectionEnabled}
             <div class="panel has--border is--rounded" id="wd_payment_fields">
                 <div class="panel--title is--underline">
-                    <img src="{link file={$paymentLogo}}"/>{$wirecardAdditionalHeadline}
+                    <img src="{link file={$paymentLogo}}"/>{$qentaAdditionalHeadline}
                 </div>
 
                 <div class="panel--body is--wide">
-                    <div class="wirecard--field">
+                    <div class="qenta--field">
                         <select name="financialInstitution" id="financialInstitutions" onchange="setFinancialInstitution()">
 
                             {foreach from=$epsFinancialInstitutions item=bank key=short}
@@ -128,7 +128,7 @@
                             {/foreach}
                         </select>
                     </div>
-                    <div class="wirecard--clearer"></div>
+                    <div class="qenta--clearer"></div>
                 </div>
             </div>
         {/if}
@@ -194,7 +194,7 @@
                             {s name="QentaCheckoutPagePayolutionTermsAccept"}Bitte akzeptieren Sie die payolution Konditionen.{/s}
                         </span>
             <div class="clear" style="content:''; clear:both; float:none;"></div>
-            <div class="wirecard--clearer"></div>
+            <div class="qenta--clearer"></div>
         {/if}
     </div>
         </div>
