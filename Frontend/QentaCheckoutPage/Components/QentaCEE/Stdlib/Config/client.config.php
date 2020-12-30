@@ -31,7 +31,7 @@
  */
 
 return Array(
-    'MODULE_NAME'    => 'QentaCEE_Stdlib',
+    'MODULE_NAME'    => 'WirecardCEE_Stdlib',
     'MODULE_VERSION' => '3.0.3',
     'DEPENDENCIES'   => array(
         'SCRIPTING_LANG'         => 'PHP',

@@ -34,7 +34,7 @@
 return Array(
     'FRONTEND_URL'   => 'https://checkout.wirecard.com/page/init-server.php',
     'TOOLKIT_URL'    => 'https://checkout.wirecard.com/page/toolkit.php',
-    'MODULE_NAME'    => 'QentaCEE_QPay',
+    'MODULE_NAME'    => 'WirecardCEE_QPay',
     'MODULE_VERSION' => '3.3.0',
     'DEPENDENCIES'   => Array(),
     'USE_DEBUG'      => false
