@@ -1,0 +1,9 @@
+#content #payment #qcp_iframe {
+    height: 890px;
+    min-width: 320px;
+    width: 100%;
+}
+#content .finish .qenta_pending {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
