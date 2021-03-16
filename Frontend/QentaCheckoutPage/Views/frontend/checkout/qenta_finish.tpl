@@ -1,7 +1,7 @@
 {extends file="frontend/checkout/finish.tpl"}
 
 {block name="frontend_index_header_css_screen" append}
-    <link type="text/css" media="all" rel="stylesheet" href="{link file='frontend/_resources/styles/qenta.css'}" />
+    <link type="text/css" media="all" rel="stylesheet" href="{link file='frontend/_resources/styles/qcp.css'}" />
 {/block}
 
 {namespace name="frontend/checkout/finish"}
