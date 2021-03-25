@@ -5,12 +5,6 @@
 [![PHP v7.3](https://img.shields.io/badge/php-v7.3-yellow.svg)](http://www.php.net)
 
 ----
-**IMPORTANT INFORMATION**  
-You are visiting a shop extension which will become obsolete in the near future. It has been replaced by a new one with new features and enhanced functionality.   
-Please use our new shop extension available on [shopware.qenta.com](https://shopware.qenta.com), which will be maintained, updated and supported on a regular basis.  
-If you have any questions, please contact shop-systems-support@qenta.com
-
-----
 
 Qenta Checkout Page plugin for Shopware. 
 
@@ -19,7 +13,7 @@ Our [Online Guides](https://guides.qenta.com/) provide further information on pa
 ## Installation
 Our [Online Guides](https://guides.qenta.com/shop_plugins:shopware_qcp:start "Installation details") also provide technical documentation, installation and configuration instructions for the plugin.
 
-Be careful after installing/updating the plugin from the GitHub master branch. Your Shopware installation will notify you about an upgrade at the [Shopware store](http://store.shopware.com/wirecard01501/wirecard-checkout-page.html). **This upgrade will revert the plugin to the latest version on the Shopware store.**
+Be careful after installing/updating the plugin from the GitHub master branch. Your Shopware installation might notify you about an upgrade at the [Shopware store](http://store.shopware.com/wirecard01501/wirecard-checkout-page.html). **This upgrade will revert the plugin to the latest version on the Shopware store.**
 
 **For Shopware versions 5.2.22 - 5.2.24 there can be problems with the shopversion from Shopware AG.**
 
@@ -36,5 +30,3 @@ Qenta Checkout Page offers:
 - PCI DSS 3 compliant, no PCI certification necessary for merchants.
 - Easy to add new payment methods, additional features, languages and currencies, etc.
 - Web interface for managing payments (approvals, cancelations, credits, etc.).
-- Benefit from Qenta Bank´s license to conclude credit card acceptance contracts (acquiring) and issue credit cards.
-- With Qenta Collecting only a single contract is required for payouts within various payment methods.
