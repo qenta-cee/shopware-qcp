@@ -71,7 +71,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
      */
     public function getVersion()
     {
-        return '1.6.4';
+        return '2.0.0';
     }
 
     /**
