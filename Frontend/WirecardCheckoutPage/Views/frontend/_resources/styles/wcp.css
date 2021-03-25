@@ -1,9 +1,0 @@
-#content #payment #wcp_iframe {
-    height: 890px;
-    min-width: 320px;
-    width: 100%;
-}
-#content .finish .wirecard_pending {
-    font-weight: bold;
-    margin-bottom: 4px;
-}
