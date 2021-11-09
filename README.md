@@ -2,16 +2,16 @@
 
 [![License](https://img.shields.io/badge/license-GPLv2-blue.svg)](https://raw.githubusercontent.com/qenta-cee/shopware-qcp/master/LICENSE)
 [![Shopware](https://img.shields.io/badge/Shopware-v5.2.0--v5.6.8-green.svg)](https://www.shopware.com/)
-[![PHP v7.3](https://img.shields.io/badge/php-v7.3-yellow.svg)](http://www.php.net)
+[![PHP v7.4](https://img.shields.io/badge/php-v7.4-green.svg)](http://www.php.net)
 
 ----
 
 Qenta Checkout Page plugin for Shopware. 
 
-Our [Online Guides](https://guides.qenta.com/) provide further information on payment methods and additional features. Please observe our [terms of use](https://guides.qenta.com/shop_plugins:info#terms_of_use) regarding plugins.
+Our [Online Guides](https://guides.qenta.com/) provide further information on payment methods and additional features. Please observe our [terms of use](https://guides.qenta.com/shop_plugins/info/) regarding plugins.
 
 ## Installation
-Our [Online Guides](https://guides.qenta.com/shop_plugins:shopware_qcp:start "Installation details") also provide technical documentation, installation and configuration instructions for the plugin.
+Our [Online Guides](https://guides.qenta.com/shop_plugins/qpay/shopware/start/ "Installation details") also provide technical documentation, installation and configuration instructions for the plugin.
 
 Be careful after installing/updating the plugin from the GitHub master branch. Your Shopware installation might notify you about an upgrade at the [Shopware store](http://store.shopware.com/wirecard01501/wirecard-checkout-page.html). **This upgrade will revert the plugin to the latest version on the Shopware store.**
 
