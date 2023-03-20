@@ -71,7 +71,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Config
      */
     public function getLanguage()
     {
-        return Shopware()->Locale()->getLanguage();
+        return substr(Shopware()->Container()->get('shop')->getLocale()->getLocale(), 0, 2);
     }
 
     public function getPrefix($type)

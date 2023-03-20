@@ -60,9 +60,9 @@ class Shopware_Controllers_Frontend_QentaCheckoutPage extends Shopware_Controlle
         }
 
         /** @var Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Page $oPageModel */
-        $oPageModel = Shopware()->QentaCheckoutPage()->getPage();
+        $oPageModel = Shopware()->Container()->get('QentaCheckoutPage')->getPage();
 
-        $sPaymentType = Shopware()->QentaCheckoutPage()->getPaymentShortName();
+        $sPaymentType = Shopware()->Container()->get('QentaCheckoutPage')->getPaymentShortName();
         $fAmount = $this->getAmount();
         $sCurrency = $this->getCurrencyShortName();
 
@@ -83,16 +83,16 @@ class Shopware_Controllers_Frontend_QentaCheckoutPage extends Shopware_Controlle
         );
 
         $aParams = Array(
-            'sCoreId' => Shopware()->SessionID(),
+            'sCoreId' => Shopware()->Session()->get('sessionId'),
             '__shop' => Shopware()->Shop()->getId(),
-            'wQentaCheckoutPageId' => Shopware()->QentaCheckoutPage()->getTransactionId(),
-            'displayText' => Shopware()->QentaCheckoutPage()->getConfig()->display_text
+            'wQentaCheckoutPageId' => Shopware()->Container()->get('QentaCheckoutPage')->getTransactionId(),
+            'displayText' => Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->display_text
         );
 
         $checkoutUrl = $this->Front()->Router()->assemble(
             Array('controller' => 'checkout', 'action' => 'confirm', 'sUseSSL' => true)
         );
-        $bUseIframe = (Shopware()->QentaCheckoutPage()->getConfig()->use_iframe == 1);
+        $bUseIframe = (Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->use_iframe == 1);
 
         $sOrderVariables = Shopware()->Session()->sOrderVariables;
         $existingOrder = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findByNumber($sOrderVariables['sOrderNumber']);
@@ -102,11 +102,11 @@ class Shopware_Controllers_Frontend_QentaCheckoutPage extends Shopware_Controlle
         } else {
 
             /** @var Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Transaction $oTransaction */
-            $oTransaction = Shopware()->QentaCheckoutPage()->getTransaction();
+            $oTransaction = Shopware()->Container()->get('QentaCheckoutPage')->getTransaction();
 
             $oTransaction->create($aParams['wQentaCheckoutPageId'],
                 $oTransaction->generateHash($aParams['wQentaCheckoutPageId'], $fAmount, $sCurrency),
-                Shopware()->QentaCheckoutPage()->getPaymentShortName(),
+                Shopware()->Container()->get('QentaCheckoutPage')->getPaymentShortName(),
                 $_SESSION);
 
             $oResponse = $oPageModel->initiatePayment($sPaymentType, $fAmount, $sCurrency, $sReturnUrl, $sConfigmrUrl, $aParams);
@@ -117,9 +117,9 @@ class Shopware_Controllers_Frontend_QentaCheckoutPage extends Shopware_Controlle
 
             if($oResponse->hasFailed())
             {
-                Shopware()->Pluginlogger()->info('QentaCheckoutPage: '. __METHOD__ . ':' . $oResponse->getError());
-                Shopware()->QentaCheckoutPage()->qenta_message = $oResponse->getError();
-                Shopware()->QentaCheckoutPage()->qenta_action = 'failure';
+                Shopware()->Container()->get('pluginlogger')->info('QentaCheckoutPage: '. __METHOD__ . ':' . $oResponse->getError()->getConsumerMessage());
+                Shopware()->Container()->get('QentaCheckoutPage')->qenta_message = $oResponse->getError()->getConsumerMessage();
+                Shopware()->Container()->get('QentaCheckoutPage')->qenta_action = 'failure';
                 //if an error occurs we should not show followup page in iframe.
                 $bUseIframe = false;
                 $sRedirectUrl = $checkoutUrl;
@@ -151,17 +151,18 @@ class Shopware_Controllers_Frontend_QentaCheckoutPage extends Shopware_Controlle
     public function confirmAction()
     {
         /** @var Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Transaction $oTransaction */
-        $oTransaction = Shopware()->QentaCheckoutPage()->getTransaction();
+        $oTransaction = Shopware()->Container()->get('QentaCheckoutPage')->getTransaction();
 
         try {
             Shopware()->Plugins()->Controller()->ViewRenderer()->setNoRender();
 
             $post = $this->Request()->getPost();
-            Shopware()->Pluginlogger()->info('QentaCheckoutPage: ' . __METHOD__ . '--' . __LINE__ . ':' . print_r($post,
+            Shopware()->Container()->get('pluginlogger')->info('QentaCheckoutPage: ' . __METHOD__ . '--' . __LINE__ . ':' . print_r($post,
                     1));
 
             $paymentUniqueId = $this->Request()->getParam('wQentaCheckoutPageId');
-            if (Shopware()->QentaCheckoutPage()->getConfig()->setAsTransactionID() == 'gatewayReferenceNumber') {
+            $sCoreId = $this->Request()->getParam('sCoreId');
+            if (Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->setAsTransactionID() == 'gatewayReferenceNumber') {
                 $sTransactionIdField = 'gatewayReferenceNumber';
             } else {
                 $sTransactionIdField = 'orderNumber';
@@ -170,28 +171,32 @@ class Shopware_Controllers_Frontend_QentaCheckoutPage extends Shopware_Controlle
 
             $transactionData = $oTransaction->read($paymentUniqueId);
             if (!is_array($transactionData)) {
-                Shopware()->Pluginlogger()->info('QentaCheckoutPage: ' . __METHOD__ . ':invalid transaction data');
+                Shopware()->Container()->get('pluginlogger')->info('QentaCheckoutPage: ' . __METHOD__ . ':invalid transaction data');
                 die(QentaCEE_QPay_ReturnFactory::generateConfirmResponseString('invalid transaction data'));
             }
 
             $sessionData = unserialize($transactionData['session']);
             if($sessionData === false) {
-                Shopware()->Pluginlogger()->info('QentaCheckoutPage: '. __METHOD__ . ':Validation error: invalid session data');
+                Shopware()->Container()->get('pluginlogger')->info('QentaCheckoutPage: '. __METHOD__ . ':Validation error: invalid session data');
                 die(QentaCEE_QPay_ReturnFactory::generateConfirmResponseString('Validation error: invalid session data'));
             }
 
             // restore session
             $_SESSION = $sessionData;
+            if (is_array($sessionData) && isset($sessionData['Shopware'])) {
+                Shopware()->Session()->offsetSet('sOrderVariables', $sessionData['Shopware']['sOrderVariables']);
+                Shopware()->Session()->offsetSet('sQentaConfirmMail', $sessionData['Shopware']['sQentaConfirmMail']);
+            }
 
             // restore remote address
             $_SERVER['REMOTE_ADDR'] = $transactionData['remoteAddr'];
 
             $return       = QentaCEE_QPay_ReturnFactory::getInstance($post,
-                Shopware()->QentaCheckoutPage()->getConfig()->SECRET);
-            $paymentState = Shopware()->QentaCheckoutPage()->getPaymentStatusId($return->getPaymentState());
+                Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->SECRET);
+            $paymentState = Shopware()->Container()->get('QentaCheckoutPage')->getPaymentStatusId($return->getPaymentState());
 
             if ( ! $return->validate()) {
-                Shopware()->Pluginlogger()->info('QentaCheckoutPage: ' . __METHOD__ . ':Validation error: invalid response');
+                Shopware()->Container()->get('pluginlogger')->info('QentaCheckoutPage: ' . __METHOD__ . ':Validation error: invalid response');
                 die(QentaCEE_QPay_ReturnFactory::generateConfirmResponseString('Validation error: invalid response'));
             }
 
@@ -238,10 +243,15 @@ class Shopware_Controllers_Frontend_QentaCheckoutPage extends Shopware_Controlle
                                 $sOrderNumber, $paymentUniqueId, $paymentState));
                         }
 
+                        Shopware()->Container()->get('dbal_connection')->delete(
+                            's_order',
+                            ['temporaryID' => $sCoreId, 'ordernumber' => '0']
+                        );
+
                         $update['orderId'] = $sOrderNumber;
                     }
 
-                    if (Shopware()->QentaCheckoutPage()->getConfig()->saveResponseTo()) {
+                    if (Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->saveResponseTo()) {
                         $this->saveComments($return, Shopware()->Session()->sOrderVariables['sOrderNumber']);
                     }
                     break;
@@ -251,7 +261,7 @@ class Shopware_Controllers_Frontend_QentaCheckoutPage extends Shopware_Controlle
                     //Set qentaState for pending mail check
                     Shopware()->Session()->sOrderVariables['qentaState'] = 'pending';
                     $sendMail = false;
-                    if (Shopware()->QentaCheckoutPage()->getConfig()->SEND_PENDING_MAILS) {
+                    if (Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->SEND_PENDING_MAILS) {
                         $sendMail = true;
                     }
                     $sOrderNumber = $this->saveOrder(
@@ -266,9 +276,14 @@ class Shopware_Controllers_Frontend_QentaCheckoutPage extends Shopware_Controlle
                             $sOrderNumber, $paymentUniqueId, $paymentState));
                     }
 
+                    Shopware()->Container()->get('dbal_connection')->delete(
+                        's_order',
+                        ['temporaryID' => $sCoreId, 'ordernumber' => '0']
+                    );
+
                     $update['orderId'] = $sOrderNumber;
 
-                    if (Shopware()->QentaCheckoutPage()->getConfig()->saveResponseTo()) {
+                    if (Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->saveResponseTo()) {
                         $this->saveComments($return, Shopware()->Session()->sOrderVariables['sOrderNumber']);
                     }
                     break;
@@ -276,12 +291,12 @@ class Shopware_Controllers_Frontend_QentaCheckoutPage extends Shopware_Controlle
                     $sOrderVariables = Shopware()->Session()->sOrderVariables;
                     $existingOrder   = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findByNumber($sOrderVariables['sOrderNumber']);
 
-                    if (($existingOrder[0] instanceof \Shopware\Models\Order\Order) && $existingOrder[0]->getPaymentStatus()->getId() !== Shopware()->QentaCheckoutPage()->getPaymentStatusId(QentaCEE_QPay_ReturnFactory::STATE_PENDING)) {
-                        Shopware()->Pluginlogger()->info('QentaCheckoutPage: ' . __METHOD__ . ': do not modify payment status as the order is in a final state!');
+                    if (($existingOrder[0] instanceof \Shopware\Models\Order\Order) && $existingOrder[0]->getPaymentStatus()->getId() !== Shopware()->Container()->get('QentaCheckoutPage')->getPaymentStatusId(QentaCEE_QPay_ReturnFactory::STATE_PENDING)) {
+                        Shopware()->Container()->get('pluginlogger')->info('QentaCheckoutPage: ' . __METHOD__ . ': do not modify payment status as the order is in a final state!');
                         die(QentaCEE_QPay_ReturnFactory::generateConfirmResponseString('Can not overwrite payment status as the order is in a final state!'));
                     } else if ($existingOrder[0] instanceof \Shopware\Models\Order\Order) {
                         $status = $existingOrder[0]->getPaymentStatus();
-                        if ($status->getId() === Shopware()->QentaCheckoutPage()->getPaymentStatusId(QentaCEE_QPay_ReturnFactory::STATE_PENDING)) {
+                        if ($status->getId() === Shopware()->Container()->get('QentaCheckoutPage')->getPaymentStatusId(QentaCEE_QPay_ReturnFactory::STATE_PENDING)) {
                             // save existing order for failed payment
                             $sOrderNumber = $this->savePaymentStatus(
                                 $transactionId,
@@ -310,7 +325,7 @@ class Shopware_Controllers_Frontend_QentaCheckoutPage extends Shopware_Controlle
             $oTransaction->update($paymentUniqueId, $update);
 
         } catch (Exception $e) {
-            Shopware()->Pluginlogger()->info('QentaCheckoutPage: ' . __METHOD__ . '.--' . __LINE__ . ':' . $e->getMessage());
+            Shopware()->Container()->get('pluginlogger')->info('QentaCheckoutPage: ' . __METHOD__ . '.--' . __LINE__ . ':' . $e->getMessage());
             die(QentaCEE_QPay_ReturnFactory::generateConfirmResponseString(htmlspecialchars($e->getMessage())));
         }
 
@@ -325,12 +340,13 @@ class Shopware_Controllers_Frontend_QentaCheckoutPage extends Shopware_Controlle
         $paymentUniqueId = $this->Request()->getParam('wQentaCheckoutPageId');
 
         /** @var Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Transaction $oTransaction */
-        $oTransaction = Shopware()->QentaCheckoutPage()->getTransaction();
+        $oTransaction = Shopware()->Container()->get('QentaCheckoutPage')->getTransaction();
         $transactionData = $oTransaction->read($paymentUniqueId);
 
         // write back modified sessiondata, might be modified by the confirm (server2server) request
         $savedSessionData = unserialize($transactionData['session']);
         if (is_array($savedSessionData) && isset($savedSessionData['Shopware'])) {
+            //$_SESSION = $savedSessionData;
             Shopware()->Session()->offsetSet('sOrderVariables', $savedSessionData['Shopware']['sOrderVariables']);
             Shopware()->Session()->offsetSet('sQentaConfirmMail', $savedSessionData['Shopware']['sQentaConfirmMail']);
         }
@@ -342,61 +358,66 @@ class Shopware_Controllers_Frontend_QentaCheckoutPage extends Shopware_Controlle
             $result->cleared = false;
         }
         $post = $this->Request()->getPost();
-        Shopware()->Pluginlogger()->info('QentaCheckoutPage: '.__METHOD__ . '--' . __LINE__ . ':' . print_r($post, 1));
+        Shopware()->Container()->get('pluginlogger')->info('QentaCheckoutPage: '.__METHOD__ . '--' . __LINE__ . ':' . print_r($post, 1));
 
         try {
             $return = QentaCEE_QPay_ReturnFactory::getInstance(
                 $post,
-                Shopware()->QentaCheckoutPage()->getConfig()->SECRET
+                Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->SECRET
             );
 
             switch ($return->getPaymentState()) {
                 case QentaCEE_QPay_ReturnFactory::STATE_SUCCESS:
                     /** @var $return QentaCEE_QPay_Return_Success */
-                $sRedirectUrl = $this->Front()->Router()->assemble(
-                    Array('controller' => 'checkout', 'action' => 'finish', 'sUseSSL' => true)
-                );
+
+                    Shopware()->Modules()->Basket()->sDeleteBasket();
+                    $sRedirectUrl = $this->Front()->Router()->assemble(
+                        Array('module' => 'frontend', 'controller' => 'checkout', 'action' => 'finish', 'sUseSSL' => true, 'sUniqueID' => $paymentUniqueId)
+                    );
                 break;
 
                 case QentaCEE_QPay_ReturnFactory::STATE_PENDING:
                     /** @var $return QentaCEE_QPay_Return_Pending */
-                $sRedirectUrl = $this->Front()->Router()->assemble(
-                    Array('controller' => 'checkout', 'action' => 'finish', 'sUseSSL' => true, 'ispending' => true)
-                );
+
+                    Shopware()->Modules()->Basket()->sDeleteBasket();
+                    $sRedirectUrl = $this->Front()->Router()->assemble(
+                        Array('module' => 'frontend', 'controller' => 'checkout', 'action' => 'finish', 'sUseSSL' => true, 'ispending' => true, 'sUniqueID' => $paymentUniqueId)
+                    );
                 break;
 
                 case QentaCEE_QPay_ReturnFactory::STATE_CANCEL:
                     /** @var $return QentaCEE_QPay_Return_Cancel */
+
                     if(isset($_SESSION["qcp_redirect_url"])) {
                         unset($_SESSION["qcp_redirect_url"]);
                     }
-                $sRedirectUrl = $this->Front()->Router()->assemble(
-                    Array('controller' => 'checkout', 'action' => 'confirm', 'sUseSSL' => true)
-                );
-                Shopware()->QentaCheckoutPage()->qenta_action = 'cancel';
+                    $sRedirectUrl = $this->Front()->Router()->assemble(
+                        Array('controller' => 'checkout', 'action' => 'confirm', 'sUseSSL' => true)
+                    );
+                    Shopware()->Container()->get('QentaCheckoutPage')->qenta_action = 'cancel';
                 break;
 
                 case QentaCEE_QPay_ReturnFactory::STATE_FAILURE:
             default:
                     /** @var $return QentaCEE_QPay_Return_Failure */
-                if(isset($_SESSION["qcp_redirect_url"])) {
-                    unset($_SESSION["qcp_redirect_url"]);
-                }
-                    Shopware()->QentaCheckoutPage()->qenta_message = $return->getErrors()->getConsumerMessage();
-                    Shopware()->QentaCheckoutPage()->qenta_action = 'external_error';
-                $sRedirectUrl = $this->Front()->Router()->assemble(
-                    Array('controller' => 'checkout', 'action' => 'confirm', 'sUseSSL' => true)
-                );
-        }
+                    if(isset($_SESSION["qcp_redirect_url"])) {
+                       unset($_SESSION["qcp_redirect_url"]);
+                    }
+                    Shopware()->Container()->get('QentaCheckoutPage')->qenta_message = $return->getErrors()->getConsumerMessage();
+                    Shopware()->Container()->get('QentaCheckoutPage')->qenta_action = 'external_error';
+                    $sRedirectUrl = $this->Front()->Router()->assemble(
+                        Array('controller' => 'checkout', 'action' => 'confirm', 'sUseSSL' => true)
+                    );
+            }
         } catch (Exception $e) {
-            Shopware()->Pluginlogger()->error('QentaCheckoutPage: '.__METHOD__ . ':' . $e->getMessage());
-            Shopware()->QentaCheckoutPage()->qenta_action = 'failure';
+            Shopware()->Container()->get('pluginlogger')->error('QentaCheckoutPage: '.__METHOD__ . ':' . $e->getMessage());
+            Shopware()->Container()->get('QentaCheckoutPage')->qenta_action = 'failure';
         }
 
         //reset transactionId
-        Shopware()->QentaCheckoutPage()->transactionId = null;
+        Shopware()->Container()->get('QentaCheckoutPage')->transactionId = null;
 
-        $bUseIframe = (Shopware()->QentaCheckoutPage()->getConfig()->use_iframe == 1);
+        $bUseIframe = (Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->use_iframe == 1);
 
         if($bUseIframe)
         {
@@ -435,11 +456,11 @@ class Shopware_Controllers_Frontend_QentaCheckoutPage extends Shopware_Controlle
 
 
 
-        $field = Shopware()->QentaCheckoutPage()->getConfig()->saveResponseTo();
-        Shopware()->Pluginlogger()->info('QentaCheckoutPage: Comment field:' . $field);
+        $field = Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->saveResponseTo();
+        Shopware()->Container()->get('pluginlogger')->info('QentaCheckoutPage: Comment field:' . $field);
         if ($field == 'internalcomment') {
 
-            Shopware()->Pluginlogger()->info('QentaCheckoutPage: Saving internal comment');
+            Shopware()->Container()->get('pluginlogger')->info('QentaCheckoutPage: Saving internal comment');
             Shopware()->Db()->update(
                 's_order',
                 array($field => implode("\n", $comments)),
@@ -451,7 +472,7 @@ class Shopware_Controllers_Frontend_QentaCheckoutPage extends Shopware_Controlle
                 ->where('ordernumber = ?', array($orderNumber));
             $orderId = Shopware()->Db()->fetchOne($sql);
 
-            Shopware()->Pluginlogger()->info('QentaCheckoutPage: Saving attribute');
+            Shopware()->Container()->get('pluginlogger')->info('QentaCheckoutPage: Saving attribute');
             Shopware()->Db()->update(
                 's_order_attributes',
                 array($field => implode("\n", $comments)),

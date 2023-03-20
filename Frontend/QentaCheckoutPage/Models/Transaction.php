@@ -116,7 +116,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Transaction
     public function generateHash($id, $amount, $currencycode)
     {
         return md5(
-            Shopware()->QentaCheckoutPage()->getConfig()->SECRET . '|' . $id . '|' . $amount . '|' . $currencycode
+            Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->SECRET . '|' . $id . '|' . $amount . '|' . $currencycode
         );
     }
 

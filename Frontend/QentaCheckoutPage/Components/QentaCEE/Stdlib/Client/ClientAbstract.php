@@ -402,7 +402,7 @@ abstract class QentaCEE_Stdlib_Client_ClientAbstract
         $httpClient = $this->_getHttpClient();
 
         $request = $httpClient->post($this->_getRequestUrl(), [
-            'body' => $this->_requestData,
+            'form_params' => $this->_requestData,
             'headers'     => [
                 'User-Agent' => $this->getUserAgentString()
             ]

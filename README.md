@@ -1,7 +1,7 @@
 # Qenta Checkout Page plugin for Shopware
 
 [![License](https://img.shields.io/badge/license-GPLv2-blue.svg)](https://raw.githubusercontent.com/qenta-cee/shopware-qcp/master/LICENSE)
-[![Shopware](https://img.shields.io/badge/Shopware-v5.2.0--v5.6.8-green.svg)](https://www.shopware.com/)
+[![Shopware](https://img.shields.io/badge/Shopware-v5.7.0--v5.7.16-green.svg)](https://www.shopware.com/)
 [![PHP v7.4](https://img.shields.io/badge/php-v7.4-green.svg)](http://www.php.net)
 
 ----
@@ -15,7 +15,7 @@ Our [Online Guides](https://guides.qenta.com/shop_plugins/qpay/shopware/start/ "
 
 Be careful after installing/updating the plugin from the GitHub master branch. Your Shopware installation might notify you about an upgrade at the [Shopware store](http://store.shopware.com/wirecard01501/wirecard-checkout-page.html). **This upgrade will revert the plugin to the latest version on the Shopware store.**
 
-**For Shopware versions 5.2.22 - 5.2.24 there can be problems with the shopversion from Shopware AG.**
+**For Shopware versions 5.7.0 - 5.7.16 there can be problems with the shopversion from Shopware AG.**
 
 ## Qenta Checkout Page
 Qenta Checkout Page is designed to meet the ambitious demands of merchants offering a wide range of payment methods while at the same time fulfilling PCI DSS compliance.

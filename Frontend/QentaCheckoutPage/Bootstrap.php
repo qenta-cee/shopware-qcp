@@ -71,7 +71,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
      */
     public function getVersion()
     {
-        return '2.0.1';
+        return '2.0.2';
     }
 
     /**
@@ -116,7 +116,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
         $this->createForm();
         $this->createTranslations();
 
-        foreach (Shopware()->QentaCheckoutPage()->getConfig()->getDbTables() as $sql) {
+        foreach (Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->getDbTables() as $sql) {
             Shopware()->Db()->exec($sql);
         }
 
@@ -746,7 +746,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
      */
     protected function createPayments()
     {
-        $oConfig = Shopware()->QentaCheckoutPage()->getConfig();
+        $oConfig = Shopware()->Container()->get('QentaCheckoutPage')->getConfig();
 
         $prefixName = $oConfig->getPrefix('name');
 
@@ -770,7 +770,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
 
         $aTranslations = array();
         $i = 80;
-        foreach (Shopware()->QentaCheckoutPage()->getPaymentMethods()->getList() as $pm) {
+        foreach (Shopware()->Container()->get('QentaCheckoutPage')->getPaymentMethods()->getList() as $pm) {
             $oPayment = $this->Payments()->findOneBy(array('name' => $prefixName . $pm['name']));
             if(!$oPayment) {
                 $payment = array(
@@ -825,9 +825,9 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
     public static function init()
     {
         // Register resource QentaCheckoutPage
-        // The instance is available with Shopware()->QentaCheckoutPage()
-        if (!Shopware()->Bootstrap()->issetResource('QentaCheckoutPage')) {
-            Shopware()->Bootstrap()->registerResource(
+        // The instance is available with Shopware()->Container()->get('QentaCheckoutPage')
+        if (!Shopware()->Container()->initialized('QentaCheckoutPage')) {
+            Shopware()->Container()->set(
                 'QentaCheckoutPage',
                 new Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Resources()
             );
@@ -864,7 +864,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
      */
     public function getPayolutionLink()
     {
-        $mid = Shopware()->QentaCheckoutPage()->getConfig()->PAYOLUTION_MID;
+        $mid = Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->PAYOLUTION_MID;
         if (strlen($mid) === 0) {
             return false;
         }
@@ -917,7 +917,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
         $financialInstitution = $args->getSubject()->Request()->get('financialInstitution');
         if (isset($financialInstitution)) {
             self::init();
-            Shopware()->QentaCheckoutPage()->financialInstitution = $financialInstitution;
+            Shopware()->Container()->get('QentaCheckoutPage')->financialInstitution = $financialInstitution;
         }
         $birthDate = $args->getSubject()->Request()->get('birthdate');
         if (!empty($birthDate)) {
@@ -965,7 +965,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
                 $view->addTemplateDir($this->Path() . 'Views/responsive/');
 
                 // Output of common errors
-                if (null != Shopware()->QentaCheckoutPage()->qenta_action) {
+                if (null != Shopware()->Container()->get('QentaCheckoutPage')->qenta_action) {
                     self::showErrorMessages($view);
                 }
                 break;
@@ -975,7 +975,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
                 $view->addTemplateDir($this->Path() . 'Views/responsive/');
 
                 // Output of common errors
-                if (null != Shopware()->QentaCheckoutPage()->qenta_action) {
+                if (null != Shopware()->Container()->get('QentaCheckoutPage')->qenta_action) {
                     self::showErrorMessages($view);
                 }
 
@@ -984,18 +984,18 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
                 $view->paymentDesc = Shopware()->Session()->sOrderVariables['sUserData']['additional']['payment']['description'];
                 $view->paymentName = $paymentName;
                 $view->paymentLogo = 'frontend/_public/images/' . $paymentName . '.png';
-                $view->financialInstitutionSelectionEnabled = Shopware()->QentaCheckoutPage()->getConfig()->FINANCIAL_INSTITUTION_SELECTION_ENABLED;
+                $view->financialInstitutionSelectionEnabled = Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->FINANCIAL_INSTITUTION_SELECTION_ENABLED;
 
                 if(Shopware()->Session()->offsetGet('qcpConsumerDeviceId') != null) {
                     $consumerDeviceId = Shopware()->Session()->offsetGet('qcpConsumerDeviceId');
                 } else {
                     $timestamp = microtime();
-                    $consumerDeviceId = md5(Shopware()->QentaCheckoutPage()->getConfig()->customerid . "_" . $timestamp);
+                    $consumerDeviceId = md5(Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->customerid . "_" . $timestamp);
                     Shopware()->Session()->offsetSet('qcpConsumerDeviceId', $consumerDeviceId);
                 }
-                $paymentName = Shopware()->QentaCheckoutPage()->getPaymentShortName();
-                if ((Shopware()->QentaCheckoutPage()->getConfig()->INVOICE_PROVIDER == 'ratepay' && $paymentName == 'qcp_invoice') ||
-                    (Shopware()->QentaCheckoutPage()->getConfig()->INSTALLMENT_PROVIDER == 'ratepay' && $paymentName == 'qcp_installment')) {
+                $paymentName = Shopware()->Container()->get('QentaCheckoutPage')->getPaymentShortName();
+                if ((Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->INVOICE_PROVIDER == 'ratepay' && $paymentName == 'qcp_invoice') ||
+                    (Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->INSTALLMENT_PROVIDER == 'ratepay' && $paymentName == 'qcp_installment')) {
                     $ratepay = '<script language="JavaScript">var di = {t:"' . $consumerDeviceId . '",v:"WDWL",l:"Checkout"};</script>';
                     $ratepay .= '<script type="text/javascript" src="//d.ratepay.com/' . $consumerDeviceId . '/di.js"></script>';
                     $ratepay .= '<noscript><link rel="stylesheet" type="text/css" href="//d.ratepay.com/di.css?t=' . $consumerDeviceId . '&v=WDWL&l=Checkout"></noscript>';
@@ -1029,11 +1029,11 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
                 $view->bMonth = $birthday[1];
                 $view->bDay   = $birthday[2];
 
-                if ((Shopware()->QentaCheckoutPage()->getConfig()->INVOICE_PROVIDER == 'payolution' && $paymentName == 'INVOICE') ||
-                    (Shopware()->QentaCheckoutPage()->getConfig()->INSTALLMENT_PROVIDER == 'payolution' && $paymentName == 'INSTALLMENT')
+                if ((Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->INVOICE_PROVIDER == 'payolution' && $paymentName == 'INVOICE') ||
+                    (Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->INSTALLMENT_PROVIDER == 'payolution' && $paymentName == 'INSTALLMENT')
                 ) {
-                    $view->payolutionTerms = Shopware()->QentaCheckoutPage()->getConfig()->PAYOLUTION_TERMS;
-                    if (Shopware()->QentaCheckoutPage()->getConfig()->PAYOLUTION_TERMS) {
+                    $view->payolutionTerms = Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->PAYOLUTION_TERMS;
+                    if (Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->PAYOLUTION_TERMS) {
                         $view->qcpPayolutionLink1 = '<a id="qcp-payolutionlink" href="https://payment.payolution.com/payolution-payment/infoport/dataprivacyconsent?mId=' . $this->getPayolutionLink() . '" target="_blank">';
                         $view->qcpPayolutionLink2 = '</a>';
                     }
@@ -1041,7 +1041,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
 
                 $view->epsFinancialInstitutions = QentaCEE_QPay_PaymentType::getFinancialInstitutions('EPS');
                 $view->idlFinancialInstitutions = QentaCEE_QPay_PaymentType::getFinancialInstitutions('IDL');
-                $view->financialInstitutionsSelected = Shopware()->QentaCheckoutPage()->financialInstitution;
+                $view->financialInstitutionsSelected = Shopware()->Container()->get('QentaCheckoutPage')->financialInstitution;
 
                 break;
 
@@ -1070,7 +1070,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
     {
         switch ($paymentName) {
             case 'qcp_invoice':
-                $currencies = Shopware()->QentaCheckoutPage()->getConfig()->INVOICE_CURRENCY;
+                $currencies = Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->INVOICE_CURRENCY;
                 if (isset($currencies)) {
                     $currentCurrency = Shopware()->Shop()->getCurrency()->getCurrency();
 
@@ -1086,7 +1086,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
 
                 return true;
             case 'qcp_installment':
-                $currencies = Shopware()->QentaCheckoutPage()->getConfig()->INSTALLMENT_CURRENCY;
+                $currencies = Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->INSTALLMENT_CURRENCY;
                 if (isset($currencies)) {
                     $currentCurrency = Shopware()->Shop()->getCurrency()->getCurrency();
 
@@ -1136,10 +1136,10 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap extends Shopware_Com
      */
     protected static function showErrorMessages($view)
     {
-        $view->qenta_error = Shopware()->QentaCheckoutPage()->qenta_action;
-        $view->qenta_message = Shopware()->QentaCheckoutPage()->qenta_message;
-        Shopware()->QentaCheckoutPage()->qenta_action = null;
-        Shopware()->QentaCheckoutPage()->qenta_message = null;
+        $view->qenta_error = Shopware()->Container()->get('QentaCheckoutPage')->qenta_action;
+        $view->qenta_message = Shopware()->Container()->get('QentaCheckoutPage')->qenta_message;
+        Shopware()->Container()->get('QentaCheckoutPage')->qenta_action = null;
+        Shopware()->Container()->get('QentaCheckoutPage')->qenta_message = null;
     }
 
     /**

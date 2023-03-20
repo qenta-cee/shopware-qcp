@@ -104,6 +104,8 @@ abstract class QentaCEE_Stdlib_Response_ResponseAbstract
     {
         if ($response instanceof Response) {
             $this->_response = QentaCEE_Stdlib_SerialApi::decode($response->getBody());
+        } elseif ($response instanceof \GuzzleHttp\Psr7\Response) {
+            $this->_response = QentaCEE_Stdlib_SerialApi::decode($response->getBody()->getContents());
         } elseif (is_array($response)) {
             $this->_response = $response;
         } else {

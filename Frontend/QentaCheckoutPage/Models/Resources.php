@@ -158,7 +158,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Resources
      */
     public function __set($var = null, $val = null)
     {
-        Shopware()->Session()->_SESSION[Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap::NAME][$var] = serialize($val);
+        Shopware()->Session()->offsetSet(Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap::NAME . '_' . $var, serialize($val));
     }
 
     /**
@@ -168,8 +168,8 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Resources
      */
     public function __get($var = null)
     {
-        if (!empty($var) && isset(Shopware()->Session()->_SESSION[Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap::NAME][$var])) {
-            return unserialize(Shopware()->Session()->_SESSION[Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap::NAME][$var]);
+        if (!empty($var) && Shopware()->Session()->has(Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap::NAME . '_' . $var)) {
+            return unserialize(Shopware()->Session()->offsetGet(Shopware_Plugins_Frontend_QentaCheckoutPage_Bootstrap::NAME . '_' . $var));
         } else {
             return null;
         }
@@ -216,7 +216,7 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Resources
      */
     public function getPaymentShortName()
     {
-        $aPaymentType = $this->getPaymentMethods()->getOneByFullName(Shopware()->QentaCheckoutPage()->getUser('payment')->name);
+        $aPaymentType = $this->getPaymentMethods()->getOneByFullName(Shopware()->Container()->get('QentaCheckoutPage')->getUser('payment')->name);
         return $aPaymentType['call'];
     }
 

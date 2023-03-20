@@ -48,13 +48,13 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Page
             'CUSTOMER_ID' => $oConfig->customerid,
             'SHOP_ID'     => $oConfig->shopid,
             'SECRET'      => $oConfig->secret,
-            'LANGUAGE'    => Shopware()->Locale()->getLanguage()
+            'LANGUAGE'    => substr(Shopware()->Container()->get('shop')->getLocale()->getLocale(), 0, 2)
         ));
         $oInit->setPluginVersion($this->getPluginVersion());
 
         $oInit->setMaxRetries($oConfig->max_retries);
-        $oInit->setOrderReference(Shopware()->QentaCheckoutPage()->getOrderReference());
-        $oInit->setOrderDescription(Shopware()->QentaCheckoutPage()->getOrderDescription());
+        $oInit->setOrderReference(Shopware()->Container()->get('QentaCheckoutPage')->getOrderReference());
+        $oInit->setOrderDescription(Shopware()->Container()->get('QentaCheckoutPage')->getOrderDescription());
         $oInit->setImageUrl($oConfig->getImageUrl());
         $oInit->setServiceUrl($oConfig->service_url);
 
@@ -76,14 +76,14 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Page
      */
     public function initiatePayment($paymentType, $amount, $currency, $returnUrl, $confimUrl, $params = array())
     {
-        $oFrontendClient = $this->getFrontendClient(Shopware()->QentaCheckoutPage()->getConfig());
-        if (Shopware()->QentaCheckoutPage()->getConfig()->FINANCIAL_INSTITUTION_SELECTION_ENABLED
+        $oFrontendClient = $this->getFrontendClient(Shopware()->Container()->get('QentaCheckoutPage')->getConfig());
+        if (Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->FINANCIAL_INSTITUTION_SELECTION_ENABLED
             && in_array(strtolower($paymentType),
-                Shopware()->QentaCheckoutPage()->getConfig()->getPaymentsFinancialInstitution())
+                Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->getPaymentsFinancialInstitution())
         ) {
-            $oFrontendClient->setFinancialInstitution(Shopware()->QentaCheckoutPage()->financialInstitution);
+            $oFrontendClient->setFinancialInstitution(Shopware()->Container()->get('QentaCheckoutPage')->financialInstitution);
         }
-        $email = (string) Shopware()->QentaCheckoutPage()->getUser('user')->email;
+        $email = (string) Shopware()->Container()->get('QentaCheckoutPage')->getUser('user')->email;
 
         $oFrontendClient->setPaymentType($paymentType)
                         ->setAmount($amount)
@@ -106,19 +106,19 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Page
         if ($paymentType == \QentaCEE_QPay_PaymentType::MASTERPASS) {
             $oFrontendClient->setShippingProfile('NO_SHIPPING');
         }
-        if (Shopware()->QentaCheckoutPage()->getConfig()->SEND_BASKET_DATA
-            || ($paymentType == QentaCEE_QPay_PaymentType::INVOICE && Shopware()->QentaCheckoutPage()->getConfig()->INVOICE_PROVIDER != 'payolution')
-            || ($paymentType == QentaCEE_QPay_PaymentType::INSTALLMENT && Shopware()->QentaCheckoutPage()->getConfig()->INSTALLMENT_PROVIDER != 'payolution')
+        if (Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->SEND_BASKET_DATA
+            || ($paymentType == QentaCEE_QPay_PaymentType::INVOICE && Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->INVOICE_PROVIDER != 'payolution')
+            || ($paymentType == QentaCEE_QPay_PaymentType::INSTALLMENT && Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->INSTALLMENT_PROVIDER != 'payolution')
         ) {
             $oFrontendClient->setBasket($this->getShoppingBasket());
         }
-        if (Shopware()->QentaCheckoutPage()->getConfig()->ENABLE_DUPLICATE_REQUEST_CHECK){
+        if (Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->ENABLE_DUPLICATE_REQUEST_CHECK){
             $oFrontendClient->setDuplicateRequestCheck(true);
         }
 
         $customerStatement = sprintf('%9s', substr(Shopware()->Config()->get('ShopName'), 0, 9));
         if ($paymentType != \QentaCEE_QPay_PaymentType::POLI) {
-            $customerStatement .= ' ' . Shopware()->QentaCheckoutPage()->wQentaCheckoutPageId;
+            $customerStatement .= ' ' . Shopware()->Container()->get('QentaCheckoutPage')->wQentaCheckoutPageId;
         }
         $oFrontendClient->setCustomerStatement($customerStatement);
 
@@ -126,14 +126,14 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Page
         foreach ($params as $k => $v)
             $oFrontendClient->$k = $v;
 
-        Shopware()->Pluginlogger()->info('QentaCheckoutPage: '.__METHOD__ . ':' . print_r($oFrontendClient->getRequestData(),true));
+        Shopware()->Container()->get('pluginlogger')->info('QentaCheckoutPage: '.__METHOD__ . ':' . print_r($oFrontendClient->getRequestData(),true));
 
         try {
             return $oFrontendClient->initiate();
         } catch (\Exception $e) {
-            Shopware()->Pluginlogger()->error('QentaCheckoutPage: '.__METHOD__ . ':' . $e->getMessage());
-            Shopware()->QentaCheckoutPage()->qenta_action = 'failure';
-            Shopware()->QentaCheckoutPage()->qenta_message = $e->getMessage();
+            Shopware()->Container()->get('pluginlogger')->error('QentaCheckoutPage: '.__METHOD__ . ':' . $e->getMessage());
+            Shopware()->Container()->get('QentaCheckoutPage')->qenta_action = 'failure';
+            Shopware()->Container()->get('QentaCheckoutPage')->qenta_message = $e->getMessage();
         }
 
         return null;
@@ -151,11 +151,11 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Page
         if(defined('Shopware::VERSION')){
             $shopversion = Shopware::VERSION;
         } else {
-            $shopversion = \PackageVersions\Versions::getVersion('shopware/shopware');
+            $shopversion = Shopware()->Container()->get('shopware.release')->getVersion();
         }
 
         if ( ! strlen($shopversion)) {
-            $shopversion = '>5.2.21';
+            $shopversion = '>5.7.0';
         }
 
         return QentaCEE_QPay_FrontendClient::generatePluginVersion(
@@ -173,9 +173,9 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Page
     public function getUserDescription()
     {
         return sprintf('%s %s %s',
-            Shopware()->QentaCheckoutPage()->getUser('user')->email,
-            Shopware()->QentaCheckoutPage()->getUser('billingaddress')->firstname,
-            Shopware()->QentaCheckoutPage()->getUser('billingaddress')->lastname
+            Shopware()->Container()->get('QentaCheckoutPage')->getUser('user')->email,
+            Shopware()->Container()->get('QentaCheckoutPage')->getUser('billingaddress')->firstname,
+            Shopware()->Container()->get('QentaCheckoutPage')->getUser('billingaddress')->lastname
         );
     }
 
@@ -191,12 +191,12 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Page
         $consumerData->setIpAddress($_SERVER['REMOTE_ADDR']);
         $consumerData->setUserAgent($_SERVER['HTTP_USER_AGENT']);
 
-        if (Shopware()->QentaCheckoutPage()->getConfig()->send_additional_data
+        if (Shopware()->Container()->get('QentaCheckoutPage')->getConfig()->send_additional_data
             || $paymentType == QentaCEE_QPay_PaymentType::INSTALLMENT
             || $paymentType == QentaCEE_QPay_PaymentType::INVOICE
             || $paymentType == QentaCEE_QPay_PaymentType::P24
         ) {
-            $consumerData->setEmail(Shopware()->QentaCheckoutPage()->getUser('user')->email);
+            $consumerData->setEmail(Shopware()->Container()->get('QentaCheckoutPage')->getUser('user')->email);
             $consumerData->addAddressInformation($this->getAddress('billing'));
             $consumerData->addAddressInformation($this->getAddress('shipping'));
 
@@ -232,18 +232,18 @@ class Shopware_Plugins_Frontend_QentaCheckoutPage_Models_Page
                 $address = new QentaCEE_Stdlib_ConsumerData_Address(QentaCEE_Stdlib_ConsumerData_Address::TYPE_BILLING);
                 break;
         }
-        $address->setFirstname(Shopware()->QentaCheckoutPage()->getUser($prefix)->firstname);
-        $address->setLastname(Shopware()->QentaCheckoutPage()->getUser($prefix)->lastname);
-        $address->setAddress1(Shopware()->QentaCheckoutPage()->getUser($prefix)->street . ' ' . Shopware()->QentaCheckoutPage()->getUser($prefix)->streetnumber);
-        $address->setZipCode(Shopware()->QentaCheckoutPage()->getUser($prefix)->zipcode);
-        $address->setCity(Shopware()->QentaCheckoutPage()->getUser($prefix)->city);
+        $address->setFirstname(Shopware()->Container()->get('QentaCheckoutPage')->getUser($prefix)->firstname);
+        $address->setLastname(Shopware()->Container()->get('QentaCheckoutPage')->getUser($prefix)->lastname);
+        $address->setAddress1(Shopware()->Container()->get('QentaCheckoutPage')->getUser($prefix)->street . ' ' . Shopware()->Container()->get('QentaCheckoutPage')->getUser($prefix)->streetnumber);
+        $address->setZipCode(Shopware()->Container()->get('QentaCheckoutPage')->getUser($prefix)->zipcode);
+        $address->setCity(Shopware()->Container()->get('QentaCheckoutPage')->getUser($prefix)->city);
         switch ($type) {
             case 'billing':
-                $address->setCountry(Shopware()->QentaCheckoutPage()->getUser('country')->countryiso);
-                $address->setPhone(Shopware()->QentaCheckoutPage()->getUser($prefix)->phone);
+                $address->setCountry(Shopware()->Container()->get('QentaCheckoutPage')->getUser('country')->countryiso);
+                $address->setPhone(Shopware()->Container()->get('QentaCheckoutPage')->getUser($prefix)->phone);
                 break;
             case 'shipping':
-                $address->setCountry(Shopware()->QentaCheckoutPage()->getUser('countryShipping')->countryiso);
+                $address->setCountry(Shopware()->Container()->get('QentaCheckoutPage')->getUser('countryShipping')->countryiso);
                 break;
         }
         return $address;
